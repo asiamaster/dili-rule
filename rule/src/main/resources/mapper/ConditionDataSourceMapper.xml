@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dili.rule.mapper.ConditionDataSourceMapper">
+  <resultMap id="BaseResultMap" type="com.dili.rule.domain.ConditionDataSource">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id"  property="id" />
+    <result column="name"  property="name" />
+    <result column="query_url"  property="queryUrl" />
+    <result column="keys_url"  property="keysUrl" />
+    <result column="data_source_type"  property="dataSourceType" />
+    <result column="paged"  property="paged" />
+    <result column="create_time"  property="createTime" />
+    <result column="modify_time"  property="modifyTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dili.rule.domain.ConditionDataSource">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="data_json" jdbcType="LONGVARCHAR" property="dataJson" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, name, query_url, keys_url, data_source_type, paged, created, modified
+  </sql>
+  <sql id="Blob_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    data_json
+  </sql>
+  <select id="selectBy" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from condition_data_source
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <update id="updateBy" parameterType="com.dili.rule.domain.ConditionDataSource">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    update condition_data_source
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="queryUrl != null">
+        query_url = #{queryUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="keysUrl != null">
+        keys_url = #{keysUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSourceType != null">
+        data_source_type = #{dataSourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="paged != null">
+        paged = #{paged,jdbcType=TINYINT},
+      </if>
+      <if test="created != null">
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modified != null">
+        modified = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataJson != null">
+        data_json = #{dataJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

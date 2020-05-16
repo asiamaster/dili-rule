@@ -1,0 +1,45 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <%if (has(conditionDataSource)){%>
+        <form id="addForm" role="form" novalidate>
+            <input type="hidden" id="id" name="id" value="${conditionDataSource.id!}">
+            <div class="row row-cols-1">
+                <div class="form-group col">
+                    <label for="name" class="">名称<i class="red">*</i></label>
+                    <input type="text" class="form-control" id="name" name="name" maxlength="20" required value="${conditionDataSource.name!}"/>
+                </div>
+                <div class="form-group col">
+                    <label for="dataSourceType" class="">数据来源<i class="red">*</i></label>
+                    <select id="dataSourceType" name="dataSourceType" class="form-control" required></select>
+                    <#bcomboProvider _id="dataSourceType" _provider="dataSourceTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDataSource.dataSourceType!}" />
+                </div>
+                <div class="form-group col">
+                    <label for="queryUrl" class="">数据URL</label>
+                    <input type="text" class="form-control url" id="queryUrl" name="queryUrl" maxlength="255" value="${conditionDataSource.queryUrl!}" placeholder="如果来源为远程，则需设置数据URL" />
+                </div>
+                <div class="form-group col">
+                    <label for="paged" class="">是否分页<i class="red">*</i></label>
+                    <select id="paged" name="paged" class="form-control" required title="远程接口数据是否需要分页"></select>
+                    <#bcomboProvider _id="paged" _provider="yesOrNoProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDataSource.paged!}" />
+                </div>
+                <div class="form-group col">
+                    <label for="keysUrl" class="">查询URL<i class="red">*</i></label>
+                    <input type="text" class="form-control url" id="keysUrl" name="keysUrl" maxlength="255" value="${conditionDataSource.keysUrl!}" placeholder="通过关键key或ID查询数据时的URL" />
+                </div>
+                <div class="form-group col">
+                    <label for="dataJson" class="">本地数据</label>
+                    <textarea type="text" id="dataJson" name="dataJson"  placeholder="JSON格式的本地数据，如果来源为本地，需填写此项 " class="form-control isJSON" maxlength="500">${conditionDataSource.dataJson!}</textarea>
+                </div>
+            </div>
+            <div class="text-right mt-2">
+                <button type="button" class="btn btn-secondary px-5" id="formCancel" onclick="javascript:parent.dia.hide()">取消</button>
+                <button type="button" class="btn btn-primary px-5" id="formSubmit">保存</button>
+            </div>
+        </form>
+    <%}else{%>
+        <h4 class="red"><span class="px-3">数据源信息已不存在</span></h4>
+    <%}%>
+</div>
+</#bs4Body>
+<#conditionDataSource_editJs />

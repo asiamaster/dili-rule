@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dili.rule.mapper.DataSourceColumnMapper">
+  <resultMap id="BaseResultMap" type="com.dili.rule.domain.DataSourceColumn">
+    <id column="id" property="id" />
+    <result column="data_source_id" property="dataSourceId" />
+    <result column="column_code" property="columnCode" />
+    <result column="column_name" property="columnName" />
+    <result column="column_index"  property="columnIndex" />
+    <result column="display" property="display" />
+    <result column="visible" property="visible" />
+    <result column="create_time"  property="createTime" />
+    <result column="modify_time" property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, data_source_id, column_code, column_name, column_index, display, visible, create_time,
+    modify_time
+  </sql>
+</mapper>

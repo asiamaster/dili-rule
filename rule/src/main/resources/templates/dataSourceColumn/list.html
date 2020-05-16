@@ -1,0 +1,89 @@
+<#bs4Body>
+<div class="container-fluid">
+    <form id="dataSourceColumnQueryForm" role="form">
+        <input type="hidden" id="dataSourceId" name="dataSourceId" value="${dataSourceId!}">
+        <div class="row  row-cols-6">
+            <div class="form-group col">
+                <label for="columnCode">列编码</label>
+                <input type="" class="form-control isNaturalNum" id="columnCode" name="columnCode" placeholder="">
+            </div>
+            <div class="form-group col">
+                <label for="">列名称</label>
+                <input type="" class="form-control isNaturalNum" id="columnName" name="columnName" placeholder="">
+            </div>
+            <div class="form-group col">
+                <label for="">是否可见</label>
+                <select class="form-control" id="visible" name="visible"></select>
+                <#bcomboProvider _id="visible" _provider="yesOrNoProvider" _valueField="value" _textField="text" _value="" _queryParams='{emptyText:"-- 全部 --"}' />
+            </div>
+            <div class="col align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#dataSourceColumnQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空
+                </button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 查询
+                </button>
+            </div>
+        </div>
+    </form>
+    <hr>
+    <div class="">
+        <div class="row">
+            <div class="col-12">
+                <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
+                    <button id="btn_view" type="button" class="btn btn-primary" onclick=";"><i class="fa fa-eye"></i>
+                        查看
+                    </button>
+                    <#resource code="addColumn">
+                    <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+                            class="fa fa-plus"></i> 新增
+                    </button>
+                    </#resource>
+                    <#resource code="editColumn">
+                    <button id="btn_edit" type="button" class="btn btn-primary" onclick="openUpdateHandler()"><i
+                            class="fa fa-pencil-square-o"></i> 修改
+                    </button>
+                    </#resource>
+                    <#resource code="delColumn">
+                    <button type="button" class="btn btn-primary" onclick="doDeleteHandler()">
+                        <i class="fa fa-trash-o"></i> 删除
+                    </button>
+                    </#resource>
+                </div>
+                <table id="dataSourceColumnGrid" data-toggle="table" data-title="数据源-列" class="table"
+                       data-toolbar="#toolbar"
+                       data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
+                       data-side-pagination="server" data-method="POST"
+                       data-content-type="application/x-www-form-urlencoded" data-single-select="true"
+                       data-click-to-select="true" data-checkbox-header="true" data-unique-id="id" data-sort-name="id"
+                       data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary"
+                       data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
+                    <thead>
+                    <tr>
+                        <th data-width-unit="%" data-width="2" data-radio="true"></th>
+                        <th data-width-unit="%" data-width="15" data-field="columnCode" data-align="center"  data-sortable="true">
+                            列编码
+                        </th>
+                        <th data-width-unit="%" data-width="15" data-field="columnName" data-sortable="true"
+                            data-sort-name="convert(column_name using gbk)" data-align="center">
+                            列名称
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="columnIndex" data-sortable="true"
+                            data-align="center">
+                            列索引
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="display" data-align="center" data-sortable="true" data-sort-name="display"
+                            data-provider="yesOrNoProvider">
+                            是否回显
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="visible" data-align="center" data-sortable="true" data-sort-name="visible"
+                            data-provider="yesOrNoProvider">
+                            是否可见
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</#bs4Body>
+<#dataSourceColumn_listJs />

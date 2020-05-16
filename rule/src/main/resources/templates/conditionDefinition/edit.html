@@ -1,0 +1,202 @@
+<#bs4Body>
+<div class="container-fluid">
+    <form id="addForm" role="form" novalidate>
+        <input type="hidden" id="id" name="id" value="${conditionDefinition.id!}">
+        <div class="row row-cols-1">
+            <div class="form-group col">
+                <label for="marketId">所属市场<i class="red">*</i></label>
+                <select class="form-control" id="marketId" name="marketId" required onchange="marketChange()"></select>
+                <#bcomboProvider _id="marketId" _provider="marketProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.marketId!}" _queryParams='{required:true}' _onLoadSuccess='marketChange'/>
+            </div>
+            <div class="form-group col">
+                <label for="systemCode">所属市场<i class="red">*</i></label>
+                <select class="form-control" id="systemCode" name="systemCode" required onchange="systemChange()"></select>
+                <#bcomboProvider _id="systemCode" _provider="systemProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.systemCode!}" _queryParams='{required:true}' _onLoadSuccess='systemChange'/>
+            </div>
+            <div class="form-group col">
+                <input type="hidden" id="oldBusinessType" value="${conditionDefinition.businessType!}">
+                <label for="businessType">业务类型<i class="red">*</i></label>
+                <select class="form-control" id="businessType" name="businessType" required>
+                    <option value="">请选择</option>
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="label" class="">标签<i class="red">*</i></label>
+                <input type="text" class="form-control" id="label" name="label" maxlength="20" value="${conditionDefinition.label!}" required placeholder="用于显示的label" />
+            </div>
+            <div class="form-group col">
+                <label for="matchedKey" class="">匹配Key<i class="red">*</i></label>
+                <input type="text" class="form-control" id="matchedKey" name="matchedKey" maxlength="20" value="${conditionDefinition.matchedKey!}" required />
+            </div>
+            <div class="form-group col">
+                <label for="conditionType" class="">条件类型<i class="red">*</i></label>
+                <select id="conditionType" name="conditionType" class="form-control" required></select>
+                <#bcomboProvider _id="conditionType" _provider="conditionTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDefinition.conditionType!}" />
+            </div>
+            <div class="form-group col">
+                <label for="defaultValues" class="">默认值</label>
+                <input type="text" class="form-control" id="defaultValues" name="defaultValues" maxlength="255" value="${conditionDefinition.defaultValues!}"  placeholder="条件默认值,多个以英文逗号隔开" />
+            </div>
+            <div class="form-group col">
+                <input type="hidden" id="oldDataSourceId" value="${conditionDefinition.dataSourceId!}">
+                <label for="dataSourceId">数据来源</label>
+                <select class="form-control" id="dataSourceId" name="dataSourceId" title="数据来源选项，如果为空，则认为是直接输入的文本框">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+            <div class="form-group col">
+                <input type="hidden" id="oldMatchedColumn" value="${conditionDefinition.matchedColumn!}">
+                <label for="matchedColumn">匹配列</label>
+                <select class="form-control" id="matchedColumn" name="matchedColumn" title="设置需要保存数据来源中的哪一列的值">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="viewMode" class="">显示方式</label>
+                <select id="viewMode" name="viewMode" class="form-control"></select>
+                <#bcomboProvider _id="viewMode" _provider="viewModeProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.viewMode!}" />
+            </div>
+        </div>
+        <div class="text-right mt-2">
+            <button type="button" class="btn btn-secondary px-5" id="formCancel" onclick="javascript:parent.dia.hide()">取消</button>
+            <button type="button" class="btn btn-primary px-5" id="formSubmit">保存</button>
+        </div>
+    </form>
+</div>
+</#bs4Body>
+
+<script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
+
+<script>
+
+    /**
+     * 当市场改变时，重新获取业务类型
+     */
+    function marketChange() {
+        defaultGetBizTypeInfo($('#oldBusinessType').val(),false,'-- 请选择 --');
+    }
+
+    /**
+     * 当系统改变时，重新获取业务类型
+     */
+    function systemChange() {
+        defaultGetBizTypeInfo($('#oldBusinessType').val(),false,'-- 请选择 --');
+    }
+
+    /**
+     * 动态加载数据源信息
+     */
+    function getDataSourceInfo(dataSourceId) {
+        $('#dataSourceId').empty();
+        let dataSource = ["<option value=''>--请选择--</option>"];
+        $.ajax({
+            type: 'post',
+            url: "${contextPath}/conditionDataSource/getDataSource.action",
+            async: false,
+            success: function (ret) {
+                if (ret.success) {
+                    $.each(ret.data, function (i, item) {
+                        //数据来源信息判断
+                        if (typeof (dataSourceId) != "undefined" && null != dataSourceId && '' != dataSourceId && parseInt(dataSourceId) == parseInt(item["id"])) {
+                            dataSource.push('<option selected value="' + item["id"] + '">' + item["name"] + '</option>');
+                        } else {
+                            dataSource.push('<option value="' + item["id"] + '">' + item["name"] + '</option>');
+                        }
+                    });
+                }
+            }
+        });
+        $('#dataSourceId').html(dataSource.join(''));
+    }
+
+    /**
+     * 数据源改变事件处理
+     */
+    $('#dataSourceId').on('change', function(){
+        getMatchedColumn();
+    });
+
+    /**
+     * 获取数据列信息
+     */
+    function getMatchedColumn(defaultValue) {
+        let dataSourceId = $('#dataSourceId').val();
+        $('#matchedColumn').empty();
+        let data = ["<option value=''>--请选择--</option>"];
+        if (dataSourceId) {
+            $.ajax({
+                type: 'post',
+                url: "${contextPath}/dataSourceColumn/getByDataSource.action",
+                data: {dataSourceId: dataSourceId},
+                async: false,
+                success: function (ret) {
+                    if (ret.success) {
+                        $.each(ret.data, function (i, item) {
+                            //数据来源信息判断
+                            if (typeof(defaultValue) != "undefined" && null != defaultValue && '' != defaultValue && defaultValue == item["columnCode"]) {
+                                data.push('<option selected value="' + item["columnCode"] + '">' + item["columnName"] + '</option>');
+                            } else {
+                                data.push('<option value="' + item["columnCode"] + '">' + item["columnName"] + '</option>');
+                            }
+                        });
+                    } else {
+                        bs4pop.alert(ret.result, {width: 400, type: 'error'});
+                    }
+                }
+            });
+        }
+        $('#matchedColumn').html(data.join(''));
+    }
+
+    /**
+     * 保存定义数据
+     */
+    $('#formSubmit').on('click', function () {
+        if (!$('#addForm').valid()) {
+            return false;
+        } else {
+            let dataSourceId = $('#dataSourceId').val();
+            let viewMode = $('#viewMode').val();
+            let matchedColumn = $('#matchedColumn').val();
+            if (null != dataSourceId && '' != dataSourceId) {
+                if (!viewMode) {
+                    bs4pop.alert("数据来源不为空时，[显示方式]必选", {type: 'error',width: 400});
+                    return;
+                }
+                if (!matchedColumn) {
+                    bs4pop.alert("数据来源不为空时，[匹配列]必选", {type: 'error',width: 400});
+                    return;
+                }
+            }
+            $.ajax({
+                type: 'post',
+                url: "${contextPath}/conditionDefinition/save.action",
+                data: $('#addForm').serialize(),
+                success: function (ret) {
+                    if (ret.success) {
+                        bs4pop.alert("保存成功", {type: 'success', width: 400}, function () {
+                            parent.dia.hide();
+                            parent.queryDataHandler();
+                        });
+                    } else {
+                        bs4pop.alert(ret.result, {width: 400, type: 'error'});
+                    }
+                },
+                error: function (error) {
+                    bui.loading.hide();
+                    bs4pop.alert(error.result, {width: 400, type: 'error'}, function () {
+
+                    });
+                }
+            });
+        }
+    });
+
+    $(function () {
+        let dataSourceId = $('#oldDataSourceId').val();
+        getDataSourceInfo(dataSourceId);
+        let matchedColumn = $('#oldMatchedColumn').val();
+        getMatchedColumn(matchedColumn);
+    });
+
+</script>

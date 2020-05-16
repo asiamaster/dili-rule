@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dili.rule.mapper.ConditionDefinitionMapper">
+  <resultMap id="BaseResultMap" type="com.dili.rule.domain.ConditionDefinition">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id"  property="id" />
+    <result column="market_id"  property="marketId" />
+    <result column="system_code"  property="systemCode" />
+    <result column="business_type"  property="businessType" />
+    <result column="label"  property="label" />
+    <result column="matched_key"  property="matchedKey" />
+    <result column="condition_type"  property="conditionType" />
+    <result column="default_values"  property="defaultValues" />
+    <result column="data_type"  property="dataType" />
+    <result column="data_source_id"  property="dataSourceId" />
+    <result column="matched_column"  property="matchedColumn" />
+    <result column="view_mode"  property="viewMode" />
+    <result column="data_target_id"  property="dataTargetId" />
+    <result column="rule_condition"  property="ruleCondition" />
+    <result column="create_time"  property="createTime" />
+    <result column="modify_time"  property="modifyTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, market_id, system_code, business_type, label, matched_key, condition_type, default_values, 
+    data_type, data_source_id, matched_column, view_mode, data_target_id, rule_condition, 
+    create_time, modify_time
+  </sql>
+</mapper>

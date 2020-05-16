@@ -1,0 +1,121 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <#bs4nav>
+    <form id="conditionDefinitionQueryForm" role="form">
+        <div class="row  row-cols-6">
+            <div class="form-group col">
+                <label for="marketId">所属市场</label>
+                <select class="form-control" id="marketId" name="marketId" onchange="marketChange()"></select>
+                <#bcomboProvider _id="marketId" _provider="marketProvider" _valueField="value" _textField="text" _value="" _queryParams='{required:true}' _onLoadSuccess='marketChange'/>
+            </div>
+            <div class="form-group col">
+                <label for="systemCode">所属系统</label>
+                <select class="form-control" id="systemCode" name="systemCode" onchange="systemChange()"></select>
+                <#bcomboProvider _id="systemCode" _provider="systemProvider" _valueField="value" _textField="text" _value="" _queryParams='{required:true}' _onLoadSuccess='systemChange' />
+            </div>
+            <div class="form-group col">
+                <label for="businessType">业务类型</label>
+                <select class="form-control" id="businessType" name="businessType">
+                    <option value="">全部</option>
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="conditionType">条件类型</label>
+                <select class="form-control" id="conditionType" name="conditionType"></select>
+                <#bcomboProvider _id="conditionType" _provider="conditionTypeProvider" _valueField="value" _textField="text" _value="" _queryParams='{required:true}' />
+            </div>
+            <div class="form-group col">
+                <label for="label">名称</label>
+                <input type="text" class="form-control" id="label" name="label">
+            </div>
+            <div class="col align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2"
+                        onclick="javascript:$('#conditionDefinitionQueryForm .form-control').val('');"><i
+                        class="fa fa-refresh"></i> 清空
+                </button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i
+                        class="fa fa-search"></i> 查询
+                </button>
+            </div>
+        </div>
+    </form>
+    </#bs4nav>
+    <hr>
+    <div class="">
+        <div class="row">
+            <div class="col-12">
+                <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
+                    <button id="btn_view" type="button" class="btn btn-primary" onclick=";"><i class="fa fa-eye"></i>
+                        查看
+                    </button>
+                    <#resource code="addDefinition">
+                    <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+                            class="fa fa-plus"></i> 新增
+                    </button>
+                    </#resource>
+                    <#resource code="editDefinition">
+                    <button id="btn_edit" type="button" class="btn btn-primary" onclick="openUpdateHandler()"><i
+                        class="fa fa-pencil-square-o"></i> 修改
+                    </button>
+                    </#resource>
+                    <#resource code="delDefinition">
+                    <button type="button" class="btn btn-primary" onclick="doDeleteHandler()">
+                        <i class="fa fa-trash-o"></i> 删除
+                    </button>
+                    </#resource>
+                </div>
+                <table id="conditionDefinitionGrid" data-toggle="table" data-title="规则预定义列表" class="table" data-toolbar="#toolbar"
+                       data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
+                       data-side-pagination="server" data-method="POST"
+                       data-content-type="application/x-www-form-urlencoded" data-single-select="true"
+                       data-click-to-select="true" data-checkbox-header="true" data-unique-id="id" data-sort-name="id"
+                       data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary"
+                       data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
+                    <thead>
+                    <tr>
+                        <th data-width-unit="%" data-width="2" data-radio="true"></th>
+                        <th data-width-unit="%" data-width="10" data-field="marketId" data-sortable="true" data-sort-name="market_id" data-align="center" data-provider="marketProvider">
+                            所属市场
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="systemCode" data-sortable="true" data-sort-name="system_code" data-align="center" data-provider="systemProvider">
+                            所属系统
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="businessType" data-sortable="true" data-sort-name="business_type" data-align="center">
+                            业务类型
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="label" data-sortable="true"
+                            data-sort-name="convert(label using gbk)" data-align="center">
+                            条件标签
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="matchedKey" data-align="center">
+                            匹配Key
+                        </th>
+                        <th data-width-unit="%" data-width="5" data-field="conditionType" data-sortable="true" data-sort-name="condition_type" data-align="center" data-provider="conditionTypeProvider">
+                            条件类型
+                        </th>
+                        <th data-width-unit="%" data-width="15" data-field="defaultValues" data-align="center">
+                            默认值
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="ruleCondition" data-sortable="true" data-sort-name="rule_condition" data-align="center" data-provider="yesOrNoProvider">
+                            是否用于规则
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="dataSourceId" data-sortable="true" data-sort-name="data_source_id" data-align="center">
+                            来源类型
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="matchedColumn" data-sortable="true" data-sort-name="matched_column" data-align="center">
+                            匹配列
+                        </th>
+                        <th data-width-unit="%" data-width="10" data-field="dataTargetId" data-sortable="true" data-sort-name="data_target_id" data-align="center">
+                            数据归属
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</#bs4Body>
+<script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
+<#conditionDefinition_listJs />

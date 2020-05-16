@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dili.rule.mapper.RuleConditionValMapper">
+  <resultMap id="BaseResultMap" type="com.dili.rule.domain.RuleConditionVal">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" />
+    <result column="rule_id" property="ruleId" />
+    <result column="label" property="label" />
+    <result column="matched_key" property="matchedKey" />
+    <result column="condition_type" property="conditionType" />
+    <result column="data_type" property="dataType" />
+    <result column="definition_id" property="definitionId" />
+    <result column="created" property="createTime" />
+    <result column="modified"  property="modifyTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dili.rule.domain.RuleConditionVal">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="val" jdbcType="LONGVARCHAR" property="val" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, rule_id, label, matched_key, condition_type, data_type, val, definition_id, create_time,
+    modify_time
+  </sql>
+</mapper>

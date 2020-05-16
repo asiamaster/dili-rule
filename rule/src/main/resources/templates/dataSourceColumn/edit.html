@@ -1,0 +1,76 @@
+<#bs4Body>
+<div class="container-fluid">
+    <form id="addForm" role="form" novalidate>
+        <input type="hidden" id="id" name="id" value="${dataSourceColumn.id!}">
+        <input type="hidden" id="dataSourceId" name="dataSourceId" value="${dataSourceColumn.dataSourceId!}">
+        <div class="row row-cols-1">
+            <div class="form-group col">
+                <label for="columnCode" class="">列编码<i class="red">*</i></label>
+                <input type="text" class="form-control" id="columnCode" name="columnCode" maxlength="20" value="${dataSourceColumn.columnCode!}" required/>
+            </div>
+            <div class="form-group col">
+                <label for="" class="">列名称<i class="red">*</i></label>
+                <input type="text" class="form-control" id="columnName" name="columnName" maxlength="20" value="${dataSourceColumn.columnName!}" required/>
+            </div>
+            <div class="form-group col">
+                <label for="columnIndex" class="">列索引<i class="red">*</i></label>
+                <input type="text" class="form-control isNaturalNum" id="columnIndex" name="columnIndex" maxlength="20" value="${dataSourceColumn.columnIndex!}" required />
+            </div>
+            <div class="form-group col">
+                <label for="display" class="">是否回显</label>
+                <select id="display" name="display" class="form-control" required></select>
+                <#bcomboProvider _id="display" _provider="yesOrNoProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${dataSourceColumn.display!}" />
+            </div>
+            <div class="form-group col">
+                <label for="visible" class="">是否回显</label>
+                <select id="visible" name="visible" class="form-control" required></select>
+                <#bcomboProvider _id="visible" _provider="yesOrNoProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${dataSourceColumn.visible!}" />
+            </div>
+        </div>
+        <div class="text-right mt-2">
+            <button type="button" class="btn btn-secondary px-5" id="formCancel" onclick="javascript:parent.dia.hide()">取消</button>
+            <button type="button" class="btn btn-primary px-5" id="formSubmit">保存</button>
+        </div>
+    </form>
+</div>
+</#bs4Body>
+
+<script>
+
+    /**
+     * 保存数据
+     */
+    $('#formSubmit').on('click', function () {
+        if (!$('#addForm').valid()) {
+            return false;
+        } else {
+            bui.loading.show('努力提交中，请稍候。。。');
+            let _formData = $('#addForm').serialize();
+            let url = "${contextPath}/dataSourceColumn/save.action";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: _formData,
+                async: true,
+                success: function (ret) {
+                    bui.loading.hide();
+                    if (ret.success) {
+                        bs4pop.alert('保存成功', {type: 'success',width: 400}, function () {
+                            parent.dia.hide();
+                            parent.queryDataHandler();
+                        });
+                    } else {
+                        bs4pop.alert(ret.message, {width: 400,type: 'error'});
+                    }
+                },
+                error: function (error) {
+                    bui.loading.hide();
+                    bs4pop.alert(error.result, {width: 400,type: 'error'},function () {
+
+                    });
+                }
+            });
+        }
+    });
+
+</script>
