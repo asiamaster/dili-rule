@@ -2,32 +2,29 @@ package com.dili.rule.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.ss.domain.BaseDomain;
-import com.dili.ss.metadata.FieldEditor;
-import com.dili.ss.metadata.annotation.EditMode;
-import com.dili.ss.metadata.annotation.FieldDef;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * 由MyBatis Generator工具自动生成
  * 条件值
- * This file was generated on 2020-05-13 11:18:54.
+ * This file was generated on 2020-05-16 17:55:31.
  */
 @Getter
 @Setter
 @ToString(callSuper = true)
-@Table(name = "`rule_condition_val`")
-public class RuleConditionVal extends BaseDomain {
+@Table(name = "`charge_condition_val`")
+public class ChargeConditionVal extends BaseDomain {
     /**
      * 主键ID
      */
     @Id
-    @Column(name = "`id`")
+    @Column(name = "`id`",updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -62,12 +59,6 @@ public class RuleConditionVal extends BaseDomain {
     private Integer dataType;
 
     /**
-     * 值
-     */
-    @Column(name = "`val`")
-    private String val;
-
-    /**
      * 条件定义
      */
     @Column(name = "`definition_id`")
@@ -88,4 +79,11 @@ public class RuleConditionVal extends BaseDomain {
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifyTime;
+
+    /**
+     * 值
+     */
+    @Column(name = "`val`")
+    private String val;
+
 }

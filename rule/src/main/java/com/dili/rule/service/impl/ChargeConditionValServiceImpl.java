@@ -1,0 +1,127 @@
+package com.dili.rule.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.dili.commons.glossary.YesOrNoEnum;
+import com.dili.rule.domain.*;
+import com.dili.rule.domain.enums.ConditionTypeEnum;
+import com.dili.rule.domain.vo.ConditionDefinitionVo;
+import com.dili.rule.mapper.ChargeConditionValMapper;
+import com.dili.rule.service.ChargeConditionValService;
+import com.dili.rule.service.ConditionDataSourceService;
+import com.dili.rule.service.ConditionDefinitionService;
+import com.dili.rule.service.DataSourceColumnService;
+import com.dili.rule.service.remote.RemoteDataQueryService;
+import com.dili.ss.base.BaseServiceImpl;
+import com.google.common.collect.Lists;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * <B></B>
+ * <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其研发团队所有,未经许可不得任意复制与传播.</B>
+ * <B>农丰时代科技有限公司</B>
+ *
+ * @author yuehongbo
+ * @date 2020/5/16 18:04
+ */
+@Service
+public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditionVal, Long> implements ChargeConditionValService {
+
+    public ChargeConditionValMapper getActualMapper() {
+        return (ChargeConditionValMapper)getDao();
+    }
+
+    @Autowired
+    private ConditionDefinitionService conditionDefinitionService;
+    @Autowired
+    private ConditionDataSourceService conditionDataSourceService;
+    @Autowired
+    private DataSourceColumnService dataSourceColumnService;
+    @Autowired
+    private RemoteDataQueryService remoteDataQueryService;
+
+    @Override
+    public Map<String, Object> getRuleCondition(ChargeRule chargeRule) {
+        Map<String,Object>resultMap = new HashMap<>();
+        List<ChargeConditionVal> chargeConditionValList = Lists.newArrayList();
+        if (Objects.nonNull(chargeRule.getId())) {
+            //根据规则，查询规则条件信息
+            ChargeConditionVal conditionVal = new ChargeConditionVal();
+            conditionVal.setRuleId(chargeRule.getId());
+            chargeConditionValList = list(conditionVal);
+        }
+        resultMap.put("chargeConditionVals",chargeConditionValList);
+        //根据规则所在的市场、系统、业务，查询预定义的规则条件
+        ConditionDefinition conditionDefinition = new ConditionDefinition();
+        conditionDefinition.setMarketId(chargeRule.getMarketId());
+        conditionDefinition.setSystemCode(chargeRule.getSystemCode());
+        conditionDefinition.setBusinessType(chargeRule.getBusinessType());
+        conditionDefinition.setRuleCondition(YesOrNoEnum.YES.getCode());
+        List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.list(conditionDefinition);
+        //组装已选条件与预定义的条件值
+        List<ConditionDefinitionVo> conditionDefinitions = generate(chargeConditionValList,conditionDefinitionList);
+        resultMap.put("conditionDefinitions",conditionDefinitions);
+
+        return resultMap;
+    }
+
+
+    /**************** 私有方法分割线 **********************************/
+
+    /**
+     * 组装已选规则条件与预定义数据
+     * @param chargeConditionValList 已设置的规则条件
+     * @param conditionDefinitionList 已设置的预定义条件
+     */
+    private List<ConditionDefinitionVo> generate(List<ChargeConditionVal> chargeConditionValList,List<ConditionDefinition> conditionDefinitionList){
+        Map<Long, ChargeConditionVal> conditionValMap = chargeConditionValList.stream().collect(Collectors.toMap(ChargeConditionVal::getDefinitionId, RuleConditionVal -> RuleConditionVal));
+        List<ConditionDefinitionVo> voList = Lists.newArrayList();
+        conditionDefinitionList.stream().forEach(conditionDefinition -> {
+            ConditionDefinitionVo vo = new ConditionDefinitionVo();
+            BeanUtils.copyProperties(conditionDefinition, vo);
+            if (conditionValMap.containsKey(vo.getId())) {
+                ChargeConditionVal conditionVal = conditionValMap.get(vo.getId());
+                ConditionTypeEnum conditionType = ConditionTypeEnum.getInitDataMaps().get(conditionDefinition.getConditionType());
+                JSONArray objects = JSON.parseArray(conditionVal.getVal());
+                if (conditionType == ConditionTypeEnum.EQUALS) {
+                    vo.getValues().addAll(objects);
+                } else if (conditionType == ConditionTypeEnum.BETWEEN) {
+                    vo.getValues().addAll(objects);
+                } else if (conditionType == ConditionTypeEnum.IN) {
+                    vo.getValues().addAll(objects);
+                    ConditionDataSource conditionDataSource = conditionDataSourceService.get(conditionDefinition.getDataSourceId());
+                    String matchColumn = conditionDefinition.getMatchedColumn();
+                    List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects);
+                    DataSourceColumn condition = new DataSourceColumn();
+                    condition.setDataSourceId(conditionDefinition.getDataSourceId());
+                    List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
+                    for (Object value : objects) {
+                        for (Map<String, Object> row : keyTextMap) {
+                            Object matchValue = row.get(matchColumn);
+                            if (String.valueOf(value).equals(String.valueOf(matchValue))) {
+                                List<String> displayedText = new ArrayList<>();
+                                for (DataSourceColumn column : columns) {
+                                    if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
+                                        Object obj=row.get(column.getColumnCode());
+                                        if(obj!=null) {
+                                            displayedText.add(String.valueOf(obj));
+                                        }
+
+                                    }
+                                }
+                                vo.getTexts().add(String.join("#", displayedText));
+                            }
+                        }
+                    }
+                }
+            }
+            voList.add(vo);
+        });
+        return voList;
+    }
+}

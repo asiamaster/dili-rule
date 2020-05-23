@@ -1,5 +1,6 @@
 package com.dili.rule.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <B>公共信息服务控制层</B>
@@ -43,5 +45,27 @@ public class CommonInfoController {
         maps.put("4","摊位");
         //todo 目前数据怎么存，从哪里来，还没确定
         return BaseOutput.success().setData(maps);
+    }
+
+    /**
+     * 根据市场、系统、业务类型获取对应的收费项
+     * @param marketId 市场
+     * @param systemCode 系统
+     * @param businessType 业务类型
+     * @return
+     */
+    @RequestMapping("/getChargeItem.action")
+    @ResponseBody
+    public BaseOutput<Object> getChargeItem(Long marketId, String systemCode, String businessType){
+        if (Objects.nonNull(marketId) && StrUtil.isNotBlank(systemCode) && StrUtil.isNotBlank(businessType)){
+            Map maps = Maps.newLinkedHashMap();
+            maps.put("1","收费项1");
+            maps.put("2","收费项2");
+            maps.put("3","收费项3");
+            maps.put("4","收费项4");
+            return BaseOutput.success().setData(maps);
+        }
+        return BaseOutput.failure("参数丢失");
+
     }
 }

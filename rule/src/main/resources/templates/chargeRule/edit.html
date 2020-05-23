@@ -1,0 +1,102 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <%if (has(chargeRule)){%>
+        <form id="addForm" role="form" novalidate>
+            <input type="hidden" id="id" name="id" value="${chargeRule.id!}">
+            <div class="breadcrumb" >
+                基础信息
+                <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true"
+                   aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+            </div>
+            <div class="row row-cols-4 collapse show" id="baseInfo">
+                <div class="form-group col">
+                    <label for="marketId">所属市场<i class="red">*</i></label>
+                    <select class="form-control" id="marketId" name="marketId" onchange="getBizType()" required>
+                        <%if (has(marketList) && isNotEmpty(marketList) && marketList.~size >0 ){
+                            for(market in marketList){
+                        %>
+                            <option  value="${market.id!}" <%if(market.id==chargeRule.marketId){%> selected <%}%> >${market.name!}</option>
+                        <%}}%>
+                    </select>
+                </div>
+                <div class="form-group col">
+                    <label for="systemCode">所属系统<i class="red">*</i></label>
+                    <select class="form-control" id="systemCode" name="systemCode" onchange="getBizType()" required>
+                        <%if (has(systemList) && isNotEmpty(systemList) && systemList.~size >0 ){
+                            for(system in systemList){
+                        %>
+                            <option value="${system.code!}">${system.name!}</option>
+                        <%}}%>
+                    </select>
+                </div>
+                <div class="form-group col">
+                    <label for="businessType">业务类型<i class="red">*</i></label>
+                    <select class="form-control" id="businessType" name="businessType" required>
+                        <option value="">-- 请选择 --</option>
+                    </select>
+                </div>
+                <div class="form-group col">
+                    <label for="businessType">费用科目<i class="red">*</i></label>
+                    <select class="form-control" id="chargeItem" name="chargeItem" required>
+                        <option value="">-- 请选择 --</option>
+                    </select>
+                </div>
+                <div class="form-group col">
+                    <label for="ruleName">规则名称<i class="red">*</i></label>
+                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="30" required>
+                </div>
+                <div class="form-group col-auto">
+                    <label for="expireStart">有效期<i class="red">*</i></label>
+                    <div class="form-inline">
+                        <div class="input-group">
+                            <input type="text" name="expireStart" id="expireStart" class="form-control laydatetime" value="${chargeRule.expireStart!}"/>
+                            <div class="input-group-append">
+                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
+                            </div>
+                        </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                        <div class="input-group" id="datetimepicker3">
+                            <input type="text" name="expireEnd" id="expireEnd" class="form-control laydatetime" value="${chargeRule.expireEnd!}"/>
+                            <div class="input-group-append">
+                                <label for="expireEnd" class="input-group-text fa fa-calendar"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="breadcrumb">
+                条件指标
+                <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#conditionInfo" aria-expanded="true" aria-controls="conditionInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+            </div>
+            <div id="conditionInfo" class="collapse show">
+                <div id="ruleConditionDiv"></div>
+            </div>
+            <div class="breadcrumb">
+                计算指标
+                <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+            </div>
+            <div class="row row-cols-4 collapse show" id="calcParam">
+
+            </div>
+            <div class="breadcrumb">
+                其它信息
+                <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+            </div>
+            <div class="row  row-cols-4 collapse show" id="otherInfo">
+                <div class="form-group col-8">
+                    <label for="remark">备注</label>
+                    <textarea id="remark" class="form-control" name="remark" rows="1" maxlength="100"></textarea>
+                </div>
+            </div>
+            <div class="text-right btn-r-b">
+                <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()">取消</button>
+                <button type="button" class="btn btn-primary px-5" id="formSubmit">保存</button>
+            </div>
+        </form>
+    <%}else{%>
+        <h4 class="red"><span class="px-3">参数丢失</span></h4>
+    <%}%>
+</div>
+</#bs4Body>
+<script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
+<#chargeRule_editJs />

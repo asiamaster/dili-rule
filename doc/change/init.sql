@@ -1,6 +1,6 @@
-drop table if exists rule;
+drop table if exists charge_rule;
 
-drop table if exists rule_condition_val;
+drop table if exists charge_condition_val;
 
 drop table if exists condition_data_source;
 
@@ -9,9 +9,9 @@ drop table if exists data_source_column;
 drop table if exists condition_definition;
 
 /*==============================================================*/
-/* Table: rule                                                  */
+/* Table: charge_rule                                                  */
 /*==============================================================*/
-create table rule
+create table charge_rule
 (
    id                   bigint not null auto_increment comment '唯一ID',
    original_id          bigint comment '原始ID(在非启用状态下，修改数据，会生成一条新规则，需记录原始规则ID)',
@@ -41,12 +41,12 @@ create table rule
    approval_time        datetime comment '审核时间',
    primary key (id)
 );
-alter table rule comment '规则';
+alter table rule comment '计费规则';
 
 /*==============================================================*/
-/* Table: rule_condition_val                                    */
+/* Table: charge_condition_val                                    */
 /*==============================================================*/
-create table rule_condition_val
+create table charge_condition_val
 (
    id                   bigint not null auto_increment comment '主键ID',
    rule_id              bigint comment '所属规则',
@@ -60,7 +60,7 @@ create table rule_condition_val
    modify_time          datetime default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '修改时间',
    primary key (id)
 );
-alter table rule_condition_val comment '条件值';
+alter table rule_condition_val comment '计费规则中的条件值';
 
 /*==============================================================*/
 /* Table: condition_data_source                                 */

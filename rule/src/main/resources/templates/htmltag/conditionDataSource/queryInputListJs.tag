@@ -3,7 +3,7 @@
     /*********************变量定义区 begin*************/
         //行索引计数器
         //如 let itemIndex = 0;
-    let _dataGrid = $('#conditionDataSourceGrid');
+    let _dataGrid = $('#conditionQueryGrid');
     let currentSelectRowIndex;
     var dia;
 
@@ -14,9 +14,9 @@
         $(window).resize(function () {
             _dataGrid.bootstrapTable('resetView')
         });
-        let size = ($(window).height() - $('#conditionDataSourceQueryForm').height() - 210) / 40;
+        let size = ($(window).height() - $('#conditionQueryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
-        _dataGrid.bootstrapTable('refreshOptions', {url: '/conditionDataSource/listPage.action', pageSize: parseInt(size)});
+        _dataGrid.bootstrapTable('refreshOptions', {url: '/conditionDefinition/listPage.action', pageSize: parseInt(size)});
 
         _dataGrid.on('load-success.bs.table', function () {
             $('[data-toggle="tooltip"]').tooltip()
@@ -40,9 +40,14 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        let url = "/conditionDataSource/preSave.html";
+        let dataTargetId = $('#dataTargetId').val();
+        if (!dataTargetId) {
+            bs4pop.alert('目标数据源丢失，请重新进入页面');
+            return;
+        }
+        let url = "/conditionDefinition/queryInputPreSave.html?dataTargetId="+dataTargetId;
         dia = bs4pop.dialog({
-            title: '新增数据源',
+            title: '新增查询框',
             content: url,
             isIframe: true,
             closeBtn: true,
@@ -65,68 +70,15 @@
         }
         //table选择模式是单选时可用
         let selectedRow = rows[0];
-        let url = "/conditionDataSource/preSave.html?id=" + selectedRow.id;
+        let url = "/conditionDefinition/queryInputPreSave.html?id=" + selectedRow.id;
         dia = bs4pop.dialog({
-            title: '更新数据源',
+            title: '更新查询框',
             content: url,
             isIframe: true,
             closeBtn: true,
             backdrop: 'static',
             width: '650',
             height: '600',
-            btns: []
-        });
-    }
-
-
-    /**
-     * 打开列设置页面
-     */
-    function openColumnSettingHandler() {
-        //获取选中行的数据
-        let rows = _dataGrid.bootstrapTable('getSelections');
-        if (null == rows || rows.length == 0) {
-            bs4pop.alert('请选中一条数据');
-            return;
-        }
-        //table选择模式是单选时可用
-        let selectedRow = rows[0];
-        let url = "/dataSourceColumn/index.html?dataSourceId=" + selectedRow.id;
-        let title = '数据源【' + selectedRow.name + '】列设置';
-        dia = bs4pop.dialog({
-            title: title,
-            content: url,
-            isIframe: true,
-            closeBtn: true,
-            backdrop: 'static',
-            width: '98%',
-            height: '95%',
-            btns: []
-        });
-    }
-
-    /**
-     * 打开查询框设置页面
-     */
-    function openQueryInputHandler() {
-        //获取选中行的数据
-        let rows = _dataGrid.bootstrapTable('getSelections');
-        if (null == rows || rows.length == 0) {
-            bs4pop.alert('请选中一条数据');
-            return;
-        }
-        //table选择模式是单选时可用
-        let selectedRow = rows[0];
-        let url = "/conditionDataSource/queryInput.html?dataTargetId=" + selectedRow.id;
-        let title = '数据源【' + selectedRow.name + '】查询框设置';
-        dia = bs4pop.dialog({
-            title: title,
-            content: url,
-            isIframe: true,
-            closeBtn: true,
-            backdrop: 'static',
-            width: '98%',
-            height: '95%',
             btns: []
         });
     }
@@ -142,13 +94,13 @@
             return;
         }
         let selectedRow = rows[0];
-        let msg = '此操作不可恢复(已应用到规则的条件，可继续生效)，是否删除？';
+        let msg = '此操作不可恢复，是否删除？';
         bs4pop.confirm(msg, undefined, function (sure) {
             if(sure){
                 bui.loading.show('努力提交中，请稍候。。。');
                 $.ajax({
                     type: "POST",
-                    url: "${contextPath}/conditionDataSource/doDelete.action",
+                    url: "${contextPath}/conditionDefinition/delete.action",
                     data: {id: selectedRow.id},
                     processData:true,
                     dataType: "json",
@@ -175,9 +127,12 @@
      * 查询处理
      */
     function queryDataHandler() {
-        currentSelectRowIndex = undefined;
-        $('#toolbar button').attr('disabled', false);
-        _dataGrid.bootstrapTable('refresh');
+        let dataTargetId = $('#dataTargetId').val();
+        if (dataTargetId){
+            currentSelectRowIndex = undefined;
+            $('#toolbar button').attr('disabled', false);
+            _dataGrid.bootstrapTable('refresh');
+        }
     }
 
     /**
@@ -192,7 +147,7 @@
             sort: params.sort,
             order: params.order
         };
-        return $.extend(temp, bui.util.bindGridMeta2Form('conditionDataSourceGrid', 'conditionDataSourceQueryForm'));
+        return $.extend(temp, bui.util.bindGridMeta2Form('conditionQueryGrid', 'conditionQueryForm'));
     }
 
     /*****************************************函数区 end**************************************/

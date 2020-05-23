@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @date 2020/5/15 17:54
  */
 @Service
-public class FirmRpcService {
+public class MarketRpcService {
 
     @Autowired
     private DataAuthRpc dataAuthRpc;

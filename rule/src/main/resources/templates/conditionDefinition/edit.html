@@ -1,6 +1,7 @@
 <#bs4Body>
 <div class="container-fluid">
     <form id="addForm" role="form" novalidate>
+        <input type="hidden" name="ruleCondition" value="1">
         <input type="hidden" id="id" name="id" value="${conditionDefinition.id!}">
         <div class="row row-cols-1">
             <div class="form-group col">
@@ -32,6 +33,11 @@
                 <label for="conditionType" class="">条件类型<i class="red">*</i></label>
                 <select id="conditionType" name="conditionType" class="form-control" required></select>
                 <#bcomboProvider _id="conditionType" _provider="conditionTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDefinition.conditionType!}" />
+            </div>
+            <div class="form-group col">
+                <label for="dataType" class="">值类型<i class="red">*</i></label>
+                <select id="dataType" name="dataType" class="form-control" required></select>
+                <#bcomboProvider _id="dataType" _provider="valueDataTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDefinition.dataType!}" />
             </div>
             <div class="form-group col">
                 <label for="defaultValues" class="">默认值</label>

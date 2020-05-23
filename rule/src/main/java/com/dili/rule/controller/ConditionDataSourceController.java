@@ -130,4 +130,28 @@ public class ConditionDataSourceController {
         return BaseOutput.success().setData(conditionDataSourceService.list(null));
     }
 
+    /**
+     * 跳转到数据源-查询框条件设置管理首页面
+     * @param dataTargetId 查询框对应的目标数据源
+     * @param modelMap
+     * @return String
+     */
+    @RequestMapping(value="/queryInput.html", method = RequestMethod.GET)
+    public String queryInput(Long dataTargetId,ModelMap modelMap) {
+        modelMap.put("dataTargetId",dataTargetId);
+        return "conditionDataSource/queryInputList";
+    }
+
+    /**
+     * 跳转到数据源-查询框条件设置管理首页面
+     * @param dataSourceId
+     * @param modelMap
+     * @return String
+     */
+    @RequestMapping(value="/queryInputList.action", method = RequestMethod.GET)
+    public String queryInputList(Long dataSourceId,ModelMap modelMap) {
+        modelMap.put("dataSourceId",dataSourceId);
+        return "conditionDataSource/queryInputList";
+    }
+
 }

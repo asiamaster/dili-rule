@@ -1,6 +1,6 @@
 package com.dili.rule.provider;
 
-import com.dili.rule.service.remote.FirmRpcService;
+import com.dili.rule.service.remote.MarketRpcService;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
@@ -30,11 +30,11 @@ import java.util.stream.Collectors;
 public class MarketProvider extends BatchDisplayTextProviderSupport {
 
     @Autowired
-    private FirmRpcService firmRpcService;
+    private MarketRpcService marketRpcService;
 
     @Override
     public List<ValuePair<?>> getLookupList(Object obj, Map metaMap, FieldMeta fieldMeta) {
-        List<Firm> firmList = firmRpcService.getCurrentUserFirms();
+        List<Firm> firmList = marketRpcService.getCurrentUserFirms();
         if (CollectionUtils.isNotEmpty(firmList)) {
             return firmList.stream().filter(Objects::nonNull).sorted(Comparator.comparing(Firm::getId)).map(f -> {
                 ValuePairImpl<?> vp = new ValuePairImpl<>(f.getName(), f.getId());
@@ -55,7 +55,7 @@ public class MarketProvider extends BatchDisplayTextProviderSupport {
             if (!idList.isEmpty()) {
                 FirmDto firmDto = DTOUtils.newDTO(FirmDto.class);
                 firmDto.setIdList(idList);
-                return firmRpcService.listByExample(firmDto);
+                return marketRpcService.listByExample(firmDto);
             }
         }
         return null;

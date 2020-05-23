@@ -1,0 +1,75 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <form id="queryForm" role="form">
+        <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
+        <div class="row  row-cols-6">
+            <%if (has(inputConditionDefinitions) && isNotEmpty(inputConditionDefinitions) && inputConditionDefinitions.~size >0 ){
+                for(input in inputConditionDefinitions){
+            %>
+                <div class="form-group col">
+                    <label for="">${input.label}</label>
+                    <input type="text" class="form-control"  name="${input.matchedKey}" value="${params[input.matchedKey]}">
+                </div>
+            <%}}%>
+            <div class="col align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2"
+                        onclick="javascript:$('#queryForm .form-control').val('');"><i
+                        class="fa fa-refresh"></i> 清空
+                </button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryData();"><i
+                        class="fa fa-search"></i> 查询
+                </button>
+            </div>
+        </div>
+    </form>
+    <hr>
+    <div class="">
+        <div class="row">
+            <div class="col-12 checkboxWrap fl" width="60%">
+                <table  class="table table-bordered table-hover table-striped text-center" >
+                    <thead>
+                    <tr>
+                        <th><input class="checkAll" type="checkbox" /></th>
+                        <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
+                            for(column in dataSourceColumns){
+                        %>
+                            <th>${column.columnName}</th>
+                        <%}}%>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <%if (has(page) && isNotEmpty(page) ){
+                            for(row in page){
+                        %>
+                        <tr  bind-id="" data-id="${row[conditionDefinition.matchedColumn]}">
+                            <td><input type="checkbox" /></td>
+                            <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
+                                for(column in dataSourceColumns){
+                            %>
+                                <td>${row[column.columnCode]}</td>
+                            <%}}%>
+
+                        </tr>
+                        <%}}%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</#bs4Body>
+<script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
+<script>
+    /**
+     * 条件查询操作
+     */
+    function queryData() {
+        let formData = $('#queryForm').serializeJSON();
+        loadAjaxTable($("#definitionId").val(), formData);
+        $('.checkedShow tr').each(function (i, ele) {
+            $('.checkboxWrap tr[data-id="' + $(ele).data('id') + '"]').find(':checkbox').prop('checked', true);
+        })
+    }
+
+</script>

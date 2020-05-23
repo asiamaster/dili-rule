@@ -1,0 +1,53 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <input type="hidden" id="definitionId" value="${conditionDefinition.id}">
+    <div class="table-wrap clearfix">
+        <div id="ajaxTableDiv" class="fl">
+
+        </div>
+        <div class="table-showlist checkedShow fr">
+            <table class="table table-bordered table-hover table-condensed">
+                <tr>
+                    <th>${conditionDefinition.label!}</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</#bs4Body>
+<script>
+
+    /* 选择项 子父页面的存储 处理  */
+    // let choice = parent.window.choiceTarget;
+    // let checkedids = choice.attr('checkedids') ? choice.attr('checkedids').split(',').map(function(item){ return +item}) : [];
+    // let checkedtexts = choice.attr('checkedids') ? choice.siblings('.form-control').val().split(',') : [];
+
+    /**
+     * 根据条件定义，动态加载表格
+     * @param definitionId
+     * @param params
+     */
+    function loadAjaxTable(definitionId, params) {
+        let data = {};
+        $.extend(data, {'definitionId': definitionId});
+        $.extend(data, params);
+        let json =  JSON.stringify(data);
+        debugger;
+        let html = $.ajax({
+            type: "POST",
+            url: "${contextPath}/conditionDefinition/ajaxTable.action",
+            data: json,
+            contentType: "application/json",
+            dataType: "json",
+            async: false,
+        }).responseText;
+        $("#ajaxTableDiv").html(html);
+    }
+
+
+    $(document).ready(function () {
+        let definitionId = $('#definitionId').val();
+        loadAjaxTable(definitionId);
+    });
+</script>
