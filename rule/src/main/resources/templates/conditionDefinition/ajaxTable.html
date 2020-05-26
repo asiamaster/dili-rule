@@ -1,9 +1,7 @@
-<#bs4Body>
 
-<div class="container-fluid">
     <form id="queryForm" role="form">
         <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
-        <div class="row  row-cols-6">
+        <div class="row row-cols-6">
             <%if (has(inputConditionDefinitions) && isNotEmpty(inputConditionDefinitions) && inputConditionDefinitions.~size >0 ){
                 for(input in inputConditionDefinitions){
             %>
@@ -24,41 +22,73 @@
         </div>
     </form>
     <hr>
-    <div class="">
-        <div class="row">
-            <div class="col-12 checkboxWrap fl" width="60%">
-                <table  class="table table-bordered table-hover table-striped text-center" >
-                    <thead>
-                    <tr>
-                        <th><input class="checkAll" type="checkbox" /></th>
+    <div class="row">
+        <div class="col-12 checkboxWrap">
+            <table  class="table table-bordered table-hover table-striped text-center" >
+                <thead>
+                <tr>
+                    <th><input class="checkAll" type="checkbox" /></th>
+                    <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
+                        for(column in dataSourceColumns){
+                    %>
+                        <th>${column.columnName}</th>
+                    <%}}%>
+                </tr>
+                </thead>
+                <tbody>
+                    <%if (has(page) && isNotEmpty(page) ){
+                        for(row in page){
+                    %>
+                    <tr  bind-id="" data-id="${row[conditionDefinition.matchedColumn]}">
+                        <td><input type="checkbox" /></td>
                         <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
                             for(column in dataSourceColumns){
                         %>
-                            <th>${column.columnName}</th>
+                            <td>${row[column.columnCode]}</td>
                         <%}}%>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <%if (has(page) && isNotEmpty(page) ){
-                            for(row in page){
-                        %>
-                        <tr  bind-id="" data-id="${row[conditionDefinition.matchedColumn]}">
-                            <td><input type="checkbox" /></td>
-                            <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
-                                for(column in dataSourceColumns){
-                            %>
-                                <td>${row[column.columnCode]}</td>
-                            <%}}%>
 
-                        </tr>
-                        <%}}%>
-                    </tbody>
-                </table>
+                    </tr>
+                    <%}}%>
+                </tbody>
+            </table>
+            <div class="turnpage row align-items-start">
+                <div class="d-flex form-group col-2">
+                    <label for="">每页显示<i class="red">*</i></label>
+                    <select class="form-control w-50" id="" name="" >
+                        <option value="">20</option>
+                        <option value="">50</option>
+                    </select>
+                </div>
+                <nav aria-label="Page navigation col-10">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <i class="fa fa-angle-left" aria-hidden="true"></i>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
-</div>
-</#bs4Body>
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <script>
     /**
@@ -71,5 +101,48 @@
             $('.checkboxWrap tr[data-id="' + $(ele).data('id') + '"]').find(':checkbox').prop('checked', true);
         })
     }
+
+    // 行选中
+    $('.checkboxWrap').on('click', 'tr',  function(e){
+        let ele = $(this).find('td :checkbox');
+        if (e.target.type !== 'checkbox') {
+            if(ele.prop("checked")) {
+                ele.prop("checked", false);
+            } else {
+                ele.prop("checked", true);
+            }
+            ele.trigger('change');
+        }
+
+    })
+    // 全选
+    $(".checkAll").click(function () {
+        $('.checkboxWrap :checkbox').not(this).prop('checked', this.checked);
+        $('.checkboxWrap td :checkbox').trigger('change');
+    });
+
+    // 选择项
+    $('.checkboxWrap td :checkbox').on('change', function () {
+        let id = $(this).parents('tr').data('id');
+        let text = $(this).parents('tr').find('.text').text();
+        if ($(this).is(':checked')) {
+            if(checkedids.indexOf(id) < 0  ) {
+                $('.checkedShow .table').append('<tr data-id="' + id + '"><td>' + text + '<span class="glyphicon glyphicon-remove fr remove-btn"></span></td></tr>');
+                checkedids.push(id);
+                checkedtexts.push(text);
+            } else if (!$('.checkedShow .table [data-id="' + id + '"]').length) {
+                $('.checkedShow .table').append('<tr data-id="' + id + '"><td>' + text + '<span class="glyphicon glyphicon-remove fr remove-btn" ></span></td></tr>');
+            }
+
+        } else {
+            $(".checkAll").prop('checked', '');
+            $('.checkedShow tr[data-id="' + id + '"]').remove();
+            checkedids.remove(id);
+            checkedtexts.remove(text);
+        }
+    });
+
+
+
 
 </script>

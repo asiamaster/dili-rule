@@ -9,8 +9,10 @@
             <label for="">${cd.label}</label>
             <div class="input-group">
                 <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.texts}" type="text" class="form-control input-sm" size="20" readonly>
-                <a href="javascript:;" class="input-group-addon clear">x</a>
-                <a href="javascript:;" class="input-group-addon choice" data-type="conditionType" data-definitionid="${cd.id}" data-label="${cd.label}" data-checkedids="${cd.values}">...</a>
+                <div class="input-group-append">
+                    <span class="input-group-text card-btn  text-primary clear"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
+                    <span class="input-group-text card-btn  text-primary choice" data-type="conditionType" data-definitionid="${cd.id}" data-label="${cd.label}" data-checkedids="${cd.values}"><a href="javascript:;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a></span>
+                </div>
             </div>
         </div>
     <%}else{%>
@@ -51,7 +53,7 @@
                 <!--/*  输入框的条件类型：  范围 */-->
             <%if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DECIMAL.getCode()){%>
                 <!--/*  输入框的值类型：  小数类型*/-->
-                <div class="form-group col-auto form-range" data-name="${cd.id}_${cd.matchedKey}">
+                <div class="form-group col-3 form-range" data-name="${cd.id}_${cd.matchedKey}">
                     <label for="" >${cd.label}</label>
                     <div class="input-group">
                         <input value="${isNotEmpty(cd.values)?cd.values.get(0):''}" type="text" class="form-control input-sm cusFloatReserve" size="12">
@@ -65,7 +67,7 @@
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.INTEGER.getCode()){%>
                 <!--/*  输入框的值类型：  整数类型*/-->
-                <div class="form-group col-auto form-range" data-name="${cd.id}_${cd.matchedKey}">
+                <div class="form-group col-3 form-range" data-name="${cd.id}_${cd.matchedKey}">
                     <label for="">${cd.label}</label>
                     <div class="input-group">
                         <input value="${isNotEmpty(cd.values)>0?cd.values.get(0):''}" type="text" class="form-control input-sm cusIsNaturalNum"  size="12" >
@@ -79,7 +81,7 @@
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.TEXT.getCode()){%>
                 <!--/*  输入框的值类型：  日期类型*/-->
-                <div class="form-group col-auto form-date">
+                <div class="form-group col-3 form-date">
 
                 </div>
             <%}%>

@@ -2,11 +2,12 @@
 
 <div class="container-fluid">
     <input type="hidden" id="definitionId" value="${conditionDefinition.id}">
-    <div class="table-wrap clearfix">
-        <div id="ajaxTableDiv" class="fl">
+    <div class="table-wrap row justify-content-between">
+        <div id="ajaxTableDiv" class="col-8">
 
         </div>
-        <div class="table-showlist checkedShow fr">
+
+        <div class="table-showlist checkedShow col-3">
             <table class="table table-bordered table-hover table-condensed">
                 <tr>
                     <th>${conditionDefinition.label!}</th>
@@ -19,9 +20,9 @@
 <script>
 
     /* 选择项 子父页面的存储 处理  */
-    // let choice = parent.window.choiceTarget;
-    // let checkedids = choice.attr('checkedids') ? choice.attr('checkedids').split(',').map(function(item){ return +item}) : [];
-    // let checkedtexts = choice.attr('checkedids') ? choice.siblings('.form-control').val().split(',') : [];
+    var choice = parent.window.choiceTarget;
+    var checkedids = choice.attr('checkedids') ? choice.attr('checkedids').split(',').map(function(item){ return +item}) : [];
+    var checkedtexts = choice.attr('checkedids') ? choice.siblings('.form-control').val().split(',') : [];
 
     /**
      * 根据条件定义，动态加载表格
@@ -33,7 +34,6 @@
         $.extend(data, {'definitionId': definitionId});
         $.extend(data, params);
         let json =  JSON.stringify(data);
-        debugger;
         let html = $.ajax({
             type: "POST",
             url: "${contextPath}/conditionDefinition/ajaxTable.action",

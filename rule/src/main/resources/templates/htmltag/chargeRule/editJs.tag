@@ -16,16 +16,6 @@
     /******************************驱动执行区 end****************************/
 
     /*****************************************函数区 begin************************************/
-    /**
-     时间范围
-     */
-    lay('.laydatetime').each(function () {
-        laydate.render({
-            elem: this
-            , trigger: 'click'
-            , type: 'datetime'
-        });
-    });
 
 
     /*****************************************函数区 end**************************************/
@@ -92,7 +82,7 @@
         }
     }
 
-    let choiceTarget;
+    var choiceTarget;
     // 选择数据时的操作事件
     $(document).on('click', '.form-choice .choice', function () {
         let choice = $(this);
@@ -127,5 +117,66 @@
             // });
         }
     });
+
+    /*
+   @choice 当前事件元素即choice
+   @layero/index 当前layer对象/索引
+   */
+    // 从弹框中得到已选项
+    function getCheckedItem(choice, index, layero) {
+        let layeroWindow = window[layero.find('iframe')[0]['name']];
+        choice.attr('checkedids', layeroWindow.checkedids);
+        choice.siblings('.form-control').val(layeroWindow.checkedtexts);
+        layer.close(index);
+    }
+
+    //单个项清空
+    $(document).on('click', '.form-group .input-group .clear',  function () {
+        $(this).siblings('.form-control').val('');
+        $(this).siblings('.choice').attr('checkedids', '');
+        isCalcParamDateRange();
+    });
+
+    /* 数组删除指定元素 */
+    Array.prototype.remove = function(ele){
+        let index = this.indexOf(ele);
+        if( index > -1 ) {
+            this.splice(index, 1);
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </script>
