@@ -9,16 +9,18 @@
                     <label for="">${input.label}</label>
                     <input type="text" class="form-control"  name="${input.matchedKey}" value="${params[input.matchedKey]}">
                 </div>
-            <%}}%>
-            <div class="col align-self-center mt-3">
-                <button type="button" class="btn btn-outline-primary mr-2"
-                        onclick="javascript:$('#queryForm .form-control').val('');"><i
-                        class="fa fa-refresh"></i> 清空
-                </button>
-                <button type="button" class="btn btn-outline-primary" onclick="queryData();"><i
-                        class="fa fa-search"></i> 查询
-                </button>
-            </div>
+            <%}%>
+                <div class="col align-self-center mt-3">
+                    <button type="button" class="btn btn-outline-primary mr-2"
+                            onclick="javascript:$('#queryForm .form-control').val('');"><i
+                            class="fa fa-refresh"></i> 清空
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="queryData();"><i
+                            class="fa fa-search"></i> 查询
+                    </button>
+                </div>
+            <%}%>
+
         </div>
     </form>
     <hr>
