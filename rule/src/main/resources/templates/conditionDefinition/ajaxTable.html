@@ -44,7 +44,7 @@
                         <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
                             for(column in dataSourceColumns){
                         %>
-                            <td>${row[column.columnCode]}</td>
+                            <td class="<%if(column.display==1){%> text <%}%>"  >${row[column.columnCode]}</td>
                         <%}}%>
 
                     </tr>
