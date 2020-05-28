@@ -5,7 +5,7 @@
             <%if (has(inputConditionDefinitions) && isNotEmpty(inputConditionDefinitions) && inputConditionDefinitions.~size >0 ){
                 for(input in inputConditionDefinitions){
             %>
-                <div class="form-group col">
+                <div class="form-group col-auto">
                     <label for="">${input.label}</label>
                     <input type="text" class="form-control"  name="${input.matchedKey}" value="${params[input.matchedKey]}">
                 </div>
@@ -104,6 +104,14 @@
         })
     }
 
+    /* 数组删除指定元素 */
+    Array.prototype.remove = function(ele){
+        let index = this.indexOf(ele);
+        if( index > -1 ) {
+            this.splice(index, 1);
+        }
+    };
+
     // 行选中
     $('.checkboxWrap').on('click', 'tr',  function(e){
         let ele = $(this).find('td :checkbox');
@@ -125,15 +133,16 @@
 
     // 选择项
     $('.checkboxWrap td :checkbox').on('change', function () {
+        debugger
         let id = $(this).parents('tr').data('id');
         let text = $(this).parents('tr').find('.text').text();
         if ($(this).is(':checked')) {
             if(checkedids.indexOf(id) < 0  ) {
-                $('.checkedShow .table').append('<tr data-id="' + id + '"><td>' + text + '<span class="glyphicon glyphicon-remove fr remove-btn"></span></td></tr>');
+                $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
                 checkedids.push(id);
                 checkedtexts.push(text);
             } else if (!$('.checkedShow .table [data-id="' + id + '"]').length) {
-                $('.checkedShow .table').append('<tr data-id="' + id + '"><td>' + text + '<span class="glyphicon glyphicon-remove fr remove-btn" ></span></td></tr>');
+                $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
             }
 
         } else {
@@ -144,6 +153,23 @@
         }
     });
 
+    $.each(checkedids, function(k,ele) {
+        $('body').find('.checkboxWrap [data-id="' + parseInt(ele) + '"]').find(':checkbox').click();
+        if (!$('.checkedShow .table [data-id="' + ele + '"]').length) {
+            $('.checkedShow .table').append('<tr data-id="' + parseInt(ele) + '"><td>' + checkedtexts[k] + '<i class="fa fa-times remove-btn float-right" aria-hidden="true"></i></td></tr>');
+        }
+    });
+
+    // 移除已选项
+    $(document).on('click', '.checkedShow .remove-btn', function () {
+        let id = $(this).data('id');
+        let text = $(this).text();
+        $('.checkboxWrap tr[data-id="' + id + '"]').find(':checkbox').prop('checked', false);
+        $(".checkAll").prop('checked', '');
+        $('.checkedShow tr[data-id="' + id + '"]').remove();
+        checkedids.remove(id);
+        checkedtexts.remove(text);
+    });
 
 
 

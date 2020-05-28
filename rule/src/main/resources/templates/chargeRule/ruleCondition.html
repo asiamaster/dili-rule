@@ -1,4 +1,4 @@
-<div class="form-conditionParam-box row row-cols-4" name="condition">
+<div class="form-conditionParam-box row row-cols-6" name="condition">
 
     <%if (has(conditionDefinitions) && isNotEmpty(conditionDefinitions) && conditionDefinitions.~size >0 ){
         for(cd in conditionDefinitions){
@@ -8,7 +8,7 @@
         <div class="form-group col form-choice">
             <label for="">${cd.label}</label>
             <div class="input-group">
-                <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.texts}" type="text" class="form-control input-sm" size="20" readonly>
+                <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.texts}" type="text" class="form-control" size="20" readonly>
                 <div class="input-group-append">
                     <span class="input-group-text card-btn  text-primary clear"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
                     <span class="input-group-text card-btn  text-primary choice" data-type="conditionType" data-definitionid="${cd.id}" data-label="${cd.label}" data-checkedids="${cd.values}"><a href="javascript:;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a></span>
@@ -23,25 +23,19 @@
                 <!--/*  输入框的值类型：  小数类型*/-->
                 <div class="form-group col">
                     <label for="" >${cd.label}</label>
-                    <div class="input-group">
-                        <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.values}" type="text"  class="form-control input-sm floatReserve" size="31"  min="0" max="9999999.99">
-                    </div>
+                    <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.values}" type="text"  class="form-control floatReserve" size="31"  min="0" max="9999999.99">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.INTEGER.getCode()){%>
                 <!--/*  输入框的值类型：  整数类型*/-->
                 <div class="form-group col form-number">
                     <label for="">${cd.label}</label>
-                    <div class="input-group">
-                        <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.values}" type="text"  class="form-control input-sm isNaturalNum" size="31" min="0" max="9999999">
-                    </div>
+                    <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.values}" type="text"  class="form-control isNaturalNum" size="31" min="0" max="9999999">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.TEXT.getCode()){%>
                 <!--/*  输入框的值类型：  文本类型*/-->
                 <div class="form-group col form-text">
                     <label for="">${cd.label}</label>
-                    <div class="input-group">
-                        <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.values}" type="text"  class="form-control input-sm " size="31" maxlength="22">
-                    </div>
+                    <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.values}" type="text"  class="form-control " size="31" maxlength="22">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()){%>
                 <!--/*  输入框的值类型：  日期类型*/-->
@@ -56,12 +50,12 @@
                 <div class="form-group col-3 form-range" data-name="${cd.id}_${cd.matchedKey}">
                     <label for="" >${cd.label}</label>
                     <div class="input-group">
-                        <input value="${isNotEmpty(cd.values)?cd.values.get(0):''}" type="text" class="form-control input-sm cusFloatReserve" size="12">
+                        <input value="${isNotEmpty(cd.values)?cd.values.get(0):''}" type="text" class="form-control cusFloatReserve" size="12">
                         <label class="error" ></label>
                     </div> -
                     <div class="input-group">
                         <label style="display: none">-</label>
-                        <input value="${cd.values.~size>1?cd.values.get(1):''}" type="text" class="form-control input-sm cusFloatReserve" size="12">
+                        <input value="${cd.values.~size>1?cd.values.get(1):''}" type="text" class="form-control cusFloatReserve" size="12">
                         <label class="error" ></label>
                     </div>
                 </div>
@@ -70,12 +64,12 @@
                 <div class="form-group col-3 form-range" data-name="${cd.id}_${cd.matchedKey}">
                     <label for="">${cd.label}</label>
                     <div class="input-group">
-                        <input value="${isNotEmpty(cd.values)>0?cd.values.get(0):''}" type="text" class="form-control input-sm cusIsNaturalNum"  size="12" >
+                        <input value="${isNotEmpty(cd.values)>0?cd.values.get(0):''}" type="text" class="form-control cusIsNaturalNum"  size="12" >
                         <label class="error" ></label>
                     </div> -
                     <div class="input-group">
                         <label style="display: none">-</label>
-                        <input value="${cd.values.~size>1?cd.values.get(1):''}" type="text" class="form-control input-sm cusIsNaturalNum" size="12" >
+                        <input value="${cd.values.~size>1?cd.values.get(1):''}" type="text" class="form-control cusIsNaturalNum" size="12" >
                         <label class="error" ></label>
                     </div>
                 </div>
@@ -88,9 +82,7 @@
         <%}else if(cd.conditionType == @com.dili.rule.domain.enums.ConditionTypeEnum.IN.getCode()){%>
             <div class="form-group col form-text">
                 <label for="">${cd.label}</label>
-                <div class="input-group">
-                    <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.values}" type="text"  class="form-control input-sm" size="31" maxlength="50" placeholder="如有多个值，以英文逗号隔开">
-                </div>
+                <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.values}" type="text"  class="form-control" size="31" maxlength="50" placeholder="如有多个值，以英文逗号隔开">
             </div>
         <%}%>
     <%}}}%>

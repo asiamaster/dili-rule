@@ -82,6 +82,19 @@
         }
     }
 
+
+    /*
+    @choice 当前事件元素即choice
+    @layero/index 当前layer对象/索引
+    */
+    // 从弹框中得到已选项
+    function getCheckedItem(choice, index, layero) {
+        let layeroWindow = window[layero.find('iframe')[0]['name']];
+        choice.attr('checkedids', layeroWindow.checkedids);
+        choice.siblings('.form-control').val(layeroWindow.checkedtexts);
+        layer.close(index);
+    }
+
     var choiceTarget;
     // 选择数据时的操作事件
     $(document).on('click', '.form-choice .choice', function () {
@@ -99,7 +112,19 @@
                 backdrop: 'static',
                 width: '98%',
                 height: '95%',
-                btns: []
+                btns: [{label: '取消',className: 'btn btn-secondary px-5',onClick(e,$iframe){
+
+                        }
+                    }, {label: '确定',className: 'btn btn-primary px-5',onClick(e,$iframe){
+                        debugger
+                        let diaWindow = $iframe[0].contentWindow;
+                        choice.attr('checkedids', diaWindow.checkedids);
+                        choice.parents('.input-group').find('.form-control').val(diaWindow.checkedtexts);
+                        dia.hide()
+
+                    }
+                }]
+
             });
         }else if(choiceType=='targetType'){
             // layer.open({
@@ -118,23 +143,13 @@
         }
     });
 
-    /*
-   @choice 当前事件元素即choice
-   @layero/index 当前layer对象/索引
-   */
-    // 从弹框中得到已选项
-    function getCheckedItem(choice, index, layero) {
-        let layeroWindow = window[layero.find('iframe')[0]['name']];
-        choice.attr('checkedids', layeroWindow.checkedids);
-        choice.siblings('.form-control').val(layeroWindow.checkedtexts);
-        layer.close(index);
-    }
+
 
     //单个项清空
     $(document).on('click', '.form-group .input-group .clear',  function () {
-        $(this).siblings('.form-control').val('');
+        $(this).parents('.input-group').find('.form-control').val('');
         $(this).siblings('.choice').attr('checkedids', '');
-        isCalcParamDateRange();
+        // isCalcParamDateRange();
     });
 
     /* 数组删除指定元素 */

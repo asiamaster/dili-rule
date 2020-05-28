@@ -22,7 +22,7 @@
     /* 选择项 子父页面的存储 处理  */
     var choice = parent.window.choiceTarget;
     var checkedids = choice.attr('checkedids') ? choice.attr('checkedids').split(',').map(function(item){ return +item}) : [];
-    var checkedtexts = choice.attr('checkedids') ? choice.siblings('.form-control').val().split(',') : [];
+    var checkedtexts = choice.attr('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : [];
 
     /**
      * 根据条件定义，动态加载表格
