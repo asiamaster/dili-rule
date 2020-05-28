@@ -35,6 +35,13 @@ public class ChargeRuleVo extends ChargeRule implements Serializable {
      */
     private String expireValue;
 
+    /**
+     * 规则条件设置项
+     * json格式
+     */
+    @Transient
+    private String conditions;
+
     public String getExpireValue() {
         StringBuilder str = new StringBuilder();
         if (Objects.nonNull(getExpireStart())) {

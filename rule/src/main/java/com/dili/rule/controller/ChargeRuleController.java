@@ -1,10 +1,12 @@
 package com.dili.rule.controller;
 
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.remote.MarketRpcService;
 import com.dili.rule.service.remote.SystemRpcService;
+import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.uap.sdk.domain.dto.SystemDto;
@@ -105,5 +107,23 @@ public class ChargeRuleController {
         Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule);
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
+    }
+
+    /**
+     * 保存计费规则信息
+     * @param chargeRuleVo
+     * @return
+     */
+    @RequestMapping(value = "/save.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo) {
+        try {
+            return chargeRuleService.save(chargeRuleVo);
+        } catch (IllegalArgumentException ex) {
+            return BaseOutput.failure(ex.getMessage());
+        } catch (Exception e) {
+            log.error(String.format("保存计费规则信息[%s] 失败：[s%]", chargeRuleVo.toString(), e.getMessage()), e);
+            return BaseOutput.failure(e.getMessage());
+        }
     }
 }

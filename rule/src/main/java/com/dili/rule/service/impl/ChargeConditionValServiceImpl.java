@@ -70,6 +70,16 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
         return resultMap;
     }
 
+    @Override
+    public Integer deleteByRuleId(Long ruleId) {
+        if (Objects.isNull(ruleId)){
+            return 0;
+        }
+        ChargeConditionVal val = new ChargeConditionVal();
+        val.setRuleId(ruleId);
+        return getActualMapper().delete(val);
+    }
+
 
     /**************** 私有方法分割线 **********************************/
 

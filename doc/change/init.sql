@@ -41,7 +41,7 @@ create table charge_rule
    approval_time        datetime comment '审核时间',
    primary key (id)
 );
-alter table rule comment '计费规则';
+alter table charge_rule comment '计费规则';
 
 /*==============================================================*/
 /* Table: charge_condition_val                                    */
@@ -60,7 +60,7 @@ create table charge_condition_val
    modify_time          datetime default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '修改时间',
    primary key (id)
 );
-alter table rule_condition_val comment '计费规则中的条件值';
+alter table charge_condition_val comment '计费规则中的条件值';
 
 /*==============================================================*/
 /* Table: condition_data_source                                 */

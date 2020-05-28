@@ -138,7 +138,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
      * 是否可修改,如果因修改而产生了新记录，则本记录不可再修改
      */
     @Column(name = "`revisable`")
-    private Byte revisable;
+    private Integer revisable;
 
     /**
      * 操作员

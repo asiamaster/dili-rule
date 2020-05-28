@@ -21,4 +21,11 @@ public interface ChargeConditionValService extends BaseService<ChargeConditionVa
      * @param chargeRule 规则对象
      */
     Map<String,Object> getRuleCondition(ChargeRule chargeRule);
+
+    /**
+     * 根据规则ID删除规则条件信息
+     * @param ruleId 规则ID
+     * @return
+     */
+    Integer deleteByRuleId(Long ruleId);
 }

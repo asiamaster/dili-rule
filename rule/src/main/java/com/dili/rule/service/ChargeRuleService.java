@@ -1,7 +1,9 @@
 package com.dili.rule.service;
 
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.ss.base.BaseService;
+import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 
 /**
@@ -20,4 +22,24 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * @return
      */
     EasyuiPageOutput listForEasyuiPage(ChargeRule chargeRule) throws Exception;
+
+    /**
+     * 保存规则数据信息
+     * @param chargeRuleVo
+     * @return
+     */
+    BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo);
+
+    /**
+     * 根据有效期时间，变更规则的状态
+     * @param rule 需要变更状态的规则
+     */
+    void updateStateByExpires(ChargeRule rule);
+
+    /**
+     * 根据有效期时间，变更规则的状态
+     * @param id 需要变更状态的规则ID
+     */
+    void updateStateByExpires(Long id);
+
 }
