@@ -83,21 +83,10 @@
     }
 
 
-    /*
-    @choice 当前事件元素即choice
-    @layero/index 当前layer对象/索引
-    */
-    // 从弹框中得到已选项
-    function getCheckedItem(choice, index, layero) {
-        let layeroWindow = window[layero.find('iframe')[0]['name']];
-        choice.attr('checkedids', layeroWindow.checkedids);
-        choice.siblings('.form-control').val(layeroWindow.checkedtexts);
-        layer.close(index);
-    }
-
     var choiceTarget;
     // 选择数据时的操作事件
     $(document).on('click', '.form-choice .choice', function () {
+        debugger
         let choice = $(this);
         choiceTarget = choice;
         let definitionId = choice.data('definitionid');
@@ -116,7 +105,6 @@
 
                         }
                     }, {label: '确定',className: 'btn btn-primary px-5',onClick(e,$iframe){
-                        debugger
                         let diaWindow = $iframe[0].contentWindow;
                         choice.attr('checkedids', diaWindow.checkedids);
                         choice.parents('.input-group').find('.form-control').val(diaWindow.checkedtexts);
@@ -160,38 +148,122 @@
         }
     };
 
+    // 条件指标的校验
+    function validCondition(){
+        let flag = true;
+        $('.form-conditionParam-box .form-range').each(function(i, ele){
+            // 判断范围开始/结束比较
+            let start =  $(ele).find('.input-group:nth-of-type(1) .form-control').val();
+            let itemName = $(ele).find('label:first').text();
+            let end = $(ele).find('.input-group:nth-of-type(2) .form-control').val();
+            if ((start !== '' && end === '') || (start === '' && end !== '')) {
+                bs4pop.notice(itemName + '范围输入不完整')
+                flag = false
+            }
+            if (parseFloat(start) > parseFloat(end)) {
+                bs4pop.notice(itemName + '开始不能大于结束')
+                flag = false
+            }
+        });
+        return flag;
+    }
+
+    /* ---------- 规则整个form data----START------ */
+    // 基础项和计算指标项data
+    function getBaseData(){
+        let data = {},  calcValData = {};
+        // 基础
+        let basesome = $('.form-baseParam-box .form-control, [name="targetVal"], [name="remark"], [name="targetType"]').serializeArray();
+        $.each(basesome, function(i, item){
+            data[item.name] = item.value;
+        });
+        // 计算指标
+        $('.form-calcParam-box .form-choice').each(function(i, ele){
+            let val = $(ele).find('.choice').attr('checkedids');
+            if (val) {
+                let key = $(ele).find('.form-control').attr('name');
+                data[key] = '['+val+']';
+            }
+        });
+        // 计算参数
+        $.each($('.calc-param-value .form-control').serializeArray(), function(i, item){
+            if (item.value){
+                calcValData[item.name] =  item.value ;
+            }
+        });
+        data['targetVal'] = JSON.stringify(calcValData);
+        return data;
+    }
+
+    // 条件指标data
+    function getConditionData() {
+        let data = {};
+        // 通过弹框选择的项
+        $('.form-conditionParam-box .form-choice').each(function(i, ele){
+            let val = $(ele).find('.choice').attr('checkedids');
+            if (val) {
+                let key = $(ele).find('.form-control').attr('name');
+                data[key] = '['+val+']';
+            }
+        });
+
+        // 直接输入区间范围的项
+        $('.form-conditionParam-box .form-range').each(function(i, ele){
+            // 判断范围开始/结束比较
+            let start =  $(ele).find('.input-group:nth-of-type(1) .form-control').val();
+            let end = $(ele).find('.input-group:nth-of-type(2) .form-control').val();
+            if (start && end) {
+                let key = $(ele).attr('name');
+                data[key] = '['+start + ',' + end+']';
+            }
+        });
+
+        // 普通单个输入框的项
+        $.each($('.form-number .form-control, .form-text .form-control').serializeArray(), function(i, item){
+            if (item.value){
+                data[item.name] = '['+item.value+']';
+            }
+        });
+        return data;
+    }
+
+    // 规则整个form data
+    function getRuleData(){
+        return Object.assign({}, getBaseData(), {"conditions":JSON.stringify(getConditionData())});
+    }
+
+    /* ------------- 规则整个form data---END------------- */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    $(document).on('click', '.btn-cancel', function () {
+        window.location.href = document.referrer;
+    });
+    $(document).on('click', '#formSubmit', function () {
+        if ($('#addForm').validate().form() === true && validCondition()) {
+            let id = $('#id').val();
+            let url = '${contextPath}/chargeRule/save.action';
+            debugger
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: url,
+                data: getRuleData(),
+                success: function (ret) {
+                    if (ret.success) {
+                        bs4pop.notice('操作成功', {type: 'danger', position: 'center'})
+                        window.location.href = document.referrer;
+                    } else {
+                        bs4pop.notice(ret.message, {type: 'danger', position: 'center'})
+                        return false;
+                    }
+                },
+                error: function (error) {
+                    bs4pop.notice(error, {type: 'danger', position: 'center'})
+                    return false;
+                }
+            })
+        }
+    });
 
 
 </script>

@@ -9,7 +9,7 @@
                 <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true"
                    aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
-            <div class="row row-cols-6 collapse show" id="baseInfo">
+            <div class="row row-cols-6 collapse show form-baseParam-box" id="baseInfo">
                 <div class="form-group col">
                     <label for="marketId">所属市场<i class="red">*</i></label>
                     <select class="form-control" id="marketId" name="marketId" onchange="getBizType()" required>
@@ -44,26 +44,25 @@
                 </div>
                 <div class="form-group col">
                     <label for="ruleName">规则名称<i class="red">*</i></label>
-                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="30" required>
+                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="30" value="${chargeRule.ruleName!}" required>
                 </div>
-                <div class="form-group col-3">
+                <div class="form-group col-auto">
                     <label for="expireStart">有效期<i class="red">*</i></label>
                     <div class="form-inline">
                         <div class="input-group">
-                            <input type="text" name="expireStart" id="expireStart" class="form-control laydatetime laystart" value="${chargeRule.expireStart!}"/>
+                            <input type="text" name="expireStart" id="expireStart" class="form-control laydatetime laystart" value="${chargeRule.expireStart!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
                             <div class="input-group-append">
                                 <label for="expireStart" class="input-group-text fa fa-calendar"></label>
                             </div>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group" id="datetimepicker3">
-                            <input type="text" name="expireEnd" id="expireEnd" class="form-control laydatetime layend" value="${chargeRule.expireEnd!}"/>
+                            <input type="text" name="expireEnd" id="expireEnd" class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
                             <div class="input-group-append">
                                 <label for="expireEnd" class="input-group-text fa fa-calendar"></label>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
             <div class="breadcrumb">
                 条件指标
@@ -76,7 +75,7 @@
                 计算指标
                 <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
-            <div class="row row-cols-4 collapse show" id="calcParam">
+            <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParam">
 
             </div>
             <div class="breadcrumb">
