@@ -11,6 +11,8 @@
 
     /******************************驱动执行区 begin***************************/
     $(function () {
+        //获取默认的收费项
+        defaultGetChargeItem();
         $(window).resize(function () {
             _dataGrid.bootstrapTable('resetView')
         });
@@ -22,8 +24,6 @@
             $('[data-toggle="tooltip"]').tooltip()
         });
 
-        //获取业务类型
-        getBizType();
     });
 
     /******************************驱动执行区 end****************************/

@@ -3,7 +3,6 @@ package com.dili.rule.domain;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.ss.domain.BaseDomain;
 import com.dili.ss.domain.annotation.Like;
-import com.dili.ss.domain.annotation.Operator;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -50,6 +49,12 @@ public class ConditionDataSource extends BaseDomain {
      */
     @Column(name = "`keys_url`")
     private String keysUrl;
+
+    /**
+     * 关键key查询时的字段名称
+     */
+    @Column(name = "`keys_field`")
+    private String keysField;
 
     /**
      * 数据来源类型(本地、远程),具体参考DataSourceTypeEnum

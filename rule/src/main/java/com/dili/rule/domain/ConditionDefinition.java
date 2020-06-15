@@ -35,12 +35,6 @@ public class ConditionDefinition extends BaseDomain {
     private Long marketId;
 
     /**
-     * 条件属于某个系统
-     */
-    @Column(name = "`system_code`")
-    private String systemCode;
-
-    /**
      * 所属某个业务
      */
     @Column(name = "`business_type`")

@@ -6,20 +6,13 @@
         <div class="row row-cols-1">
             <div class="form-group col">
                 <label for="marketId">所属市场<i class="red">*</i></label>
-                <select class="form-control" id="marketId" name="marketId" required onchange="marketChange()"></select>
-                <#bcomboProvider _id="marketId" _provider="marketProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.marketId!}" _queryParams='{required:true}' _onLoadSuccess='marketChange'/>
+                <select class="form-control" id="marketId" name="marketId" required></select>
+                <#bcomboProvider _id="marketId" _provider="marketProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.marketId!}" _queryParams='{required:true}' />
             </div>
             <div class="form-group col">
-                <label for="systemCode">所属市场<i class="red">*</i></label>
-                <select class="form-control" id="systemCode" name="systemCode" required onchange="systemChange()"></select>
-                <#bcomboProvider _id="systemCode" _provider="systemProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.systemCode!}" _queryParams='{required:true}' _onLoadSuccess='systemChange'/>
-            </div>
-            <div class="form-group col">
-                <input type="hidden" id="oldBusinessType" value="${conditionDefinition.businessType!}">
                 <label for="businessType">业务类型<i class="red">*</i></label>
-                <select class="form-control" id="businessType" name="businessType" required>
-                    <option value="">请选择</option>
-                </select>
+                <select class="form-control" id="businessType" name="businessType"></select>
+                <#bcomboProvider  _id="businessType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"base_business_type",required:true}'  _valueField="value" _textField="text" _value="${conditionDefinition.businessType!}" />
             </div>
             <div class="form-group col">
                 <label for="label" class="">标签<i class="red">*</i></label>
@@ -71,23 +64,8 @@
 </div>
 </#bs4Body>
 
-<script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
 
 <script>
-
-    /**
-     * 当市场改变时，重新获取业务类型
-     */
-    function marketChange() {
-        defaultGetBizTypeInfo($('#oldBusinessType').val(),false,'-- 请选择 --');
-    }
-
-    /**
-     * 当系统改变时，重新获取业务类型
-     */
-    function systemChange() {
-        defaultGetBizTypeInfo($('#oldBusinessType').val(),false,'-- 请选择 --');
-    }
 
     /**
      * 动态加载数据源信息

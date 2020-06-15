@@ -94,7 +94,10 @@ public class RemoteDataQueryService {
             jsonDataOpt = Optional.ofNullable(localJsonData);
 
         } else {
-            HttpResponse response = HttpUtil.createPost(conditionDataSource.getKeysUrl()).body(JSONObject.toJSONString(keys)).execute();
+            //构建查询参数
+            Map<String,Object> params = Maps.newHashMap();
+            params.put(conditionDataSource.getKeysField(),keys);
+            HttpResponse response = HttpUtil.createPost(conditionDataSource.getKeysUrl()).body(JSONObject.toJSONString(params)).execute();
             if (response.isOk()) {
                 jsonDataOpt = Optional.ofNullable(response.body());
             }

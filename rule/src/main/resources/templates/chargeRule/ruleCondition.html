@@ -8,7 +8,7 @@
         <div class="form-group col form-choice">
             <label for="">${cd.label}</label>
             <div class="input-group">
-                <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${cd.texts}" type="text" class="form-control" size="20" readonly>
+                <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" value="${stringListJoin(cd.texts,',')}" type="text" class="form-control" size="20" readonly>
                 <div class="input-group-append">
                     <span class="input-group-text card-btn  text-primary clear"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
                     <span class="input-group-text card-btn  text-primary choice" data-type="conditionType" data-definitionid="${cd.id}" data-label="${cd.label}" data-checkedids="${cd.values}"><a href="javascript:;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a></span>

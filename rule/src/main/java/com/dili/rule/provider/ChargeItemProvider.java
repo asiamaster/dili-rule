@@ -1,23 +1,21 @@
 package com.dili.rule.provider;
 
-import com.dili.rule.service.remote.SystemRpcService;
+import cn.hutool.core.collection.CollectionUtil;
+import com.dili.assets.sdk.dto.ChargeItemDto;
+import com.dili.assets.sdk.rpc.ChargeItemRpc;
+import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
-import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
-import com.dili.uap.sdk.domain.Systems;
-import com.dili.uap.sdk.domain.dto.SystemDto;
-import org.apache.commons.collections4.CollectionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -26,41 +24,30 @@ import java.util.stream.Collectors;
  * <B>农丰时代科技有限公司</B>
  *
  * @author yuehongbo
- * @date 2020/5/15 17:57
+ * @date 2020/6/6 16:34
  */
+@Slf4j
 @Component
-@Scope("prototype")
-public class SystemProvider extends BatchDisplayTextProviderSupport {
+public class ChargeItemProvider extends BatchDisplayTextProviderSupport {
 
     @Autowired
-    private SystemRpcService systemRpcService;
+    private ChargeItemRpc chargeItemRpc;
 
     @Override
     public List<ValuePair<?>> getLookupList(Object obj, Map metaMap, FieldMeta fieldMeta) {
-        List<Systems> systemsList = systemRpcService.listByExample(DTOUtils.newInstance(SystemDto.class));
-        if (CollectionUtils.isNotEmpty(systemsList)) {
-            return systemsList.stream().filter(Objects::nonNull).map(s -> {
-                ValuePairImpl<?> vp = new ValuePairImpl<>(s.getName(), s.getCode());
-                return vp;
-            }).collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+        throw new UnsupportedOperationException("此方法暂未实现");
     }
+
 
     @Override
     protected List getFkList(List<String> relationIds, Map metaMap) {
-        if (relationIds != null) {
-            List<String> codeList = relationIds.stream()
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-            if (!codeList.isEmpty()) {
-                SystemDto systemDto = DTOUtils.newDTO(SystemDto.class);
-                systemDto.setCodeList(codeList);
-                return systemRpcService.listByExample(systemDto);
-            }
+        if (CollectionUtil.isEmpty(relationIds)) {
+            return Collections.EMPTY_LIST;
         }
-        return null;
+        List<Long> idList = relationIds.stream().distinct().map(c -> Long.valueOf(c)).collect(Collectors.toList());
+        ChargeItemDto condition = new ChargeItemDto();
+        condition.setIdList(idList);
+        return list(condition);
     }
 
     @Override
@@ -71,9 +58,26 @@ public class SystemProvider extends BatchDisplayTextProviderSupport {
         //忽略大小写关联
         batchProviderMeta.setIgnoreCaseToRef(true);
         //关联(数据库)表的主键的字段名，默认取id
-        batchProviderMeta.setRelationTablePkField("code");
+        batchProviderMeta.setRelationTablePkField("id");
         //当未匹配到数据时，返回的值
         batchProviderMeta.setMismatchHandler(t -> "-");
         return batchProviderMeta;
+    }
+
+    /**
+     * 远程获取收费项信息
+     * @param condition
+     * @return
+     */
+    private List<ChargeItemDto> list(ChargeItemDto condition) {
+        try {
+            PageOutput<List<ChargeItemDto>> output = chargeItemRpc.listPage(condition);
+            if (output.isSuccess()) {
+                return output.getData();
+            }
+        } catch (Throwable t) {
+            log.error("远程查询收费信息异常:" + t.getMessage(), t);
+        }
+        return Collections.emptyList();
     }
 }

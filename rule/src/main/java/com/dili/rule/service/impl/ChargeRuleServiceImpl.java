@@ -179,7 +179,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("id", id);
                 if (null != rule.getModifyTime()) {
-                    criteria.andEqualTo("modified", rule.getModifyTime());
+                    criteria.andEqualTo("modifyTime", rule.getModifyTime());
                 }
                 rule.setModifyTime(LocalDateTime.now());
                 getActualMapper().updateByExample(rule, example);
@@ -344,7 +344,6 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         ChargeRule condition = new ChargeRule();
         condition.setRuleName(chargeRule.getRuleName());
         condition.setMarketId(chargeRule.getMarketId());
-        condition.setSystemCode(chargeRule.getSystemCode());
         condition.setBusinessType(chargeRule.getBusinessType());
         condition.setChargeItem(chargeRule.getChargeItem());
         long sameNameCount = this.listByExample(condition).stream().filter((r) -> !r.getId().equals(chargeRule.getId())).count();

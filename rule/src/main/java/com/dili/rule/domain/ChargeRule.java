@@ -1,5 +1,7 @@
 package com.dili.rule.domain;
 
+import cn.hutool.core.date.CalendarUtil;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.ss.domain.BaseDomain;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * 由MyBatis Generator工具自动生成
@@ -51,12 +54,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
      */
     @Column(name = "`market_id`", updatable = false)
     private Long marketId;
-
-    /**
-     * 规则所属于的某系统
-     */
-    @Column(name = "`system_code`", updatable = false)
-    private String systemCode;
 
     /**
      * 所属的业务类型
@@ -193,5 +190,23 @@ public class ChargeRule extends BaseDomain implements Serializable {
      */
     @Column(name = "`target_val`")
     private String targetVal;
+
+    /**
+     * 有效期文本
+     */
+    @Transient
+    private String expireValue;
+
+    public String getExpireValue() {
+        StringBuilder str = new StringBuilder();
+        if (Objects.nonNull(getExpireStart())) {
+            str.append(DateUtil.formatLocalDateTime(getExpireStart()));
+        }
+        str.append(" 至 ");
+        if (Objects.nonNull(getExpireEnd())) {
+            str.append(DateUtil.formatLocalDateTime(getExpireEnd()));
+        }
+        return str.toString();
+    }
 
 }

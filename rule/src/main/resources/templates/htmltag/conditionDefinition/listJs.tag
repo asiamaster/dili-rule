@@ -172,17 +172,4 @@
         }
     }
 
-    /**
-     * 当市场改变时，重新获取业务类型
-     */
-    function marketChange() {
-        defaultGetBizTypeInfo(null,false,'-- 全部 --');
-    }
-
-    /**
-     * 当系统改变时，重新获取业务类型
-     */
-    function systemChange() {
-        defaultGetBizTypeInfo(null,false,'-- 全部 --');
-    }
 </script>

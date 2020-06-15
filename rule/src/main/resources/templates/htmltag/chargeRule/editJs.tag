@@ -7,8 +7,7 @@
 
     /******************************驱动执行区 begin***************************/
     $(function () {
-        //获取业务类型
-        getBizType();
+        defaultGetChargeItem($("#oldChargeItem").val(),'-- 请选择 --');
         //获取规则条件数据
         getRuleCondition();
     });
@@ -24,19 +23,15 @@
 
     /*****************************************自定义事件区 end**************************************/
 
-    /**
-     * 当市场或系统改变时，重新获取业务类型
-     */
-    function getBizType() {
-        //重新获取业务类型
-        defaultGetBizTypeInfo();
-        //重新获取业务类型后，需重新获取收费项
-        defaultGetChargeItem();
-    }
+    //市场信息变更时，获取收费项、规则条件信息
+    $('#marketId').on('change', function () {
+        defaultGetChargeItem('', '-- 请选择 --');
+        getRuleCondition();
+    });
 
     //业务类型变更时，获取收费项、规则条件信息
-    $('#businessType').on('change', function(){
-        defaultGetChargeItem();
+    $('#businessType').on('change', function () {
+        defaultGetChargeItem('', '-- 请选择 --');
         getRuleCondition();
     });
 
@@ -46,15 +41,14 @@
     function getRuleCondition(){
         let ruleId = $('#id').val();
         let marketId = $('#marketId').val();
-        let systemCode = $('#systemCode').val();
         let businessType = $('#businessType').val();
         $('#ruleConditionDiv').html('');
-        if (marketId && systemCode && businessType){
+        if (marketId && businessType){
             $.ajax({
                 type: "POST",
                 url: "${contextPath}/chargeRule/getRuleCondition.action",
                 async:false,
-                data: {id: ruleId, marketId: marketId, systemCode: systemCode, businessType: businessType},
+                data: {id: ruleId, marketId: marketId, businessType: businessType},
                 success: function (ret) {
                     $('#ruleConditionDiv').html(ret);
                     $('[name="condition"]').on('blur', '.cusIsNaturalNum', function(){

@@ -12,7 +12,7 @@
             <div class="row row-cols-6 collapse show form-baseParam-box" id="baseInfo">
                 <div class="form-group col">
                     <label for="marketId">所属市场<i class="red">*</i></label>
-                    <select class="form-control" id="marketId" name="marketId" onchange="getBizType()" required>
+                    <select class="form-control" id="marketId" name="marketId" required>
                         <%if (has(marketList) && isNotEmpty(marketList) && marketList.~size >0 ){
                             for(market in marketList){
                         %>
@@ -21,23 +21,18 @@
                     </select>
                 </div>
                 <div class="form-group col">
-                    <label for="systemCode">所属系统<i class="red">*</i></label>
-                    <select class="form-control" id="systemCode" name="systemCode" onchange="getBizType()" required>
-                        <%if (has(systemList) && isNotEmpty(systemList) && systemList.~size >0 ){
-                            for(system in systemList){
+                    <label for="businessType">业务类型<i class="red">*</i></label>
+                    <select class="form-control" id="businessType" name="businessType" required>
+                        <%if (has(businessTypeList) && isNotEmpty(businessTypeList) && businessTypeList.~size > 0 ){
+                            for(bType in businessTypeList){
                         %>
-                            <option value="${system.code!}">${system.name!}</option>
+                            <option value="${bType.code!}" <%if(bType.code==chargeRule.businessType){%> selected <%}%> >${bType.name!}</option>
                         <%}}%>
                     </select>
                 </div>
                 <div class="form-group col">
-                    <label for="businessType">业务类型<i class="red">*</i></label>
-                    <select class="form-control" id="businessType" name="businessType" required>
-                        <option value="">-- 请选择 --</option>
-                    </select>
-                </div>
-                <div class="form-group col">
                     <label for="businessType">费用科目<i class="red">*</i></label>
+                    <input type="hidden" id="oldChargeItem" value="${chargeRule.chargeItem!}">
                     <select class="form-control" id="chargeItem" name="chargeItem" required>
                         <option value="">-- 请选择 --</option>
                     </select>

@@ -59,7 +59,6 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
         //根据规则所在的市场、系统、业务，查询预定义的规则条件
         ConditionDefinition conditionDefinition = new ConditionDefinition();
         conditionDefinition.setMarketId(chargeRule.getMarketId());
-        conditionDefinition.setSystemCode(chargeRule.getSystemCode());
         conditionDefinition.setBusinessType(chargeRule.getBusinessType());
         conditionDefinition.setRuleCondition(YesOrNoEnum.YES.getCode());
         List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.list(conditionDefinition);

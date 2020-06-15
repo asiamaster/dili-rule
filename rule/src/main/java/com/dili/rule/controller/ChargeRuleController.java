@@ -5,11 +5,10 @@ import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.remote.MarketRpcService;
-import com.dili.rule.service.remote.SystemRpcService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
-import com.dili.ss.dto.DTOUtils;
-import com.dili.uap.sdk.domain.dto.SystemDto;
+import com.dili.uap.sdk.domain.DataDictionaryValue;
+import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,9 +40,9 @@ public class ChargeRuleController {
     @Autowired
     private MarketRpcService marketRpcService;
     @Autowired
-    private SystemRpcService systemRpcService;
-    @Autowired
     private ChargeConditionValService chargeConditionValService;
+    @Autowired
+    private DataDictionaryRpc dataDictionaryRpc;
 
     /**
      * 跳转到计费规则管理首页面
@@ -52,7 +52,7 @@ public class ChargeRuleController {
     @RequestMapping(value="/index.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
         modelMap.put("marketList", marketRpcService.getCurrentUserFirms());
-        modelMap.put("systemList", systemRpcService.listByExample(DTOUtils.newInstance(SystemDto.class)));
+        modelMap.put("businessTypeList", getBusinessType());
         return "chargeRule/list";
     }
 
@@ -90,7 +90,7 @@ public class ChargeRuleController {
                 }
             }
             modelMap.put("marketList", marketRpcService.getCurrentUserFirms());
-            modelMap.put("systemList", systemRpcService.listByExample(DTOUtils.newInstance(SystemDto.class)));
+            modelMap.put("businessTypeList", getBusinessType());
             modelMap.addAttribute("chargeRule", chargeRule);
         }
         return "chargeRule/edit";
@@ -125,5 +125,22 @@ public class ChargeRuleController {
             log.error(String.format("保存计费规则信息[%s] 失败：[s%]", chargeRuleVo.toString(), e.getMessage()), e);
             return BaseOutput.failure(e.getMessage());
         }
+    }
+
+    /**
+     * 获取费用业务类型
+     * @return
+     */
+    private List<DataDictionaryValue> getBusinessType() {
+        List<DataDictionaryValue> dataList = null;
+        try {
+            BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode("base_business_type");
+            if (output.isSuccess()) {
+                dataList = output.getData();
+            }
+        } catch (Throwable t) {
+            log.error("获取业务类型异常:" + t.getMessage(), t);
+        }
+        return dataList;
     }
 }
