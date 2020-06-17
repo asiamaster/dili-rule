@@ -116,4 +116,208 @@ public class ConditionDefinition extends BaseDomain {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifyTime;
 
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return Long return the marketId
+     */
+    public Long getMarketId() {
+        return marketId;
+    }
+
+    /**
+     * @param marketId the marketId to set
+     */
+    public void setMarketId(Long marketId) {
+        this.marketId = marketId;
+    }
+
+    /**
+     * @return String return the businessType
+     */
+    public String getBusinessType() {
+        return businessType;
+    }
+
+    /**
+     * @param businessType the businessType to set
+     */
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
+    /**
+     * @return String return the label
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * @param label the label to set
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    /**
+     * @return String return the matchedKey
+     */
+    public String getMatchedKey() {
+        return matchedKey;
+    }
+
+    /**
+     * @param matchedKey the matchedKey to set
+     */
+    public void setMatchedKey(String matchedKey) {
+        this.matchedKey = matchedKey;
+    }
+
+    /**
+     * @return Integer return the conditionType
+     */
+    public Integer getConditionType() {
+        return conditionType;
+    }
+
+    /**
+     * @param conditionType the conditionType to set
+     */
+    public void setConditionType(Integer conditionType) {
+        this.conditionType = conditionType;
+    }
+
+    /**
+     * @return String return the defaultValues
+     */
+    public String getDefaultValues() {
+        return defaultValues;
+    }
+
+    /**
+     * @param defaultValues the defaultValues to set
+     */
+    public void setDefaultValues(String defaultValues) {
+        this.defaultValues = defaultValues;
+    }
+
+    /**
+     * @return Integer return the dataType
+     */
+    public Integer getDataType() {
+        return dataType;
+    }
+
+    /**
+     * @param dataType the dataType to set
+     */
+    public void setDataType(Integer dataType) {
+        this.dataType = dataType;
+    }
+
+    /**
+     * @return Long return the dataSourceId
+     */
+    public Long getDataSourceId() {
+        return dataSourceId;
+    }
+
+    /**
+     * @param dataSourceId the dataSourceId to set
+     */
+    public void setDataSourceId(Long dataSourceId) {
+        this.dataSourceId = dataSourceId;
+    }
+
+    /**
+     * @return String return the matchedColumn
+     */
+    public String getMatchedColumn() {
+        return matchedColumn;
+    }
+
+    /**
+     * @param matchedColumn the matchedColumn to set
+     */
+    public void setMatchedColumn(String matchedColumn) {
+        this.matchedColumn = matchedColumn;
+    }
+
+    /**
+     * @return Integer return the viewMode
+     */
+    public Integer getViewMode() {
+        return viewMode;
+    }
+
+    /**
+     * @param viewMode the viewMode to set
+     */
+    public void setViewMode(Integer viewMode) {
+        this.viewMode = viewMode;
+    }
+
+    /**
+     * @return Long return the dataTargetId
+     */
+    public Long getDataTargetId() {
+        return dataTargetId;
+    }
+
+    /**
+     * @param dataTargetId the dataTargetId to set
+     */
+    public void setDataTargetId(Long dataTargetId) {
+        this.dataTargetId = dataTargetId;
+    }
+
+    /**
+     * @return Integer return the ruleCondition
+     */
+    public Integer getRuleCondition() {
+        return ruleCondition;
+    }
+
+    /**
+     * @param ruleCondition the ruleCondition to set
+     */
+    public void setRuleCondition(Integer ruleCondition) {
+        this.ruleCondition = ruleCondition;
+    }
+
+    /**
+     * @return LocalDateTime return the createTime
+     */
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * @param createTime the createTime to set
+     */
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * @return LocalDateTime return the modifyTime
+     */
+    public LocalDateTime getModifyTime() {
+        return modifyTime;
+    }
+
+    /**
+     * @param modifyTime the modifyTime to set
+     */
+    public void setModifyTime(LocalDateTime modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
 }

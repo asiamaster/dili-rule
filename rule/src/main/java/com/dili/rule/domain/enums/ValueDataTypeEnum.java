@@ -72,4 +72,21 @@ public enum ValueDataTypeEnum {
     public static ValueDataTypeEnum getInstance(Integer code) {
         return initMaps.get(code);
     }
+    
+
+    /**
+     * @param code the code to set
+     */
+    public Integer getCode() {
+        return this.code;
+    }
+
+    /**
+     * @return String return the desc
+     */
+    public String getDesc() {
+        return desc;
+    }
+
+
 }

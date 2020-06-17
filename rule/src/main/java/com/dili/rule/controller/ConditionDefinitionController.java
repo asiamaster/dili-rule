@@ -1,5 +1,24 @@
 package com.dili.rule.controller;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ConditionDataSource;
 import com.dili.rule.domain.ConditionDefinition;
@@ -11,22 +30,8 @@ import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 由MyBatis Generator工具自动生成
@@ -36,6 +41,7 @@ import java.util.Objects;
 @RequestMapping("/conditionDefinition")
 @Slf4j
 public class ConditionDefinitionController {
+	private static final Logger log=LoggerFactory.getLogger(ConditionDefinitionController.class);
     @Autowired
     private ConditionDefinitionService conditionDefinitionService;
     @Autowired

@@ -1,16 +1,17 @@
 package com.dili.rule.service.remote;
 
-import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.dili.commons.glossary.YesOrNoEnum;
-import com.dili.rule.domain.ConditionDataSource;
-import com.dili.rule.domain.enums.DataSourceTypeEnum;
-import com.dili.ss.domain.PageOutput;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -18,8 +19,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.alibaba.fastjson.JSONObject;
+import com.dili.commons.glossary.YesOrNoEnum;
+import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.domain.enums.DataSourceTypeEnum;
+import com.dili.ss.domain.PageOutput;
+import com.google.common.collect.Maps;
+
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <B></B>
@@ -32,7 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class RemoteDataQueryService {
-
+	private static final Logger log=LoggerFactory.getLogger(RemoteDataQueryService.class);
     /**
      * 通过url请求远程接口(http+json)
      * @param url

@@ -18,6 +18,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>13</java.version>
+        <maven.test.skip>true</maven.test.skip>
+		<maven.test.failure.ignore>true</maven.test.failure.ignore>
         <!--  模板路径  -->
         <templateRootDir>${basedir}/mbg-templates</templateRootDir>
         <projectdir>${basedir}</projectdir>
@@ -79,11 +81,11 @@
             <version>1.0</version>
         </dependency>
 
-        <dependency>
+<!--         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -94,6 +96,23 @@
             <artifactId>hutool-all</artifactId>
             <version>5.3.7</version>
         </dependency>
+        
+        		<dependency>
+			<groupId>com.github.gavlyukovskiy</groupId>
+			<artifactId>flexy-pool-spring-boot-starter</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.gavlyukovskiy</groupId>
+			<artifactId>datasource-proxy-spring-boot-starter</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gavlyukovskiy</groupId>
+			<artifactId>p6spy-spring-boot-starter</artifactId>
+			<version>1.6.1</version>
+		</dependency>
         <!-- 内部包  -->
 
         <dependency>

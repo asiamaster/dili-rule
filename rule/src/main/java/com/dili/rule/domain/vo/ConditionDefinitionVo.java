@@ -28,4 +28,33 @@ public class ConditionDefinitionVo extends ConditionDefinition {
      * 规则文件集合
      */
     private List<Object> texts = new ArrayList<Object>();
+
+    /**
+     * @return List<Object> return the values
+     */
+    public List<Object> getValues() {
+        return values;
+    }
+
+    /**
+     * @param values the values to set
+     */
+    public void setValues(List<Object> values) {
+        this.values = values;
+    }
+
+    /**
+     * @return List<Object> return the texts
+     */
+    public List<Object> getTexts() {
+        return texts;
+    }
+
+    /**
+     * @param texts the texts to set
+     */
+    public void setTexts(List<Object> texts) {
+        this.texts = texts;
+    }
+
 }

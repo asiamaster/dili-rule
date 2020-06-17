@@ -90,4 +90,84 @@ public class ConditionDataSource extends BaseDomain {
     @Column(name = "`data_json`")
     private String dataJson;
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getQueryUrl() {
+		return queryUrl;
+	}
+
+	public void setQueryUrl(String queryUrl) {
+		this.queryUrl = queryUrl;
+	}
+
+	public String getKeysUrl() {
+		return keysUrl;
+	}
+
+	public void setKeysUrl(String keysUrl) {
+		this.keysUrl = keysUrl;
+	}
+
+	public String getKeysField() {
+		return keysField;
+	}
+
+	public void setKeysField(String keysField) {
+		this.keysField = keysField;
+	}
+
+	public String getDataSourceType() {
+		return dataSourceType;
+	}
+
+	public void setDataSourceType(String dataSourceType) {
+		this.dataSourceType = dataSourceType;
+	}
+
+	public Integer getPaged() {
+		return paged;
+	}
+
+	public void setPaged(Integer paged) {
+		this.paged = paged;
+	}
+
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime createTime) {
+		this.createTime = createTime;
+	}
+
+	public LocalDateTime getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(LocalDateTime modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+
+	public String getDataJson() {
+		return dataJson;
+	}
+
+	public void setDataJson(String dataJson) {
+		this.dataJson = dataJson;
+	}
+
 }

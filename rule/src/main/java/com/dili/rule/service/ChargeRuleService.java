@@ -1,6 +1,7 @@
 package com.dili.rule.service;
 
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.ss.base.BaseService;
 import com.dili.ss.domain.BaseOutput;
@@ -28,18 +29,18 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * @param chargeRuleVo
      * @return
      */
-    BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo);
+    BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo,OperatorUser operatorUser);
 
     /**
      * 根据有效期时间，变更规则的状态
      * @param rule 需要变更状态的规则
      */
-    void updateStateByExpires(ChargeRule rule);
+    void updateStateByExpires(ChargeRule rule,OperatorUser operatorUser);
 
     /**
      * 根据有效期时间，变更规则的状态
      * @param id 需要变更状态的规则ID
      */
-    void updateStateByExpires(Long id);
+    void updateStateByExpires(Long id,OperatorUser operatorUser);
 
 }

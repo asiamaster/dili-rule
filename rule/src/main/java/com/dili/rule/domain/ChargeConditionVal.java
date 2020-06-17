@@ -86,4 +86,145 @@ public class ChargeConditionVal extends BaseDomain {
     @Column(name = "`val`")
     private String val;
 
+
+    /**
+     * @return Long return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return Long return the ruleId
+     */
+    public Long getRuleId() {
+        return ruleId;
+    }
+
+    /**
+     * @param ruleId the ruleId to set
+     */
+    public void setRuleId(Long ruleId) {
+        this.ruleId = ruleId;
+    }
+
+    /**
+     * @return String return the label
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * @param label the label to set
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    /**
+     * @return String return the matchedKey
+     */
+    public String getMatchedKey() {
+        return matchedKey;
+    }
+
+    /**
+     * @param matchedKey the matchedKey to set
+     */
+    public void setMatchedKey(String matchedKey) {
+        this.matchedKey = matchedKey;
+    }
+
+    /**
+     * @return Integer return the conditionType
+     */
+    public Integer getConditionType() {
+        return conditionType;
+    }
+
+    /**
+     * @param conditionType the conditionType to set
+     */
+    public void setConditionType(Integer conditionType) {
+        this.conditionType = conditionType;
+    }
+
+    /**
+     * @return Integer return the dataType
+     */
+    public Integer getDataType() {
+        return dataType;
+    }
+
+    /**
+     * @param dataType the dataType to set
+     */
+    public void setDataType(Integer dataType) {
+        this.dataType = dataType;
+    }
+
+    /**
+     * @return Long return the definitionId
+     */
+    public Long getDefinitionId() {
+        return definitionId;
+    }
+
+    /**
+     * @param definitionId the definitionId to set
+     */
+    public void setDefinitionId(Long definitionId) {
+        this.definitionId = definitionId;
+    }
+
+    /**
+     * @return LocalDateTime return the createTime
+     */
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * @param createTime the createTime to set
+     */
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * @return LocalDateTime return the modifyTime
+     */
+    public LocalDateTime getModifyTime() {
+        return modifyTime;
+    }
+
+    /**
+     * @param modifyTime the modifyTime to set
+     */
+    public void setModifyTime(LocalDateTime modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    /**
+     * @return String return the val
+     */
+    public String getVal() {
+        return val;
+    }
+
+    /**
+     * @param val the val to set
+     */
+    public void setVal(String val) {
+        this.val = val;
+    }
+
 }

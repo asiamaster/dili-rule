@@ -1,10 +1,14 @@
 package com.dili.rule.controller;
 
-import com.dili.rule.domain.ConditionDataSource;
-import com.dili.rule.service.ConditionDataSourceService;
-import com.dili.ss.domain.BaseOutput;
-import com.dili.ss.domain.EasyuiPageOutput;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -12,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.service.ConditionDataSourceService;
+import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 数据源管理控制层
@@ -27,6 +32,7 @@ import java.util.Objects;
 @RequestMapping("/conditionDataSource")
 @Slf4j
 public class ConditionDataSourceController {
+	private static final Logger log=LoggerFactory.getLogger(ConditionDataSourceController.class);
     @Autowired
     private ConditionDataSourceService conditionDataSourceService;
 
