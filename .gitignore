@@ -2,3 +2,14 @@
 */target/
 *.iml
 /logs
+**/.project
+**/.settings
+**/.classpath
+**/rebel.xml
+*/.idea/
+*/target/
+*/*.iml
+*/*.log
+**/logs
+**/.factorypath
+**/.vscode
