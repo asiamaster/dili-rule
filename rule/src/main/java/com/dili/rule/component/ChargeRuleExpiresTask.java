@@ -36,7 +36,7 @@ public class ChargeRuleExpiresTask {
      */
     public void register(final Long id, final LocalDateTime dateTime) {
         Runnable task = () -> {
-            chargeRuleService.updateStateByExpires(id,new OperatorUser(0L, "auto"));
+            chargeRuleService.updateStateByExpires(id,new OperatorUser(null, null));
         };
         taskScheduler.schedule(task, getTrigger(dateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli()));
     }
