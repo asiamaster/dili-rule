@@ -85,9 +85,9 @@ function getChargeItem(marketId, businessType, _viewTargetId, _defaultValue, _ti
                 if (ret.success) {
                     $.each(ret.data, function (i, item) {
                         if (typeof (_defaultValue) != "undefined" && null != _defaultValue && '' != _defaultValue && _defaultValue == item.id) {
-                            datas.push('<option selected value="' + item.id + '">' + item.name + '</option>');
+                            datas.push('<option selected value="' + item.id + '">' + item.chargeItem + '</option>');
                         } else {
-                            datas.push('<option value="' + item.id + '">' + item.name + '</option>');
+                            datas.push('<option value="' + item.id + '">' + item.chargeItem + '</option>');
                         }
                     });
                 }

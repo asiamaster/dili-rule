@@ -1,6 +1,6 @@
 package com.dili.rule.controller;
 
-import com.dili.assets.sdk.dto.ChargeItemDto;
+import com.dili.assets.sdk.dto.BusinessChargeItemDto;
 import com.dili.rule.service.remote.BusinessChargeItemRpcService;
 import com.dili.ss.domain.BaseOutput;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +49,7 @@ public class CommonInfoController {
      */
     @RequestMapping("/getChargeItem.action")
     @ResponseBody
-    public BaseOutput<List<ChargeItemDto>> getChargeItem(Long marketId, String businessType) {
+    public BaseOutput<List<BusinessChargeItemDto>> getChargeItem(Long marketId, String businessType) {
         if (Objects.nonNull(marketId) && Objects.nonNull(businessType)) {
             return BaseOutput.success().setData(businessChargeItemRpcService.list(marketId, businessType, true));
         }

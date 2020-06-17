@@ -1,9 +1,9 @@
 package com.dili.rule.provider;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.dili.assets.sdk.dto.ChargeItemDto;
-import com.dili.assets.sdk.rpc.ChargeItemRpc;
-import com.dili.ss.domain.PageOutput;
+import com.dili.assets.sdk.dto.BusinessChargeItemDto;
+import com.dili.assets.sdk.rpc.BusinessChargeItemRpc;
+import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ChargeItemProvider extends BatchDisplayTextProviderSupport {
 
     @Autowired
-    private ChargeItemRpc chargeItemRpc;
+    private BusinessChargeItemRpc chargeItemRpc;
 
     @Override
     public List<ValuePair<?>> getLookupList(Object obj, Map metaMap, FieldMeta fieldMeta) {
@@ -45,7 +45,7 @@ public class ChargeItemProvider extends BatchDisplayTextProviderSupport {
             return Collections.EMPTY_LIST;
         }
         List<Long> idList = relationIds.stream().distinct().map(c -> Long.valueOf(c)).collect(Collectors.toList());
-        ChargeItemDto condition = new ChargeItemDto();
+        BusinessChargeItemDto condition = new BusinessChargeItemDto();
         condition.setIdList(idList);
         return list(condition);
     }
@@ -54,7 +54,7 @@ public class ChargeItemProvider extends BatchDisplayTextProviderSupport {
     protected BatchProviderMeta getBatchProviderMeta(Map metaMap) {
         BatchProviderMeta batchProviderMeta = DTOUtils.newInstance(BatchProviderMeta.class);
         //设置主DTO和关联DTO需要转义的字段名
-        batchProviderMeta.setEscapeFiled("name");
+        batchProviderMeta.setEscapeFiled("chargeItem");
         //忽略大小写关联
         batchProviderMeta.setIgnoreCaseToRef(true);
         //关联(数据库)表的主键的字段名，默认取id
@@ -69,9 +69,9 @@ public class ChargeItemProvider extends BatchDisplayTextProviderSupport {
      * @param condition
      * @return
      */
-    private List<ChargeItemDto> list(ChargeItemDto condition) {
+    private List<BusinessChargeItemDto> list(BusinessChargeItemDto condition) {
         try {
-            PageOutput<List<ChargeItemDto>> output = chargeItemRpc.listPage(condition);
+            BaseOutput<List<BusinessChargeItemDto>> output = chargeItemRpc.listByExample(condition);
             if (output.isSuccess()) {
                 return output.getData();
             }
