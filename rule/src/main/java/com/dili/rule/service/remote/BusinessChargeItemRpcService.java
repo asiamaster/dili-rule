@@ -5,8 +5,6 @@ import com.dili.assets.sdk.dto.BusinessChargeItemDto;
 import com.dili.assets.sdk.rpc.BusinessChargeItemRpc;
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.ss.domain.BaseOutput;
-
-import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class BusinessChargeItemRpcService {
-	private static final Logger log=LoggerFactory.getLogger(BusinessChargeItemRpcService.class);
+
     @Autowired
     private BusinessChargeItemRpc businessChargeItemRpc;
 
