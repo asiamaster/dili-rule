@@ -320,4 +320,8 @@ public class ConditionDefinition extends BaseDomain {
         this.modifyTime = modifyTime;
     }
 
+	public Long getId() {
+		return id;
+	}
+
 }
