@@ -5,6 +5,7 @@ import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.enums.RuleStateEnum;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.mapper.ChargeRuleMapper;
@@ -17,8 +18,6 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.POJOUtils;
-import com.dili.uap.sdk.domain.UserTicket;
-import com.dili.uap.sdk.session.SessionContext;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -72,15 +71,14 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     }
 
     @Override
-    public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo) {
-        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+    public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo,OperatorUser operatorUser) {
         ChargeRule inputRuleInfo = new ChargeRule();
         BeanUtils.copyProperties(chargeRuleVo, inputRuleInfo);
 
         inputRuleInfo.setState(RuleStateEnum.UNAUDITED.getCode());
         inputRuleInfo.setRevisable(YesOrNoEnum.YES.getCode());
-        inputRuleInfo.setOperatorId(userTicket.getId());
-        inputRuleInfo.setOperatorName(userTicket.getRealName());
+        inputRuleInfo.setOperatorId(operatorUser.getUserId());
+        inputRuleInfo.setOperatorName(operatorUser.getUserName());
 
         // 检查输入的计算指标及格式
         //TODO  计算指标相关
@@ -100,7 +98,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 //            // 设置空的默认值
 //            inputRuleInfo.setTarget("[]");
 //        }
-        BaseOutput<ChargeRule> msg = this.saveOrUpdateRuleInfo(inputRuleInfo);
+        BaseOutput<ChargeRule> msg = this.saveOrUpdateRuleInfo(inputRuleInfo,operatorUser);
         if (!msg.isSuccess()) {
             return msg;
         }
@@ -139,7 +137,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateStateByExpires(ChargeRule rule) {
+    public void updateStateByExpires(ChargeRule rule,OperatorUser operatorUser) {
         if (null != rule && rule.getId() != null) {
             Long id = rule.getId();
             // 是否需要更改数据
@@ -154,7 +152,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 // 此条规则生效，需判断是否有原规则，如果有，需解除关系，并作废原规则
                 if (null != rule.getOriginalId()) {
                     // 作废原规则
-                    obsolete(rule.getOriginalId());
+                    obsolete(rule.getOriginalId(),operatorUser);
                     rule.setOriginalId(null);
                 }
             }
@@ -188,9 +186,9 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     }
 
     @Override
-    public void updateStateByExpires(Long id) {
+    public void updateStateByExpires(Long id,OperatorUser operatorUser) {
         ChargeRule rule = this.get(id);
-        this.updateStateByExpires(rule);
+        this.updateStateByExpires(rule,operatorUser);
     }
 
 
@@ -200,7 +198,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param inputRuleInfo
      * @return
      */
-    private BaseOutput<ChargeRule> saveOrUpdateRuleInfo(ChargeRule inputRuleInfo) {
+    private BaseOutput<ChargeRule> saveOrUpdateRuleInfo(ChargeRule inputRuleInfo,OperatorUser operatorUser) {
         if (null == inputRuleInfo.getId()) {
             if (this.isExistsSameRuleName(inputRuleInfo)) {
                 return BaseOutput.failure("已存在规则名称相同的记录");
@@ -214,7 +212,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 return BaseOutput.failure("此规则已存在被修改的记录，暂时不能修改");
             }
             // 修改原记录的状态并新增一条 或者更新
-            BaseOutput<ChargeRule> msg = this.createRuleForRevisable(inputRuleInfo, old);
+            BaseOutput<ChargeRule> msg = this.createRuleForRevisable(inputRuleInfo, old,operatorUser);
             if (!msg.isSuccess()) {
                 return msg;
             }
@@ -229,7 +227,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param old
      * @return
      */
-    private BaseOutput<ChargeRule> createRuleForRevisable(ChargeRule inputRuleInfo, ChargeRule old) {
+    private BaseOutput<ChargeRule> createRuleForRevisable(ChargeRule inputRuleInfo, ChargeRule old,OperatorUser operatorUser) {
         if (RuleStateEnum.ENABLED.getCode().equals(old.getState())) {
             inputRuleInfo.setOriginalId(old.getId());
             inputRuleInfo.setId(null);
@@ -241,7 +239,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             this.insertSelective(inputRuleInfo);
             old.setRevisable(YesOrNoEnum.NO.getCode());
             // 更改原来数据的状态
-            this.updateRuleInfoWithExpire(old);
+            this.updateRuleInfoWithExpire(old,operatorUser);
         } else {
             if (this.isExistsSameRuleName(inputRuleInfo)) {
                 return BaseOutput.failure("已存在规则名称相同的记录");
@@ -257,10 +255,10 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param ruleInfo
      * @return
      */
-    private int updateRuleInfoWithExpire(ChargeRule ruleInfo) {
+    private int updateRuleInfoWithExpire(ChargeRule ruleInfo,OperatorUser operatorUser) {
         if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
             // 作废原规则
-            obsolete(ruleInfo.getOriginalId());
+            obsolete(ruleInfo.getOriginalId(),operatorUser);
             ruleInfo.setOriginalId(null);
         }
         super.updateSelective(ruleInfo);
@@ -274,13 +272,12 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param id 需要作废的规则ID
      * @return
      */
-    private Integer obsolete(Long id) {
+    private Integer obsolete(Long id,OperatorUser operatorUser) {
         ChargeRule rule = new ChargeRule();
         rule.setId(id);
         rule.setState(RuleStateEnum.OBSOLETE.getCode());
-        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        rule.setOperatorId(userTicket.getId());
-        rule.setOperatorName(userTicket.getRealName());
+        rule.setOperatorId(operatorUser.getUserId());
+        rule.setOperatorName(operatorUser.getUserName());
         rule.setRevisable(YesOrNoEnum.YES.getCode());
         return this.updateSelective(rule);
     }

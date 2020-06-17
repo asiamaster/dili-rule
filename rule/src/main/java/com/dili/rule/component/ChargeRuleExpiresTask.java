@@ -1,5 +1,6 @@
 package com.dili.rule.component;
 
+import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.service.ChargeRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
@@ -35,7 +36,7 @@ public class ChargeRuleExpiresTask {
      */
     public void register(final Long id, final LocalDateTime dateTime) {
         Runnable task = () -> {
-            chargeRuleService.updateStateByExpires(id);
+            chargeRuleService.updateStateByExpires(id,new OperatorUser(0L, "auto"));
         };
         taskScheduler.schedule(task, getTrigger(dateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli()));
     }

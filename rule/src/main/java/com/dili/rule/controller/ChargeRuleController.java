@@ -1,6 +1,7 @@
 package com.dili.rule.controller;
 
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
@@ -10,6 +11,9 @@ import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,6 +38,7 @@ import java.util.Objects;
 @RequestMapping("/chargeRule")
 @Slf4j
 public class ChargeRuleController {
+	private static final Logger log=LoggerFactory.getLogger(ChargeRuleController.class);
 
     @Autowired
     private ChargeRuleService chargeRuleService;
@@ -118,7 +123,7 @@ public class ChargeRuleController {
     @ResponseBody
     public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo) {
         try {
-            return chargeRuleService.save(chargeRuleVo);
+            return chargeRuleService.save(chargeRuleVo,OperatorUser.fromSessionContext());
         } catch (IllegalArgumentException ex) {
             return BaseOutput.failure(ex.getMessage());
         } catch (Exception e) {

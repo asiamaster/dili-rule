@@ -61,4 +61,33 @@ public enum ConditionTypeEnum {
     public static ConditionTypeEnum getInstance(Integer code) {
         return initMaps.get(code);
     }
+
+    /**
+     * @return the code
+     */
+    public Integer getCode() {
+        return code;
+    }
+
+    /**
+     * @param code the code to set
+     */
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    /**
+     * @return the desc
+     */
+    public String getDesc() {
+        return desc;
+    }
+
+    /**
+     * @param desc the desc to set
+     */
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+    
 }

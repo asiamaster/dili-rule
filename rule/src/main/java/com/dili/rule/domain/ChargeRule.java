@@ -209,4 +209,362 @@ public class ChargeRule extends BaseDomain implements Serializable {
         return str.toString();
     }
 
+
+    /**
+     * @return Long return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return Long return the originalId
+     */
+    public Long getOriginalId() {
+        return originalId;
+    }
+
+    /**
+     * @param originalId the originalId to set
+     */
+    public void setOriginalId(Long originalId) {
+        this.originalId = originalId;
+    }
+
+    /**
+     * @return String return the code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * @return Long return the marketId
+     */
+    public Long getMarketId() {
+        return marketId;
+    }
+
+    /**
+     * @param marketId the marketId to set
+     */
+    public void setMarketId(Long marketId) {
+        this.marketId = marketId;
+    }
+
+    /**
+     * @return String return the businessType
+     */
+    public String getBusinessType() {
+        return businessType;
+    }
+
+    /**
+     * @param businessType the businessType to set
+     */
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
+    /**
+     * @return Long return the groupId
+     */
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    /**
+     * @param groupId the groupId to set
+     */
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    /**
+     * @return String return the chargeItem
+     */
+    public String getChargeItem() {
+        return chargeItem;
+    }
+
+    /**
+     * @param chargeItem the chargeItem to set
+     */
+    public void setChargeItem(String chargeItem) {
+        this.chargeItem = chargeItem;
+    }
+
+    /**
+     * @return String return the ruleName
+     */
+    public String getRuleName() {
+        return ruleName;
+    }
+
+    /**
+     * @param ruleName the ruleName to set
+     */
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
+    }
+
+    /**
+     * @return Integer return the state
+     */
+    public Integer getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state to set
+     */
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    /**
+     * @return Integer return the priority
+     */
+    public Integer getPriority() {
+        return priority;
+    }
+
+    /**
+     * @param priority the priority to set
+     */
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    /**
+     * @param expireStart the expireStart to set
+     */
+    public void setExpireStart(LocalDateTime expireStart) {
+        this.expireStart = expireStart;
+    }
+
+    /**
+     * @param expireEnd the expireEnd to set
+     */
+    public void setExpireEnd(LocalDateTime expireEnd) {
+        this.expireEnd = expireEnd;
+    }
+
+    /**
+     * @return Integer return the targetType
+     */
+    public Integer getTargetType() {
+        return targetType;
+    }
+
+    /**
+     * @param targetType the targetType to set
+     */
+    public void setTargetType(Integer targetType) {
+        this.targetType = targetType;
+    }
+
+    /**
+     * @return BigDecimal return the minPayment
+     */
+    public BigDecimal getMinPayment() {
+        return minPayment;
+    }
+
+    /**
+     * @param minPayment the minPayment to set
+     */
+    public void setMinPayment(BigDecimal minPayment) {
+        this.minPayment = minPayment;
+    }
+
+    /**
+     * @return BigDecimal return the maxPayment
+     */
+    public BigDecimal getMaxPayment() {
+        return maxPayment;
+    }
+
+    /**
+     * @param maxPayment the maxPayment to set
+     */
+    public void setMaxPayment(BigDecimal maxPayment) {
+        this.maxPayment = maxPayment;
+    }
+
+    /**
+     * @return String return the remark
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * @param remark the remark to set
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    /**
+     * @return Integer return the revisable
+     */
+    public Integer getRevisable() {
+        return revisable;
+    }
+
+    /**
+     * @param revisable the revisable to set
+     */
+    public void setRevisable(Integer revisable) {
+        this.revisable = revisable;
+    }
+
+    /**
+     * @return Long return the operatorId
+     */
+    public Long getOperatorId() {
+        return operatorId;
+    }
+
+    /**
+     * @param operatorId the operatorId to set
+     */
+    public void setOperatorId(Long operatorId) {
+        this.operatorId = operatorId;
+    }
+
+    /**
+     * @return String return the operatorName
+     */
+    public String getOperatorName() {
+        return operatorName;
+    }
+
+    /**
+     * @param operatorName the operatorName to set
+     */
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
+    }
+
+    /**
+     * @return LocalDateTime return the createTime
+     */
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * @param createTime the createTime to set
+     */
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * @return LocalDateTime return the modifyTime
+     */
+    public LocalDateTime getModifyTime() {
+        return modifyTime;
+    }
+
+    /**
+     * @param modifyTime the modifyTime to set
+     */
+    public void setModifyTime(LocalDateTime modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    /**
+     * @return Long return the approverId
+     */
+    public Long getApproverId() {
+        return approverId;
+    }
+
+    /**
+     * @param approverId the approverId to set
+     */
+    public void setApproverId(Long approverId) {
+        this.approverId = approverId;
+    }
+
+    /**
+     * @return String return the approverName
+     */
+    public String getApproverName() {
+        return approverName;
+    }
+
+    /**
+     * @param approverName the approverName to set
+     */
+    public void setApproverName(String approverName) {
+        this.approverName = approverName;
+    }
+
+    /**
+     * @return LocalDateTime return the approvalTime
+     */
+    public LocalDateTime getApprovalTime() {
+        return approvalTime;
+    }
+
+    /**
+     * @param approvalTime the approvalTime to set
+     */
+    public void setApprovalTime(LocalDateTime approvalTime) {
+        this.approvalTime = approvalTime;
+    }
+
+    /**
+     * @return String return the targetVal
+     */
+    public String getTargetVal() {
+        return targetVal;
+    }
+
+    /**
+     * @param targetVal the targetVal to set
+     */
+    public void setTargetVal(String targetVal) {
+        this.targetVal = targetVal;
+    }
+
+    /**
+     * @param expireValue the expireValue to set
+     */
+    public void setExpireValue(String expireValue) {
+        this.expireValue = expireValue;
+    }
+
+    /**
+     * @return the expireStart
+     */
+    public LocalDateTime getExpireStart() {
+        return expireStart;
+    }
+
+    /**
+     * @return the expireEnd
+     */
+    public LocalDateTime getExpireEnd() {
+        return expireEnd;
+    }
+
 }

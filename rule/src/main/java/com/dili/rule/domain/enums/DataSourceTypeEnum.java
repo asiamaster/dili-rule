@@ -58,4 +58,27 @@ public enum DataSourceTypeEnum {
     public static DataSourceTypeEnum getInstance(String code) {
         return initMaps.get(code);
     }
+    
+
+    /**
+     * @param code the code to set
+     */
+    public String getCode( ) {
+        return this.code;
+    }
+
+    /**
+     * @return String return the desc
+     */
+    public String getDesc() {
+        return desc;
+    }
+
+    /**
+     * @param desc the desc to set
+     */
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
 }

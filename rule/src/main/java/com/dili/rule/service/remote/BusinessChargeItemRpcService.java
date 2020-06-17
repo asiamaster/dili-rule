@@ -1,15 +1,19 @@
 package com.dili.rule.service.remote;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.dili.assets.sdk.dto.ChargeItemDto;
-import com.dili.assets.sdk.rpc.BusinessChargeItemRpc;
-import com.dili.ss.domain.BaseOutput;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import com.dili.assets.sdk.dto.ChargeItemDto;
+import com.dili.assets.sdk.rpc.BusinessChargeItemRpc;
+import com.dili.ss.domain.BaseOutput;
+
+import cn.hutool.core.collection.CollectionUtil;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <B></B>
@@ -22,7 +26,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class BusinessChargeItemRpcService {
-
+	private static final Logger log=LoggerFactory.getLogger(BusinessChargeItemRpcService.class);
     @Autowired
     private BusinessChargeItemRpc businessChargeItemRpc;
 

@@ -28,4 +28,13 @@ public class ConditionDataSourceDto extends ConditionDataSource {
     @Column(name = "`id`")
     @Operator(Operator.IN)
     private List<Long> idList;
+
+	public List<Long> getIdList() {
+		return idList;
+	}
+
+	public void setIdList(List<Long> idList) {
+		this.idList = idList;
+	}
+    
 }
