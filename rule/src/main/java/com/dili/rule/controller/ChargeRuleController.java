@@ -1,6 +1,7 @@
 package com.dili.rule.controller;
 
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.service.ChargeConditionValService;
@@ -121,10 +122,10 @@ public class ChargeRuleController {
      * @return
      */
     @RequestMapping(value = "/getRuleVariable.action", method = { RequestMethod.GET, RequestMethod.POST })
-    public String getRuleVariable(ChargeRule chargeRule, ModelMap modelMap) {
-        Map<String, Object> map = chargeConditionValService.getRuleVariable(chargeRule);
-        modelMap.addAllAttributes(map);
-        return "chargeRule/ruleCondition";
+    @ResponseBody
+    public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule, ModelMap modelMap) {
+    	List<ConditionDefinition> list = chargeConditionValService.getRuleVariable(chargeRule);
+        return list;
     }
 
     /**

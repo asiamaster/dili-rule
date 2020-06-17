@@ -136,27 +136,19 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
     }
 
 	@Override
-	public Map<String, Object> getRuleVariable(ChargeRule chargeRule) {
+	public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule) {
         Map<String,Object>resultMap = new HashMap<>();
-        List<ChargeConditionVal> chargeConditionValList = Lists.newArrayList();
-        if (Objects.nonNull(chargeRule.getId())) {
-            //根据规则，查询规则条件信息
-            ChargeConditionVal conditionVal = new ChargeConditionVal();
-            conditionVal.setRuleId(chargeRule.getId());
-            chargeConditionValList = list(conditionVal);
-        }
-        resultMap.put("chargeConditionVals",chargeConditionValList);
+
+
         //根据规则所在的市场、系统、业务，查询预定义的规则条件
         ConditionDefinition conditionDefinition = new ConditionDefinition();
         conditionDefinition.setMarketId(chargeRule.getMarketId());
         conditionDefinition.setBusinessType(chargeRule.getBusinessType());
-        conditionDefinition.setRuleCondition(YesOrNoEnum.YES.getCode());
+//        conditionDefinition.setRuleCondition(YesOrNoEnum.YES.getCode());
         conditionDefinition.setIsVariable(YesOrNoEnum.YES.getCode());
         List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.list(conditionDefinition);
-        //组装已选条件与预定义的条件值
-        List<ConditionDefinitionVo> conditionDefinitions = generate(chargeConditionValList,conditionDefinitionList);
-        resultMap.put("conditionDefinitions",conditionDefinitions);
 
-        return resultMap;
+
+        return conditionDefinitionList;
 	}
 }

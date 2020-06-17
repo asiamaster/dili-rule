@@ -10,6 +10,7 @@
         defaultGetChargeItem($("#oldChargeItem").val(),'-- 请选择 --');
         //获取规则条件数据
         getRuleCondition();
+        getRuleVariable();
     });
 
     /******************************驱动执行区 end****************************/
@@ -24,17 +25,11 @@
     /*****************************************自定义事件区 end**************************************/
 
     //市场信息变更时，获取收费项、规则条件信息
-    $('#marketId').on('change', function () {
+    $('#marketId,#businessType').on('change', function () {
         defaultGetChargeItem('', '-- 请选择 --');
         getRuleCondition();
+        getRuleVariable();
     });
-
-    //业务类型变更时，获取收费项、规则条件信息
-    $('#businessType').on('change', function () {
-        defaultGetChargeItem('', '-- 请选择 --');
-        getRuleCondition();
-    });
-
     /**
      * 获取规则条件信息
      */
@@ -47,7 +42,7 @@
             $.ajax({
                 type: "POST",
                 url: "${contextPath}/chargeRule/getRuleCondition.action",
-                async:false,
+                async:true,
                 data: {id: ruleId, marketId: marketId, businessType: businessType},
                 success: function (ret) {
                     $('#ruleConditionDiv').html(ret);
@@ -68,6 +63,35 @@
                             $(this).val('');
                         }
                     });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    bs4pop.alert('获取规则条件失败', { type: 0 });
+                }
+            })
+        }
+    }
+    
+    /**
+     * 获取规则计算指标(变量)信息
+     */
+    function getRuleVariable(){
+        let ruleId = $('#id').val();
+        let marketId = $('#marketId').val();
+        let businessType = $('#businessType').val();
+        $('#ruleConditionDiv').html('');
+        if (marketId && businessType){
+        	$('#calcParamInfo').html('');
+            $.ajax({
+                type: "POST",
+                url: "${contextPath}/chargeRule/getRuleVariable.action",
+                async:true,
+                data: {id: ruleId, marketId: marketId, businessType: businessType},
+                success: function (ret) {
+                	$.each(ret,function(){
+						var label=this.label;
+						var matchedKey=this.matchedKey;
+						$('#calcParamInfo').append('<a href="">'+label+'</a>')
+                	})
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     bs4pop.alert('获取规则条件失败', { type: 0 });
