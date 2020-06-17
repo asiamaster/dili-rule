@@ -113,6 +113,19 @@ public class ChargeRuleController {
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
     }
+    
+    /**
+     * 获取对应的规则条件值
+     * @param chargeRule
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/getRuleVariable.action", method = { RequestMethod.GET, RequestMethod.POST })
+    public String getRuleVariable(ChargeRule chargeRule, ModelMap modelMap) {
+        Map<String, Object> map = chargeConditionValService.getRuleVariable(chargeRule);
+        modelMap.addAllAttributes(map);
+        return "chargeRule/ruleCondition";
+    }
 
     /**
      * 保存计费规则信息

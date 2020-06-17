@@ -111,6 +111,7 @@ create table condition_definition
    condition_type       integer comment '条件类型(大于,小于,等于),具体参考ConditionTypeEnum',
    default_values       varchar(255) comment '条件默认值，多个以逗号隔开',
    data_type            integer comment '值类型(小数、整数等),具体参考ValueDataTypeEnum',
+   `is_variable`          tinyint not null default 0 comment '是否是计算指标变量',
    data_source_id       bigint comment '数据来源ID(用于设置规则时，通过什么方法获取数据)',
    matched_column       varchar(20) comment '匹配数据源中的某列值',
    view_mode            int comment '来源数据显示方法',

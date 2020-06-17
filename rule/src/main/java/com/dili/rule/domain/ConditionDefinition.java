@@ -118,6 +118,12 @@ public class ConditionDefinition extends BaseDomain {
 
 
     /**
+     * 是否是计算指标 
+     */
+    @Column(name = "`is_variable`")
+    private Integer isVariable;
+
+    /**
      * @param id the id to set
      */
     public void setId(Long id) {
@@ -322,6 +328,14 @@ public class ConditionDefinition extends BaseDomain {
 
 	public Long getId() {
 		return id;
+	}
+
+	public Integer getIsVariable() {
+		return isVariable;
+	}
+
+	public void setIsVariable(Integer isVariable) {
+		this.isVariable = isVariable;
 	}
 
 }

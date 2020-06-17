@@ -43,11 +43,11 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        let marketId = $('#marketId').val();
-        let systemCode = $('#systemCode').val();
-        let businessType = $('#businessType').val();
-        let chargeItem = $('#chargeItem').val();
-        let url = "/chargeRule/preSave.html?marketId=" + marketId+'&systemCode='+systemCode+'&businessType='+businessType+'&chargeItem='+chargeItem;
+        let marketId = $('#marketId').val()==null?'':$('#marketId').val();
+       // let systemCode = $('#systemCode').val();
+        let businessType = $('#businessType').val()==null?'':$('#businessType').val();
+        let chargeItem = $('#chargeItem').val()==null?'':$('#chargeItem').val();
+        let url = "/chargeRule/preSave.html?marketId=" + marketId+'&businessType='+businessType+'&chargeItem='+chargeItem;
         dia = bs4pop.dialog({
             title: '新增规则',
             content: url,

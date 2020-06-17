@@ -23,6 +23,11 @@
                 <input type="text" class="form-control" id="matchedKey" name="matchedKey" maxlength="20" value="${conditionDefinition.matchedKey!}" required />
             </div>
             <div class="form-group col">
+                <label for="isVariable" class="">是否计算指标<i class="red">*</i></label>
+                <select id="isVariable" name="isVariable" class="form-control" value="${conditionDefinition.isVariable!}"  required></select>
+                <#bcomboProvider _id="isVariable" _provider="yesOrNoProvider" _queryParams='{emptyText:"-- 请选择 --"}'  _valueField="value" _textField="text" _value="${conditionDefinition.isVariable!}" />
+            </div>
+            <div class="form-group col">
                 <label for="conditionType" class="">条件类型<i class="red">*</i></label>
                 <select id="conditionType" name="conditionType" class="form-control" required></select>
                 <#bcomboProvider _id="conditionType" _provider="conditionTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDefinition.conditionType!}" />
@@ -32,6 +37,7 @@
                 <select id="dataType" name="dataType" class="form-control" required></select>
                 <#bcomboProvider _id="dataType" _provider="valueDataTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDefinition.dataType!}" />
             </div>
+
             <div class="form-group col">
                 <label for="defaultValues" class="">默认值</label>
                 <input type="text" class="form-control" id="defaultValues" name="defaultValues" maxlength="255" value="${conditionDefinition.defaultValues!}"  placeholder="条件默认值,多个以英文逗号隔开" />
@@ -131,7 +137,25 @@
         }
         $('#matchedColumn').html(data.join(''));
     }
-
+	$('select[name="isVariable"]').change(function(){
+		var elList=$('select[name="conditionType"],select[name="dataSourceId"],select[name="matchedColumn"],select[name="viewMode"]');
+		
+		var isVariable=$(this).val();
+		if(isVariable==null){
+			isVariable=$('select[name="isVariable"]').attr('value')
+		}
+		if(isVariable=='${@com.dili.commons.glossary.YesOrNoEnum.YES.getCode()}'){
+			elList.attr('readonly','readonly');
+			elList.attr('disabled','disabled')
+		}else{
+			elList.removeAttr('readonly');
+			elList.removeAttr('disabled')
+		}
+	});
+	
+	if($('select[name="isVariable"]').attr('value')!=''){
+		$('select[name="isVariable"]').trigger('change')
+	}
     /**
      * 保存定义数据
      */

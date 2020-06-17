@@ -27,18 +27,12 @@ import java.util.stream.Stream;
 @Scope("prototype")
 public class YesOrNoProvider implements ValueProvider {
 
-    private static final List<ValuePair<?>> BUFFER;
-
-    static {
-        BUFFER = Lists.newArrayList();
-        BUFFER.addAll(Stream.of(YesOrNoEnum.values())
-                .map(e -> new ValuePairImpl<>(e.getName(), String.valueOf(e.getCode())))
-                .collect(Collectors.toList()));
-    }
 
     @Override
     public List<ValuePair<?>> getLookupList(Object obj, Map metaMap, FieldMeta fieldMeta) {
-        return BUFFER;
+         return Stream.of(YesOrNoEnum.values())
+                 .map(e -> new ValuePairImpl<>(e.getName(), String.valueOf(e.getCode())))
+                 .collect(Collectors.toList());
     }
 
     @Override
