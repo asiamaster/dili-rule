@@ -322,7 +322,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             conditionValItem.setRuleId(rule.getId());
             conditionValItem.setLabel(definition.getLabel());
             conditionValItem.setMatchedKey(definition.getMatchedKey());
-            conditionValItem.setConditionType(definition.getConditionType());
+            conditionValItem.setMatchType(definition.getMatchType());
             conditionValItem.setDataType(definition.getDataType());
             conditionValItem.setVal(val);
             conditionValItem.setDefinitionId(definition.getId());

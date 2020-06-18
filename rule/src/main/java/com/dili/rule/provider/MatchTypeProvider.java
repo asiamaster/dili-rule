@@ -1,6 +1,6 @@
 package com.dili.rule.provider;
 
-import com.dili.rule.domain.enums.ConditionTypeEnum;
+import com.dili.rule.domain.enums.MatchTypeEnum;
 import com.dili.rule.domain.enums.DataSourceTypeEnum;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
@@ -26,13 +26,13 @@ import java.util.stream.Stream;
  */
 @Component
 @Scope("prototype")
-public class ConditionTypeProvider implements ValueProvider {
+public class MatchTypeProvider implements ValueProvider {
 
     private static final List<ValuePair<?>> BUFFER;
 
     static {
         BUFFER = Lists.newArrayList();
-        BUFFER.addAll(Stream.of(ConditionTypeEnum.values())
+        BUFFER.addAll(Stream.of(MatchTypeEnum.values())
                 .map(e -> new ValuePairImpl<String>(e.getDesc(), String.valueOf(e.getCode())))
                 .collect(Collectors.toList()));
     }
@@ -47,7 +47,7 @@ public class ConditionTypeProvider implements ValueProvider {
         if (obj == null || "".equals(obj)) {
             return null;
         }
-        ConditionTypeEnum instance = ConditionTypeEnum.getInstance(Integer.valueOf(obj.toString()));
+        MatchTypeEnum instance = MatchTypeEnum.getInstance(Integer.valueOf(obj.toString()));
         if (Objects.nonNull(instance)) {
             return instance.getDesc();
         }

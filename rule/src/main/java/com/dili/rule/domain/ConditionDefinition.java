@@ -53,10 +53,10 @@ public class ConditionDefinition extends BaseDomain {
     private String matchedKey;
 
     /**
-     * 条件类型(大于,小于,等于),具体参考ConditionTypeEnum
+     * 条件类型(大于,小于,等于),具体参考MatchTypeEnum
      */
-    @Column(name = "`condition_type`")
-    private Integer conditionType;
+    @Column(name = "`match_type`")
+    private Integer matchType;
 
     /**
      * 条件默认值，多个以逗号隔开
@@ -186,21 +186,17 @@ public class ConditionDefinition extends BaseDomain {
         this.matchedKey = matchedKey;
     }
 
-    /**
-     * @return Integer return the conditionType
-     */
-    public Integer getConditionType() {
-        return conditionType;
-    }
 
-    /**
-     * @param conditionType the conditionType to set
-     */
-    public void setConditionType(Integer conditionType) {
-        this.conditionType = conditionType;
-    }
 
-    /**
+    public Integer getMatchType() {
+		return matchType;
+	}
+
+	public void setMatchType(Integer matchType) {
+		this.matchType = matchType;
+	}
+
+	/**
      * @return String return the defaultValues
      */
     public String getDefaultValues() {

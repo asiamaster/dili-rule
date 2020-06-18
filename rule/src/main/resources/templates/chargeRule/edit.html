@@ -67,15 +67,13 @@
                 <div id="ruleConditionDiv"></div>
             </div>
             <div class="breadcrumb">
-                计算指标
-                <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+                	计算指标<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
             <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParamInfo">
-
+  				<input type="text" id="expression" />
             </div>
             <div class="breadcrumb">
-                其它信息
-                <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+                	其它信息<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
             <div class="row  row-cols-4 collapse show" id="otherInfo">
                 <div class="form-group col-8">
@@ -93,5 +91,7 @@
     <%}%>
 </div>
 </#bs4Body>
+  <link rel="stylesheet" href="${contextPath}/resources/jquery-expression-builder/expression-builder.css" />
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2.js"></script>
 <#chargeRule_editJs />

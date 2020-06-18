@@ -9,7 +9,7 @@
     <result column="rule_id" jdbcType="BIGINT" property="ruleId" />
     <result column="label" jdbcType="VARCHAR" property="label" />
     <result column="matched_key" jdbcType="VARCHAR" property="matchedKey" />
-    <result column="condition_type" jdbcType="INTEGER" property="conditionType" />
+    <result column="match_type" jdbcType="INTEGER" property="matchType" />
     <result column="data_type" jdbcType="INTEGER" property="dataType" />
     <result column="definition_id" jdbcType="BIGINT" property="definitionId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -60,8 +60,8 @@
       <if test="matchedKey != null">
         matched_key = #{matchedKey,jdbcType=VARCHAR},
       </if>
-      <if test="conditionType != null">
-        condition_type = #{conditionType,jdbcType=INTEGER},
+      <if test="matchType != null">
+        match_type = #{matchType,jdbcType=INTEGER},
       </if>
       <if test="dataType != null">
         data_type = #{dataType,jdbcType=INTEGER},

@@ -90,11 +90,11 @@
                 	$.each(ret,function(){
 						var label=this.label;
 						var matchedKey=this.matchedKey;
-						$('#calcParamInfo').append('<a href="">'+label+'</a>')
+						//$('#calcParamInfo').append('<a href="javascript:void(0);">'+label+'('+matchedKey+')</a>')
                 	})
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    bs4pop.alert('获取规则条件失败', { type: 0 });
+                    bs4pop.alert('获取计算指标失败', { type: 0 });
                 }
             })
         }
@@ -110,7 +110,7 @@
         let definitionId = choice.data('definitionid');
         let title = '选择' + choice.data('label');
         let choiceType = choice.data('type');
-        if(choiceType=='conditionType'){
+        if(choiceType=='matchType'){
             dia = bs4pop.dialog({
                 title: title,
                 content: "${contextPath}/conditionDefinition/getConditionData.action?definitionId="+definitionId,

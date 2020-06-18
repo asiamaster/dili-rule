@@ -13,7 +13,7 @@ import java.util.Map;
  * @author yuehongbo
  * @date 2020/5/15 15:30
  */
-public enum ConditionTypeEnum {
+public enum MatchTypeEnum {
 
     /**
      * 等于
@@ -28,7 +28,7 @@ public enum ConditionTypeEnum {
      */
     IN(300,"包含"),
     ;
-    ConditionTypeEnum(Integer code,String desc) {
+    MatchTypeEnum(Integer code,String desc) {
         this.code=code;
         this.desc=desc;
     }
@@ -37,10 +37,10 @@ public enum ConditionTypeEnum {
     @Getter
     private String desc;
 
-    private static Map<Integer,ConditionTypeEnum> initMaps = Maps.newLinkedHashMap();
+    private static Map<Integer,MatchTypeEnum> initMaps = Maps.newLinkedHashMap();
 
     static {
-        for (ConditionTypeEnum anEnum : ConditionTypeEnum.values()){
+        for (MatchTypeEnum anEnum : MatchTypeEnum.values()){
             initMaps.put(anEnum.getCode(),anEnum);
         }
     }
@@ -49,7 +49,7 @@ public enum ConditionTypeEnum {
      * 获取转换后的map对象
      * @return
      */
-    public static Map<Integer, ConditionTypeEnum> getInitDataMaps() {
+    public static Map<Integer, MatchTypeEnum> getInitDataMaps() {
         return initMaps;
     }
 
@@ -58,7 +58,7 @@ public enum ConditionTypeEnum {
      * @param code
      * @return
      */
-    public static ConditionTypeEnum getInstance(Integer code) {
+    public static MatchTypeEnum getInstance(Integer code) {
         return initMaps.get(code);
     }
 

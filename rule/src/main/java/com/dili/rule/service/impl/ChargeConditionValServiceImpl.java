@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.*;
-import com.dili.rule.domain.enums.ConditionTypeEnum;
+import com.dili.rule.domain.enums.MatchTypeEnum;
 import com.dili.rule.domain.vo.ConditionDefinitionVo;
 import com.dili.rule.mapper.ChargeConditionValMapper;
 import com.dili.rule.service.ChargeConditionValService;
@@ -96,13 +96,13 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
             BeanUtils.copyProperties(conditionDefinition, vo);
             if (conditionValMap.containsKey(vo.getId())) {
                 ChargeConditionVal conditionVal = conditionValMap.get(vo.getId());
-                ConditionTypeEnum conditionType = ConditionTypeEnum.getInitDataMaps().get(conditionDefinition.getConditionType());
+                MatchTypeEnum matchType = MatchTypeEnum.getInitDataMaps().get(conditionDefinition.getMatchType());
                 JSONArray objects = JSON.parseArray(conditionVal.getVal());
-                if (conditionType == ConditionTypeEnum.EQUALS) {
+                if (matchType == MatchTypeEnum.EQUALS) {
                     vo.getValues().addAll(objects);
-                } else if (conditionType == ConditionTypeEnum.BETWEEN) {
+                } else if (matchType == MatchTypeEnum.BETWEEN) {
                     vo.getValues().addAll(objects);
-                } else if (conditionType == ConditionTypeEnum.IN) {
+                } else if (matchType == MatchTypeEnum.IN) {
                     vo.getValues().addAll(objects);
                     ConditionDataSource conditionDataSource = conditionDataSourceService.get(conditionDefinition.getDataSourceId());
                     String matchColumn = conditionDefinition.getMatchedColumn();

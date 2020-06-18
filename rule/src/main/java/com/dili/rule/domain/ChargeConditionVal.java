@@ -49,8 +49,8 @@ public class ChargeConditionVal extends BaseDomain {
     /**
      * 条件类型(大于,小于,等于)
      */
-    @Column(name = "`condition_type`")
-    private Integer conditionType;
+    @Column(name = "`match_type`")
+    private Integer matchType;
 
     /**
      * 值类型值类型(小数、整数等)
@@ -143,21 +143,17 @@ public class ChargeConditionVal extends BaseDomain {
         this.matchedKey = matchedKey;
     }
 
-    /**
-     * @return Integer return the conditionType
-     */
-    public Integer getConditionType() {
-        return conditionType;
-    }
 
-    /**
-     * @param conditionType the conditionType to set
-     */
-    public void setConditionType(Integer conditionType) {
-        this.conditionType = conditionType;
-    }
 
-    /**
+    public Integer getMatchType() {
+		return matchType;
+	}
+
+	public void setMatchType(Integer matchType) {
+		this.matchType = matchType;
+	}
+
+	/**
      * @return Integer return the dataType
      */
     public Integer getDataType() {

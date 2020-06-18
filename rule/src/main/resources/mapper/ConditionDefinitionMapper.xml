@@ -11,7 +11,7 @@
     <result column="business_type"  property="businessType" />
     <result column="label"  property="label" />
     <result column="matched_key"  property="matchedKey" />
-    <result column="condition_type"  property="conditionType" />
+    <result column="match_type"  property="matchType" />
     <result column="default_values"  property="defaultValues" />
     <result column="data_type"  property="dataType" />
     <result column="data_source_id"  property="dataSourceId" />
