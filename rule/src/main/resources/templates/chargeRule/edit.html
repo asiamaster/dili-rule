@@ -41,6 +41,10 @@
                     <label for="ruleName">规则名称<i class="red">*</i></label>
                     <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="30" value="${chargeRule.ruleName!}" required>
                 </div>
+                <div class="form-group col">
+                    <label for="groupId">分组<i class="red">*</i></label>
+                    <input type="" class="form-control" id="groupId" name="groupId" placeholder="" maxlength="30" value="${chargeRule.groupId!}" required>
+                </div>
                 <div class="form-group col-auto">
                     <label for="expireStart">有效期<i class="red">*</i></label>
                     <div class="form-inline">
@@ -71,8 +75,10 @@
             </div>
             <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParamInfo">
             	<div id="variableListDiv"></div>
-            	表达式:<div id="expressionDiv">
-            	<input type="text" id="expression" name="expression" autocomplete="off" />
+            	表达式:
+            	<input type="hidden" id="targetVal" name="targetVal"  autocomplete="off" value="${chargeRule.targetVal!}" />
+            	<div id="expressionDiv">
+            		<input type="text" name="expressionInput" data-target="#targetVal" class="expressionInput"  value="${chargeRule.targetVal!}" autocomplete="off" required="required"/>
             	</div>
   				
             </div>

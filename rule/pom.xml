@@ -113,6 +113,11 @@
 			<artifactId>p6spy-spring-boot-starter</artifactId>
 			<version>1.6.1</version>
 		</dependency>
+		<dependency>
+			<groupId>one.util</groupId>
+			<artifactId>streamex</artifactId>
+			<version>0.7.2</version>
+		</dependency>
         <!-- 内部包  -->
 
         <dependency>

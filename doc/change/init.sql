@@ -26,7 +26,7 @@ create table charge_rule
    expire_start         datetime comment '有效期起始',
    expire_end           datetime comment '有效期止',
    target_type          int comment '计算指标类型',
-   target_val           json comment '计算指标',
+   target_val           varchar(500) comment '计算指标',
    min_payment          decimal(8,2) comment '匹配到此规则时最低应支付的金额',
    max_payment          decimal(10,2) comment '匹配到此规则时最高支付金额',
    remark               varchar(50) comment '备注',
