@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <B></B>
@@ -34,7 +35,7 @@ public class ChargeRuleVo extends ChargeRule implements Serializable {
      * json格式
      */
     @Transient
-    private String conditions;
+    private List<ConditionVo> conditions;
     
 
     /**
@@ -51,18 +52,14 @@ public class ChargeRuleVo extends ChargeRule implements Serializable {
         this.conditionLabel = conditionLabel;
     }
 
-    /**
-     * @return String return the conditions
-     */
-    public String getConditions() {
-        return conditions;
-    }
+	public List<ConditionVo> getConditions() {
+		return conditions;
+	}
 
-    /**
-     * @param conditions the conditions to set
-     */
-    public void setConditions(String conditions) {
-        this.conditions = conditions;
-    }
+	public void setConditions(List<ConditionVo> conditions) {
+		this.conditions = conditions;
+	}
+
+
 
 }

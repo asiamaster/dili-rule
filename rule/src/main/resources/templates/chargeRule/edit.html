@@ -45,13 +45,13 @@
                     <label for="expireStart">有效期<i class="red">*</i></label>
                     <div class="form-inline">
                         <div class="input-group">
-                            <input type="text" name="expireStart" id="expireStart" class="form-control laydatetime laystart" value="${chargeRule.expireStart!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
+                            <input type="text" name="expireStart" id="expireStart"  autocomplete="off"  class="form-control laydatetime laystart" value="${chargeRule.expireStart!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
                             <div class="input-group-append">
                                 <label for="expireStart" class="input-group-text fa fa-calendar"></label>
                             </div>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group" id="datetimepicker3">
-                            <input type="text" name="expireEnd" id="expireEnd" class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
+                            <input type="text" name="expireEnd" id="expireEnd"  autocomplete="off"  class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
                             <div class="input-group-append">
                                 <label for="expireEnd" class="input-group-text fa fa-calendar"></label>
                             </div>
@@ -70,7 +70,11 @@
                 	计算指标<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
             <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParamInfo">
-  				<input type="text" id="expression" />
+            	<div id="variableListDiv"></div>
+            	表达式:<div id="expressionDiv">
+            	<input type="text" id="expression" name="expression" autocomplete="off" />
+            	</div>
+  				
             </div>
             <div class="breadcrumb">
                 	其它信息<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
@@ -94,4 +98,32 @@
   <link rel="stylesheet" href="${contextPath}/resources/jquery-expression-builder/expression-builder.css" />
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <#chargeRule_editJs />
+<script>
+$.prototype.tooltip = (function (tooltip) {
+	  return function (config) {
+	    try {
+	      return tooltip.call(this, config);
+	    } catch (ex) {
+	      if (ex instanceof TypeError && config === "destroy") {
+	        return tooltip.call(this, "dispose");
+	      }else if (ex instanceof TypeError && config === "fixTitle") {
+	    	  var $e = this
+	    	   if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
+	    		      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+	    		    }
+	    	  return this;
+	      }
+	    }
+	  };
+	})($.prototype.tooltip);
+	/*
+Tooltip.prototype.fixTitle = function () {
+    var $e = this.$element
+    if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
+      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+    }
+  }*/
+
+</script>

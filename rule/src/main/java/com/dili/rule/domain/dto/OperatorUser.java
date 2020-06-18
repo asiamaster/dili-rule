@@ -10,7 +10,7 @@ public class OperatorUser {
     public static OperatorUser build(SessionContext context) {
         UserTicket userTicket = context.getUserTicket();
         if(userTicket!=null){
-            new OperatorUser(userTicket.getId(), userTicket.getRealName());
+        	 return new OperatorUser(userTicket.getId(), userTicket.getRealName());
         }
         throw new IllegalArgumentException( "请先登录");
     }
@@ -18,7 +18,7 @@ public class OperatorUser {
     	if(SessionContext.getSessionContext()!=null) {
             UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
             if(userTicket!=null){
-                new OperatorUser(userTicket.getId(), userTicket.getRealName());
+                return new OperatorUser(userTicket.getId(), userTicket.getRealName());
             }
     	}
         throw new IllegalArgumentException("请先登录");

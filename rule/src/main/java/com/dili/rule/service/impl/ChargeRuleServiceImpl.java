@@ -8,6 +8,7 @@ import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.enums.RuleStateEnum;
 import com.dili.rule.domain.vo.ChargeRuleVo;
+import com.dili.rule.domain.vo.ConditionVo;
 import com.dili.rule.mapper.ChargeRuleMapper;
 import com.dili.rule.scheduler.ChargeRuleExpiresScheduler;
 import com.dili.rule.service.ChargeConditionValService;
@@ -70,6 +71,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         return new EasyuiPageOutput((int) total, results);
     }
 
+    @Transactional
     @Override
     public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo,OperatorUser operatorUser) {
         ChargeRule inputRuleInfo = new ChargeRule();
@@ -98,12 +100,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 //            // 设置空的默认值
 //            inputRuleInfo.setTarget("[]");
 //        }
-        BaseOutput<ChargeRule> msg = this.saveOrUpdateRuleInfo(inputRuleInfo,operatorUser);
-        if (!msg.isSuccess()) {
-            return msg;
-        }
-
-        ChargeRule temp = msg.getData();
+        ChargeRule temp = this.saveOrUpdateRuleInfo(inputRuleInfo,operatorUser);
 
         List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(temp, chargeRuleVo);
         // 如果是更新,则先删除原来的设置(如果是插入,下面的delByRuleId将导致死锁)
@@ -198,25 +195,21 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param inputRuleInfo
      * @return
      */
-    private BaseOutput<ChargeRule> saveOrUpdateRuleInfo(ChargeRule inputRuleInfo,OperatorUser operatorUser) {
+    private ChargeRule saveOrUpdateRuleInfo(ChargeRule inputRuleInfo,OperatorUser operatorUser) {
         if (null == inputRuleInfo.getId()) {
             if (this.isExistsSameRuleName(inputRuleInfo)) {
-                return BaseOutput.failure("已存在规则名称相同的记录");
+                throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             // 插入新的记录
             this.insertSelective(inputRuleInfo);
-            return BaseOutput.success().setData(inputRuleInfo);
+            return inputRuleInfo;
         } else {
             ChargeRule old = this.get(inputRuleInfo.getId());
             if (YesOrNoEnum.NO.getCode().equals(old.getRevisable())) {
-                return BaseOutput.failure("此规则已存在被修改的记录，暂时不能修改");
+            	throw new IllegalArgumentException("此规则已存在被修改的记录，暂时不能修改");
             }
             // 修改原记录的状态并新增一条 或者更新
-            BaseOutput<ChargeRule> msg = this.createRuleForRevisable(inputRuleInfo, old,operatorUser);
-            if (!msg.isSuccess()) {
-                return msg;
-            }
-            return msg;
+           return this.createRuleForRevisable(inputRuleInfo, old,operatorUser);
         }
     }
 
@@ -227,13 +220,13 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param old
      * @return
      */
-    private BaseOutput<ChargeRule> createRuleForRevisable(ChargeRule inputRuleInfo, ChargeRule old,OperatorUser operatorUser) {
+    private ChargeRule createRuleForRevisable(ChargeRule inputRuleInfo, ChargeRule old,OperatorUser operatorUser) {
         if (RuleStateEnum.ENABLED.getCode().equals(old.getState())) {
             inputRuleInfo.setOriginalId(old.getId());
             inputRuleInfo.setId(null);
 
             if (this.isExistsSameRuleName(inputRuleInfo)) {
-                return BaseOutput.failure("已存在规则名称相同的记录");
+            	throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             // 插入一条新的RuleInfo
             this.insertSelective(inputRuleInfo);
@@ -242,11 +235,11 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             this.updateRuleInfoWithExpire(old,operatorUser);
         } else {
             if (this.isExistsSameRuleName(inputRuleInfo)) {
-                return BaseOutput.failure("已存在规则名称相同的记录");
+            	throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             this.updateSelective(inputRuleInfo);
         }
-        return BaseOutput.success().setData(inputRuleInfo);
+        return inputRuleInfo;
     }
 
 
@@ -289,35 +282,17 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @return
      */
     private List<ChargeConditionVal> parseRuleConditionVal(ChargeRule rule, ChargeRuleVo vo) {
-        String conditions = vo.getConditions();
+    	List<ConditionVo> conditions = vo.getConditions();
         // 需要保存的规则条件信息
-        JSONObject jsonObject = new JSONObject();
-        if (StringUtils.isNotBlank(conditions)) {
-            jsonObject.putAll(JSONObject.parseObject(conditions));
-        }
-        List<ChargeConditionVal> ruleConditionVals = jsonObject.entrySet().stream().map((e) -> {
+        List<ChargeConditionVal> ruleConditionVals = conditions.stream().map((c) -> {
             // 获得对应的ConditionDefinition并进行数据格式校验
-            String k = e.getKey();
-            String val = String.valueOf(e.getValue());
-            String[] arrs = k.split("_");
-            Long definitionId = Long.valueOf(arrs[0]);
+            Long definitionId = c.getDefinitionId();
             ConditionDefinition definition = conditionDefinitionService.get(definitionId);
             if (definition == null) {
                 throw new IllegalArgumentException("条件指标参数不正确");
             }
-            try {
-                JSONObject.parseArray(val);
-            } catch (Exception ex) {
-                throw new IllegalArgumentException("条件指标[" + definition.getLabel() + "]数据格式不正确");
-            }
-
-            MutablePair<ConditionDefinition, String> p = new MutablePair<>(definition, val);
-            return p;
-
-        }).map((p) -> {
             // 转换为RuleConditionVal对象
-            ConditionDefinition definition = p.getKey();
-            String val = p.getValue();
+            String val = JSONObject.toJSONString(c.getMatchedValues());
             ChargeConditionVal conditionValItem = new ChargeConditionVal();
             conditionValItem.setRuleId(rule.getId());
             conditionValItem.setLabel(definition.getLabel());

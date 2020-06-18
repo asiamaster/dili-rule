@@ -391,7 +391,7 @@ jQuery.fn.extend({
                 var index = parseInt(suggestions.attr('data-index')), divs = suggestions.find('div.exp-suggestion-item'), isUp = e.key == 'Up' || e.key == 'ArrowUp';
                 if (divs.length == 0)
                     return;
-                if (isUp && index == 0 || !isUp && divs.size() == index + 1)
+                if (isUp && index == 0 || !isUp && divs.length == index + 1)
                     return;
                 index = isUp ? index - 1 : index + 1;
                 suggestions.attr('data-index', index);
@@ -672,13 +672,13 @@ jQuery.fn.extend({
             if (v == '') {
                 notificaiton.parent().removeClass('invalid').addClass('valid');
                 notificaiton.removeAttr('title');
-                notificaiton.tooltip('destroy');
+                //notificaiton.tooltip('destroy');
                 return true;
             }
             //console.warn("exp.js validation: " + v);
             notificaiton.parent().addClass('invalid').removeClass('valid');
             notificaiton.attr('title', v);
-            notificaiton.tooltip('fixTitle');
+            //notificaiton.tooltip('fixTitle');
             return false;
         }
         function setCursorPosition(position) {
