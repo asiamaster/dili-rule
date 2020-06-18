@@ -288,8 +288,7 @@
             let id = $('#id').val();
             let url = '${contextPath}/chargeRule/save.action';
             let data=buildData();
-            console.info(data);
-            debugger
+            //console.info(data);
             $.ajax({
                 type: "POST",
                 dataType: "json",
@@ -298,7 +297,7 @@
                 url: url,
                 success: function (ret) {
                     if (ret.success) {
-                        bs4pop.notice('操作成功', {type: 'danger', position: 'center'})
+                        bs4pop.notice('操作成功', {type: 'info', position: 'center'})
                         window.location.href = document.referrer;
                     } else {
                         bs4pop.notice(ret.message, {type: 'danger', position: 'center'})
