@@ -131,7 +131,11 @@
                 	$('.expressionInput').on('input',function(){
                 		var target=$(this).data('target');
                 		if(expBuilder.isValid()==true){
-                			$(target).val(expBuilder.getExpression());
+                			var inputExpression=expBuilder.getInput();
+                			$.each(options.variables,function(){
+                				inputExpression=inputExpression.replace(new RegExp(this.name,'g'),"["+this.variableId+"]");
+                        	});
+                			$(target).val(inputExpression);
                 		}else{
                 			$(target).val("");
                 		}
@@ -288,7 +292,7 @@
             let id = $('#id').val();
             let url = '${contextPath}/chargeRule/save.action';
             let data=buildData();
-            //console.info(data);
+            console.info(data);
             $.ajax({
                 type: "POST",
                 dataType: "json",
