@@ -86,11 +86,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency> -->
-        <dependency>
+<!--         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
@@ -118,6 +118,11 @@
 			<artifactId>streamex</artifactId>
 			<version>0.7.2</version>
 		</dependency>
+		<dependency>
+	        <groupId>com.udojava</groupId>
+	        <artifactId>EvalEx</artifactId>
+	        <version>2.5</version>
+    	</dependency>
         <!-- 内部包  -->
 
         <dependency>

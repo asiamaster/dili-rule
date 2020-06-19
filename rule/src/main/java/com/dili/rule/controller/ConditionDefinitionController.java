@@ -31,15 +31,12 @@ import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * 由MyBatis Generator工具自动生成
  * This file was generated on 2020-05-13 11:23:41.
  */
 @Controller
 @RequestMapping("/conditionDefinition")
-@Slf4j
 public class ConditionDefinitionController {
 	private static final Logger log=LoggerFactory.getLogger(ConditionDefinitionController.class);
     @Autowired

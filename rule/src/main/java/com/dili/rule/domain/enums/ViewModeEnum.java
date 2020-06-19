@@ -1,9 +1,8 @@
 package com.dili.rule.domain.enums;
 
-import com.google.common.collect.Maps;
-import lombok.Getter;
-
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * <B></B> <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其研发团队所有,未经许可不得任意复制与传播.</B>
@@ -21,9 +20,7 @@ public enum ViewModeEnum {
         this.desc = desc;
     }
 
-    @Getter
     private Integer code;
-    @Getter
     private String desc;
 
     private static Map<Integer, ViewModeEnum> initMaps = Maps.newLinkedHashMap();
@@ -67,11 +64,6 @@ public enum ViewModeEnum {
         return desc;
     }
 
-    /**
-     * @param desc the desc to set
-     */
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
+
 
 }

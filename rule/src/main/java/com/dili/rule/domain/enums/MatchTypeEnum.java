@@ -1,9 +1,8 @@
 package com.dili.rule.domain.enums;
 
-import com.google.common.collect.Maps;
-import lombok.Getter;
-
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * <B>条件类型枚举定义</B>
@@ -32,9 +31,7 @@ public enum MatchTypeEnum {
         this.code=code;
         this.desc=desc;
     }
-    @Getter
     private Integer code;
-    @Getter
     private String desc;
 
     private static Map<Integer,MatchTypeEnum> initMaps = Maps.newLinkedHashMap();
@@ -69,12 +66,7 @@ public enum MatchTypeEnum {
         return code;
     }
 
-    /**
-     * @param code the code to set
-     */
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+
 
     /**
      * @return the desc
@@ -83,11 +75,6 @@ public enum MatchTypeEnum {
         return desc;
     }
 
-    /**
-     * @param desc the desc to set
-     */
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
+
     
 }

@@ -28,7 +28,6 @@ import com.google.common.collect.Maps;
 
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <B></B>
@@ -39,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/5/20 11:39
  */
 @Service
-@Slf4j
 public class RemoteDataQueryService {
 	private static final Logger log=LoggerFactory.getLogger(RemoteDataQueryService.class);
     /**

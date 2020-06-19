@@ -1,16 +1,16 @@
 package com.dili.rule.controller;
 
-import com.dili.assets.sdk.dto.BusinessChargeItemDto;
-import com.dili.rule.service.remote.BusinessChargeItemRpcService;
-import com.dili.ss.domain.BaseOutput;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-import java.util.Objects;
+import com.dili.assets.sdk.dto.BusinessChargeItemDto;
+import com.dili.rule.service.remote.BusinessChargeItemRpcService;
+import com.dili.ss.domain.BaseOutput;
 
 /**
  * <B>公共信息服务控制层</B>
@@ -22,7 +22,6 @@ import java.util.Objects;
  */
 @Controller
 @RequestMapping(value = "/commonInfo")
-@Slf4j
 public class CommonInfoController {
 
     @Autowired

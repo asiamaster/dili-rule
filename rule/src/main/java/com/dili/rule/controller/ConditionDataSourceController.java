@@ -21,8 +21,6 @@ import com.dili.rule.service.ConditionDataSourceService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * 数据源管理控制层
  * 由MyBatis Generator工具自动生成
@@ -30,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Controller
 @RequestMapping("/conditionDataSource")
-@Slf4j
 public class ConditionDataSourceController {
 	private static final Logger log=LoggerFactory.getLogger(ConditionDataSourceController.class);
     @Autowired

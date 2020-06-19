@@ -1,17 +1,9 @@
 package com.dili.rule.controller;
 
-import com.dili.rule.domain.ChargeRule;
-import com.dili.rule.domain.ConditionDefinition;
-import com.dili.rule.domain.dto.OperatorUser;
-import com.dili.rule.domain.vo.ChargeRuleVo;
-import com.dili.rule.service.ChargeConditionValService;
-import com.dili.rule.service.ChargeRuleService;
-import com.dili.rule.service.remote.MarketRpcService;
-import com.dili.ss.domain.BaseOutput;
-import com.dili.ss.domain.EasyuiPageOutput;
-import com.dili.uap.sdk.domain.DataDictionaryValue;
-import com.dili.uap.sdk.rpc.DataDictionaryRpc;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.dto.OperatorUser;
+import com.dili.rule.domain.vo.ChargeRuleVo;
+import com.dili.rule.service.ChargeConditionValService;
+import com.dili.rule.service.ChargeRuleService;
+import com.dili.rule.service.remote.MarketRpcService;
+import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.uap.sdk.domain.DataDictionaryValue;
+import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 
 /**
  * <B></B>
@@ -38,7 +37,6 @@ import java.util.Objects;
  */
 @Controller
 @RequestMapping("/chargeRule")
-@Slf4j
 public class ChargeRuleController {
 	private static final Logger log=LoggerFactory.getLogger(ChargeRuleController.class);
 

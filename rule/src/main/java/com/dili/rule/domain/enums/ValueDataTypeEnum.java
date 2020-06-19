@@ -1,9 +1,8 @@
 package com.dili.rule.domain.enums;
 
-import com.google.common.collect.Maps;
-import lombok.Getter;
-
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * <B></B>
@@ -41,9 +40,7 @@ public enum ValueDataTypeEnum {
         this.code = code;
         this.desc = desc;
     }
-    @Getter
     private Integer code;
-    @Getter
     private String desc;
 
 

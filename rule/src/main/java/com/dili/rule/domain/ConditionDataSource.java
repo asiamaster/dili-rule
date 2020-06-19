@@ -1,25 +1,25 @@
 package com.dili.rule.domain;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.ss.domain.BaseDomain;
 import com.dili.ss.domain.annotation.Like;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 
 /**
  * 由MyBatis Generator工具自动生成
  * 预定义数据源
  * This file was generated on 2020-05-13 11:19:20.
  */
-@Getter
-@Setter
-@ToString(callSuper = true)
 @Table(name = "`condition_data_source`")
 public class ConditionDataSource extends BaseDomain {
     /**
@@ -168,6 +168,13 @@ public class ConditionDataSource extends BaseDomain {
 
 	public void setDataJson(String dataJson) {
 		this.dataJson = dataJson;
+	}
+
+	@Override
+	public String toString() {
+		return "ConditionDataSource [id=" + id + ", name=" + name + ", queryUrl=" + queryUrl + ", keysUrl=" + keysUrl
+				+ ", keysField=" + keysField + ", dataSourceType=" + dataSourceType + ", paged=" + paged
+				+ ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", dataJson=" + dataJson + "]";
 	}
 
 }

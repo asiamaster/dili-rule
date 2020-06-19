@@ -1,23 +1,23 @@
 package com.dili.rule.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.dili.ss.domain.BaseDomain;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.dili.ss.domain.BaseDomain;
 
 /**
  * 由MyBatis Generator工具自动生成
  * 规则条件预定义
  * This file was generated on 2020-05-13 11:23:41.
  */
-@Getter
-@Setter
-@ToString(callSuper = true)
 @Table(name = "`condition_definition`")
 public class ConditionDefinition extends BaseDomain {
     /**
@@ -332,6 +332,16 @@ public class ConditionDefinition extends BaseDomain {
 
 	public void setIsVariable(Integer isVariable) {
 		this.isVariable = isVariable;
+	}
+
+	@Override
+	public String toString() {
+		return "ConditionDefinition [id=" + id + ", marketId=" + marketId + ", businessType=" + businessType
+				+ ", label=" + label + ", matchedKey=" + matchedKey + ", matchType=" + matchType + ", defaultValues="
+				+ defaultValues + ", dataType=" + dataType + ", dataSourceId=" + dataSourceId + ", matchedColumn="
+				+ matchedColumn + ", viewMode=" + viewMode + ", dataTargetId=" + dataTargetId + ", ruleCondition="
+				+ ruleCondition + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", isVariable="
+				+ isVariable + "]";
 	}
 
 }

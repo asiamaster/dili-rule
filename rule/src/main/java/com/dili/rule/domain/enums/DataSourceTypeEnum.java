@@ -1,9 +1,8 @@
 package com.dili.rule.domain.enums;
 
-import com.google.common.collect.Maps;
-import lombok.Getter;
-
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * <B></B>
@@ -24,9 +23,7 @@ public enum DataSourceTypeEnum {
      */
     REMOTE("remote","远程数据"),
     ;
-    @Getter
     private String code;
-    @Getter
     private String desc;
 
     DataSourceTypeEnum(String code,String desc) {
@@ -72,13 +69,6 @@ public enum DataSourceTypeEnum {
      */
     public String getDesc() {
         return desc;
-    }
-
-    /**
-     * @param desc the desc to set
-     */
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
 }

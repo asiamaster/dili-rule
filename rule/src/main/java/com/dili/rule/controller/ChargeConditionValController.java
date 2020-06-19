@@ -1,10 +1,10 @@
 package com.dili.rule.controller;
 
-import com.dili.rule.service.ChargeConditionValService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.dili.rule.service.ChargeConditionValService;
 
 /**
  * <B></B>
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/chargeConditionVal")
-@Slf4j
 public class ChargeConditionValController {
 
     @Autowired

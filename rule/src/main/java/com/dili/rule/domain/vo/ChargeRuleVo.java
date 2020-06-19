@@ -1,13 +1,11 @@
 package com.dili.rule.domain.vo;
 
-import com.dili.rule.domain.ChargeRule;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.Transient;
+
+import com.dili.rule.domain.ChargeRule;
 
 /**
  * <B></B>
@@ -17,9 +15,6 @@ import java.util.List;
  * @author yuehongbo
  * @date 2020/5/18 16:59
  */
-@Getter
-@Setter
-@ToString(callSuper = true)
 public class ChargeRuleVo extends ChargeRule implements Serializable {
 
     @Transient

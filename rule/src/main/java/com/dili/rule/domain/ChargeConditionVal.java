@@ -1,23 +1,23 @@
 package com.dili.rule.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.dili.ss.domain.BaseDomain;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.dili.ss.domain.BaseDomain;
 
 /**
  * 由MyBatis Generator工具自动生成
  * 条件值
  * This file was generated on 2020-05-16 17:55:31.
  */
-@Getter
-@Setter
-@ToString(callSuper = true)
 @Table(name = "`charge_condition_val`")
 public class ChargeConditionVal extends BaseDomain {
     /**
@@ -222,5 +222,12 @@ public class ChargeConditionVal extends BaseDomain {
     public void setVal(String val) {
         this.val = val;
     }
+
+	@Override
+	public String toString() {
+		return "ChargeConditionVal [id=" + id + ", ruleId=" + ruleId + ", label=" + label + ", matchedKey=" + matchedKey
+				+ ", matchType=" + matchType + ", dataType=" + dataType + ", definitionId=" + definitionId
+				+ ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", val=" + val + "]";
+	}
 
 }

@@ -1,11 +1,9 @@
 package com.dili.rule.domain.vo;
 
-import com.dili.rule.domain.ConditionDefinition;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dili.rule.domain.ConditionDefinition;
 
 /**
  * <B></B>
@@ -15,8 +13,6 @@ import java.util.List;
  * @author yuehongbo
  * @date 2020/5/20 11:28
  */
-@Getter
-@Setter
 public class ConditionDefinitionVo extends ConditionDefinition {
 
     /**

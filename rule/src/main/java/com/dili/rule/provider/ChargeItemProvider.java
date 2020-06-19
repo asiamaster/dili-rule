@@ -1,6 +1,13 @@
 package com.dili.rule.provider;
 
-import cn.hutool.core.collection.CollectionUtil;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.dili.assets.sdk.dto.BusinessChargeItemDto;
 import com.dili.assets.sdk.rpc.BusinessChargeItemRpc;
 import com.dili.ss.domain.BaseOutput;
@@ -9,14 +16,8 @@ import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * <B></B>
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
  * @author yuehongbo
  * @date 2020/6/6 16:34
  */
-@Slf4j
 @Component
 public class ChargeItemProvider extends BatchDisplayTextProviderSupport {
 

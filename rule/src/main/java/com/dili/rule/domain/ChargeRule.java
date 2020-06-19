@@ -1,28 +1,29 @@
 package com.dili.rule.domain;
 
-import cn.hutool.core.date.CalendarUtil;
-import cn.hutool.core.date.DateUtil;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.dili.ss.domain.BaseDomain;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.dili.ss.domain.BaseDomain;
+
+import cn.hutool.core.date.DateUtil;
 
 /**
  * 由MyBatis Generator工具自动生成
  * 规则
  * This file was generated on 2020-05-16 17:51:56.
  */
-@Getter
-@Setter
-@ToString(callSuper = true)
 @Table(name = "`charge_rule`")
 public class ChargeRule extends BaseDomain implements Serializable {
 
@@ -566,5 +567,18 @@ public class ChargeRule extends BaseDomain implements Serializable {
     public LocalDateTime getExpireEnd() {
         return expireEnd;
     }
+
+
+	@Override
+	public String toString() {
+		return "ChargeRule [id=" + id + ", originalId=" + originalId + ", code=" + code + ", marketId=" + marketId
+				+ ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem
+				+ ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart="
+				+ expireStart + ", expireEnd=" + expireEnd + ", targetType=" + targetType + ", minPayment=" + minPayment
+				+ ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId="
+				+ operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime="
+				+ modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime="
+				+ approvalTime + ", targetVal=" + targetVal + ", expireValue=" + expireValue + "]";
+	}
 
 }

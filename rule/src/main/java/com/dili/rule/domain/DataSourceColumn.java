@@ -1,26 +1,23 @@
 package com.dili.rule.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.dili.ss.domain.BaseDomain;
-import com.dili.ss.metadata.FieldEditor;
-import com.dili.ss.metadata.annotation.EditMode;
-import com.dili.ss.metadata.annotation.FieldDef;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
-import javax.persistence.*;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.dili.ss.domain.BaseDomain;
 
 /**
  * 由MyBatis Generator工具自动生成
  * 数据来源的属性列
  * This file was generated on 2020-05-13 11:19:57.
  */
-@Getter
-@Setter
-@ToString(callSuper = true)
 @Table(name = "`data_source_column`")
 public class DataSourceColumn extends BaseDomain {
     /**
@@ -209,5 +206,12 @@ public class DataSourceColumn extends BaseDomain {
     public void setModifyTime(LocalDateTime modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+	@Override
+	public String toString() {
+		return "DataSourceColumn [id=" + id + ", dataSourceId=" + dataSourceId + ", columnCode=" + columnCode
+				+ ", columnName=" + columnName + ", columnIndex=" + columnIndex + ", display=" + display + ", visible="
+				+ visible + ", createTime=" + createTime + ", modifyTime=" + modifyTime + "]";
+	}
 
 }
