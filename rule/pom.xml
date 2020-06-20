@@ -1,103 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.dili</groupId>
-    <artifactId>rule</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>rule</name>
-    <description>规则</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.dili</groupId>
+	<artifactId>rule</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>rule</name>
+	<description>规则</description>
 
-    <!-- 父工程定义 -->
-    <parent>
-        <artifactId>dili-rule</artifactId>
-        <groupId>com.dili</groupId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
+	<!-- 父工程定义 -->
+	<parent>
+		<artifactId>dili-rule</artifactId>
+		<groupId>com.dili</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>13</java.version>
-        <maven.test.skip>true</maven.test.skip>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>13</java.version>
+		<maven.test.skip>true</maven.test.skip>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-        <!--  模板路径  -->
-        <templateRootDir>${basedir}/mbg-templates</templateRootDir>
-        <projectdir>${basedir}</projectdir>
-        <!--  XML生成路径  -->
-        <targetResourcesProject>${basedir}/src/main/resources</targetResourcesProject>
-        <targetXMLPackage>mapper</targetXMLPackage>
-        <!--  Java接口和实体类  -->
-        <targetJavaProject>${basedir}/src/main/java</targetJavaProject>
-        <targetMapperPackage>com.dili.rule.mapper</targetMapperPackage>
-        <targetModelPackage>com.dili.rule.domain</targetModelPackage>
-        <targetServicePackage>com.dili.rule.service</targetServicePackage>
-        <targetControllerPackage>com.dili.rule.controller</targetControllerPackage>
+		<!-- 模板路径 -->
+		<templateRootDir>${basedir}/mbg-templates</templateRootDir>
+		<projectdir>${basedir}</projectdir>
+		<!-- XML生成路径 -->
+		<targetResourcesProject>${basedir}/src/main/resources</targetResourcesProject>
+		<targetXMLPackage>mapper</targetXMLPackage>
+		<!-- Java接口和实体类 -->
+		<targetJavaProject>${basedir}/src/main/java</targetJavaProject>
+		<targetMapperPackage>com.dili.rule.mapper</targetMapperPackage>
+		<targetModelPackage>com.dili.rule.domain</targetModelPackage>
+		<targetServicePackage>com.dili.rule.service</targetServicePackage>
+		<targetControllerPackage>com.dili.rule.controller</targetControllerPackage>
 
-    </properties>
+	</properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-            <version>2.2.0.RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba</groupId>
-                    <artifactId>fastjson</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <version>2.2.0.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+			<version>2.2.0.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.alibaba</groupId>
+					<artifactId>fastjson</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+			<version>2.2.0.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+		</dependency>
 
-<!--         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency> -->
-<!--         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency> -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.3.7</version>
-        </dependency>
-        
-        		<dependency>
+		<!-- <dependency> <groupId>junit</groupId> <artifactId>junit</artifactId> 
+			<scope>test</scope> </dependency> -->
+		<!-- <dependency> <groupId>org.projectlombok</groupId> <artifactId>lombok</artifactId> 
+			<optional>true</optional> </dependency> -->
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+			<version>5.3.7</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.github.gavlyukovskiy</groupId>
 			<artifactId>flexy-pool-spring-boot-starter</artifactId>
 			<version>1.6.1</version>
@@ -119,103 +114,103 @@
 			<version>0.7.2</version>
 		</dependency>
 		<dependency>
-	        <groupId>com.udojava</groupId>
-	        <artifactId>EvalEx</artifactId>
-	        <version>2.5</version>
-    	</dependency>
-        <!-- 内部包  -->
+			<groupId>com.udojava</groupId>
+			<artifactId>EvalEx</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<!-- 内部包 -->
 
-        <dependency>
-            <groupId>com.dili</groupId>
-            <artifactId>logger-sdk</artifactId>
-            <version>${logger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dili</groupId>
-            <artifactId>ss-uid</artifactId>
-            <version>${sharp-sword.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dili</groupId>
-            <artifactId>ss-processor</artifactId>
-            <version>${sharp-sword.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun</groupId>
-                    <artifactId>tools</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.dili</groupId>
-                    <artifactId>ss-core</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.dili</groupId>
-            <artifactId>commons-web</artifactId>
-            <version>1.3.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dili</groupId>
-            <artifactId>commons-server</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dili</groupId>
-            <artifactId>assets-sdk</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dili</groupId>
-            <artifactId>uap-sdk</artifactId>
-            <version>2.8.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>logger-sdk</artifactId>
+			<version>${logger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>ss-uid</artifactId>
+			<version>${sharp-sword.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>ss-processor</artifactId>
+			<version>${sharp-sword.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun</groupId>
+					<artifactId>tools</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.dili</groupId>
+					<artifactId>ss-core</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>commons-web</artifactId>
+			<version>1.3.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>commons-server</artifactId>
+			<version>1.3.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>assets-sdk</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dili</groupId>
+			<artifactId>uap-sdk</artifactId>
+			<version>2.8.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 
-    <build>
-        <finalName>dili-rule</finalName>
-        <!-- 资源文件过滤 -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <plugins>
+	<build>
+		<finalName>dili-rule</finalName>
+		<!-- 资源文件过滤 -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <!-- 编译JDK版本 -->
-                <configuration>
-                    <source>13</source>
-                    <target>13</target>
-                    <encoding>UTF-8</encoding>
-                    <parameters>true</parameters>
-                    <compilerArgs>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.2.2.RELEASE</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<!-- 编译JDK版本 -->
+				<configuration>
+					<source>13</source>
+					<target>13</target>
+					<encoding>UTF-8</encoding>
+					<parameters>true</parameters>
+					<compilerArgs>
+						<arg>--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+						<arg>--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+						<arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+						<arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+						<arg>--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.2.2.RELEASE</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
