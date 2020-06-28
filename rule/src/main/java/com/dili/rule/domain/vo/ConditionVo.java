@@ -5,7 +5,7 @@ import java.util.List;
 public class ConditionVo {
 	private Long definitionId;
 	private String matchKey;
-	private List<String>matchedValues;
+	private List<String>matchValues;
 
 	public Long getDefinitionId() {
 		return definitionId;
@@ -19,11 +19,11 @@ public class ConditionVo {
 	public void setMatchKey(String matchKey) {
 		this.matchKey = matchKey;
 	}
-	public List<String> getMatchedValues() {
-		return matchedValues;
+	public List<String> getMatchValues() {
+		return matchValues;
 	}
-	public void setMatchedValues(List<String> matchedValues) {
-		this.matchedValues = matchedValues;
+	public void setMatchValues(List<String> matchValues) {
+		this.matchValues = matchValues;
 	}
 	
 

@@ -10,8 +10,8 @@
                 <input type="text" class="form-control" id="label" name="label" maxlength="20" value="${conditionDefinition.label!}" required placeholder="用于显示的label" />
             </div>
             <div class="form-group col">
-                <label for="matchedKey" class="">匹配Key<i class="red">*</i></label>
-                <input type="text" class="form-control" id="matchedKey" name="matchedKey" maxlength="20" value="${conditionDefinition.matchedKey!}" required />
+                <label for="matchKey" class="">匹配Key<i class="red">*</i></label>
+                <input type="text" class="form-control" id="matchKey" name="matchKey" maxlength="20" value="${conditionDefinition.matchKey!}" required />
             </div>
             <div class="form-group col">
                 <label for="matchType" class="">条件类型<i class="red">*</i></label>
@@ -72,8 +72,8 @@
     $(function () {
         let dataSourceId = $('#oldDataSourceId').val();
         getDataSourceInfo(dataSourceId);
-        let matchedColumn = $('#oldMatchedColumn').val();
-        getMatchedColumn(matchedColumn);
+        let matchColumn = $('#oldMatchColumn').val();
+        getMatchColumn(matchColumn);
     });
 
 </script>

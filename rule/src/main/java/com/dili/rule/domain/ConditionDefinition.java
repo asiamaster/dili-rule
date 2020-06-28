@@ -49,8 +49,8 @@ public class ConditionDefinition extends BaseDomain {
     /**
      * 条件定义key值(关联匹配字段)
      */
-    @Column(name = "`matched_key`")
-    private String matchedKey;
+    @Column(name = "`match_key`")
+    private String matchKey;
 
     /**
      * 条件类型(大于,小于,等于),具体参考MatchTypeEnum
@@ -71,6 +71,12 @@ public class ConditionDefinition extends BaseDomain {
     private Integer dataType;
 
     /**
+     * 是否是计算指标
+     */
+    @Column(name = "`is_variable`")
+    private Integer isVariable;
+
+    /**
      * 数据来源ID(用于设置规则时，通过什么方法获取数据)
      */
     @Column(name = "`data_source_id`")
@@ -79,8 +85,8 @@ public class ConditionDefinition extends BaseDomain {
     /**
      * 匹配数据源中的某列值
      */
-    @Column(name = "`matched_column`")
-    private String matchedColumn;
+    @Column(name = "`match_column`")
+    private String matchColumn;
 
     /**
      * 来源数据显示方法
@@ -116,12 +122,6 @@ public class ConditionDefinition extends BaseDomain {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifyTime;
 
-
-    /**
-     * 是否是计算指标 
-     */
-    @Column(name = "`is_variable`")
-    private Integer isVariable;
 
     /**
      * @param id the id to set
@@ -173,20 +173,18 @@ public class ConditionDefinition extends BaseDomain {
     }
 
     /**
-     * @return String return the matchedKey
+     * @return String return the matchKey
      */
-    public String getMatchedKey() {
-        return matchedKey;
+    public String getMatchKey() {
+        return matchKey;
     }
 
     /**
-     * @param matchedKey the matchedKey to set
+     * @param matchKey the matchKey to set
      */
-    public void setMatchedKey(String matchedKey) {
-        this.matchedKey = matchedKey;
+    public void setMatchKey(String matchKey) {
+        this.matchKey = matchKey;
     }
-
-
 
     public Integer getMatchType() {
 		return matchType;
@@ -239,17 +237,17 @@ public class ConditionDefinition extends BaseDomain {
     }
 
     /**
-     * @return String return the matchedColumn
+     * @return String return the matchColumn
      */
-    public String getMatchedColumn() {
-        return matchedColumn;
+    public String getMatchColumn() {
+        return matchColumn;
     }
 
     /**
-     * @param matchedColumn the matchedColumn to set
+     * @param matchColumn the matchColumn to set
      */
-    public void setMatchedColumn(String matchedColumn) {
-        this.matchedColumn = matchedColumn;
+    public void setMatchColumn(String matchColumn) {
+        this.matchColumn = matchColumn;
     }
 
     /**
@@ -337,9 +335,9 @@ public class ConditionDefinition extends BaseDomain {
 	@Override
 	public String toString() {
 		return "ConditionDefinition [id=" + id + ", marketId=" + marketId + ", businessType=" + businessType
-				+ ", label=" + label + ", matchedKey=" + matchedKey + ", matchType=" + matchType + ", defaultValues="
-				+ defaultValues + ", dataType=" + dataType + ", dataSourceId=" + dataSourceId + ", matchedColumn="
-				+ matchedColumn + ", viewMode=" + viewMode + ", dataTargetId=" + dataTargetId + ", ruleCondition="
+				+ ", label=" + label + ", matchKey=" + matchKey + ", matchType=" + matchType + ", defaultValues="
+				+ defaultValues + ", dataType=" + dataType + ", dataSourceId=" + dataSourceId + ", matchColumn="
+				+ matchColumn + ", viewMode=" + viewMode + ", dataTargetId=" + dataTargetId + ", ruleCondition="
 				+ ruleCondition + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", isVariable="
 				+ isVariable + "]";
 	}

@@ -19,8 +19,8 @@
                 <input type="text" class="form-control" id="label" name="label" maxlength="20" value="${conditionDefinition.label!}" required placeholder="用于显示的label" />
             </div>
             <div class="form-group col">
-                <label for="matchedKey" class="">匹配Key<i class="red">*</i></label>
-                <input type="text" class="form-control" id="matchedKey" name="matchedKey" maxlength="20" value="${conditionDefinition.matchedKey!}" required />
+                <label for="matchKey" class="">匹配Key<i class="red">*</i></label>
+                <input type="text" class="form-control" id="matchKey" name="matchKey" maxlength="20" value="${conditionDefinition.matchKey!}" required />
             </div>
             <div class="form-group col">
                 <label for="isVariable" class="">是否计算指标<i class="red">*</i></label>
@@ -50,9 +50,9 @@
                 </select>
             </div>
             <div class="form-group col">
-                <input type="hidden" id="oldMatchedColumn" value="${conditionDefinition.matchedColumn!}">
-                <label for="matchedColumn">匹配列</label>
-                <select class="form-control" id="matchedColumn" name="matchedColumn" title="设置需要保存数据来源中的哪一列的值">
+                <input type="hidden" id="oldMatchColumn" value="${conditionDefinition.matchColumn!}">
+                <label for="matchColumn">匹配列</label>
+                <select class="form-control" id="matchColumn" name="matchColumn" title="设置需要保存数据来源中的哪一列的值">
                     <option value="">--请选择--</option>
                 </select>
             </div>
@@ -103,15 +103,15 @@
      * 数据源改变事件处理
      */
     $('#dataSourceId').on('change', function(){
-        getMatchedColumn();
+        getMatchColumn();
     });
 
     /**
      * 获取数据列信息
      */
-    function getMatchedColumn(defaultValue) {
+    function getMatchColumn(defaultValue) {
         let dataSourceId = $('#dataSourceId').val();
-        $('#matchedColumn').empty();
+        $('#matchColumn').empty();
         let data = ["<option value=''>--请选择--</option>"];
         if (dataSourceId) {
             $.ajax({
@@ -135,10 +135,10 @@
                 }
             });
         }
-        $('#matchedColumn').html(data.join(''));
+        $('#matchColumn').html(data.join(''));
     }
 	$('select[name="isVariable"]').change(function(){
-		var elList=$('select[name="matchType"],select[name="dataSourceId"],select[name="matchedColumn"],select[name="viewMode"]');
+		var elList=$('select[name="matchType"],select[name="dataSourceId"],select[name="matchColumn"],select[name="viewMode"]');
 		
 		var isVariable=$(this).val();
 		if(isVariable==null){
@@ -165,13 +165,13 @@
         } else {
             let dataSourceId = $('#dataSourceId').val();
             let viewMode = $('#viewMode').val();
-            let matchedColumn = $('#matchedColumn').val();
+            let matchColumn = $('#matchColumn').val();
             if (null != dataSourceId && '' != dataSourceId) {
                 if (!viewMode) {
                     bs4pop.alert("数据来源不为空时，[显示方式]必选", {type: 'error',width: 400});
                     return;
                 }
-                if (!matchedColumn) {
+                if (!matchColumn) {
                     bs4pop.alert("数据来源不为空时，[匹配列]必选", {type: 'error',width: 400});
                     return;
                 }
@@ -203,8 +203,8 @@
     $(function () {
         let dataSourceId = $('#oldDataSourceId').val();
         getDataSourceInfo(dataSourceId);
-        let matchedColumn = $('#oldMatchedColumn').val();
-        getMatchedColumn(matchedColumn);
+        let matchColumn = $('#oldMatchColumn').val();
+        getMatchColumn(matchColumn);
     });
 
 </script>

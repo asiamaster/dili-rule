@@ -105,7 +105,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                 } else if (matchType == MatchTypeEnum.IN) {
                     vo.getValues().addAll(objects);
                     ConditionDataSource conditionDataSource = conditionDataSourceService.get(conditionDefinition.getDataSourceId());
-                    String matchColumn = conditionDefinition.getMatchedColumn();
+                    String matchColumn = conditionDefinition.getMatchColumn();
                     List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects);
                     DataSourceColumn condition = new DataSourceColumn();
                     condition.setDataSourceId(conditionDefinition.getDataSourceId());

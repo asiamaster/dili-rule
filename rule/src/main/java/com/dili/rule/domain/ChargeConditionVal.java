@@ -43,8 +43,8 @@ public class ChargeConditionVal extends BaseDomain {
     /**
      * 匹配Key值(即：需要验证的值)
      */
-    @Column(name = "`matched_key`")
-    private String matchedKey;
+    @Column(name = "`match_key`")
+    private String matchKey;
 
     /**
      * 条件类型(大于,小于,等于)
@@ -130,17 +130,17 @@ public class ChargeConditionVal extends BaseDomain {
     }
 
     /**
-     * @return String return the matchedKey
+     * @return String return the matchKey
      */
-    public String getMatchedKey() {
-        return matchedKey;
+    public String getMatchKey() {
+        return matchKey;
     }
 
     /**
-     * @param matchedKey the matchedKey to set
+     * @param matchKey the matchKey to set
      */
-    public void setMatchedKey(String matchedKey) {
-        this.matchedKey = matchedKey;
+    public void setMatchKey(String matchKey) {
+        this.matchKey = matchKey;
     }
 
 
@@ -225,7 +225,7 @@ public class ChargeConditionVal extends BaseDomain {
 
 	@Override
 	public String toString() {
-		return "ChargeConditionVal [id=" + id + ", ruleId=" + ruleId + ", label=" + label + ", matchedKey=" + matchedKey
+		return "ChargeConditionVal [id=" + id + ", ruleId=" + ruleId + ", label=" + label + ", matchKey=" + matchKey
 				+ ", matchType=" + matchType + ", dataType=" + dataType + ", definitionId=" + definitionId
 				+ ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", val=" + val + "]";
 	}

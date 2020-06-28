@@ -98,57 +98,57 @@
     /**
      * 获取规则计算指标(变量)信息
      */
-    function getRuleVariable(){
+    function getRuleVariable() {
         let ruleId = $('#id').val();
         let marketId = $('#marketId').val();
         let businessType = $('#businessType').val();
         $('#ruleConditionDiv').html('');
-        if (marketId && businessType){
-        	$('#variableListDiv').html('');
+        if (marketId && businessType) {
+            $('#variableListDiv').html('');
             $.ajax({
                 type: "POST",
                 url: "${contextPath}/chargeRule/getRuleVariable.action",
-                async:true,
+                async: true,
                 data: {id: ruleId, marketId: marketId, businessType: businessType},
                 success: function (ret) {
-                	let options = {variables: []};
-                	$.each(ret,function(){
-						var label=this.label;
-						var matchedKey=this.matchedKey;
-						options.variables.push({variableId:this.id,name:matchedKey})
-						$('#variableListDiv').append('<a href="javascript:void(0);">'+label+'('+matchedKey+')</a>')
-	
-                	});
-                	if($('.expressionInput').attr('exp-id')){
-                		var expid=$('.expressionInput').attr('exp-id');
-                		$('.expressionInput').removeAttr('exp-id');
-						var expressionInput=$('.expressionInput').clone();
-                		$('#expressionDiv').html('')
-                		$('#expressionDiv').append(expressionInput)
-                		$('div[exp-id="'+expid+'"]').remove();
-                	}
-                	var expBuilder = $('.expressionInput').expressionBuilder(options);
-                	$('.expressionInput').on('input',function(){
-                		var target=$(this).data('target');
-                		if(expBuilder.isValid()==true){
-                			var inputExpression=expBuilder.getInput();
-                			$.each(options.variables,function(){
-                				inputExpression=inputExpression.replace(new RegExp(this.name,'g'),"["+this.variableId+"]");
-                        	});
-                			$(target).val(inputExpression);
-                		}else{
-                			$(target).val("");
-                		}
-                	});
-                	$.each(options.variables,function(){
-                		var val=$('.expressionInput').val().replace('['+this.variableId+']',this.name);	
-                		$('.expressionInput').val(val)
-                	});
-                	expBuilder.isValid();
-					
+                    var options = {variables: []};
+                    $.each(ret, function () {
+                        let label = this.label;
+                        let matchKey = this.matchKey;
+                        options.variables.push({variableId: this.id, name: matchKey})
+                        $('#variableListDiv').append('<a href="javascript:void(0);">' + label + '(' + matchKey + ')</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+
+                    });
+                    if ($('.expressionInput').attr('exp-id')) {
+                        var expid = $('.expressionInput').attr('exp-id');
+                        $('.expressionInput').removeAttr('exp-id');
+                        var expressionInput = $('.expressionInput').clone();
+                        $('#expressionDiv').html('')
+                        $('#expressionDiv').append(expressionInput)
+                        $('div[exp-id="' + expid + '"]').remove();
+                    }
+                    var expBuilder = $('.expressionInput').expressionBuilder(options);
+                    $('.expressionInput').on('input', function () {
+                        var target = $(this).data('target');
+                        if (expBuilder.isValid() == true) {
+                            var inputExpression = expBuilder.getInput();
+                            $.each(options.variables, function () {
+                                inputExpression = inputExpression.replace(new RegExp(this.name, 'g'), "[" + this.variableId + "]");
+                            });
+                            $(target).val(inputExpression);
+                        } else {
+                            $(target).val("");
+                        }
+                    });
+                    // $.each(options.variables, function () {
+                    //     var val = $('.expressionInput').val().replace('[' + this.variableId + ']', this.name);
+                    //     $('.expressionInput').val(val)
+                    // });
+                    expBuilder.isValid();
+
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    bs4pop.alert('获取计算指标失败', { type: 0 });
+                    bs4pop.alert('获取计算指标失败', {type: 0});
                 }
             })
         }

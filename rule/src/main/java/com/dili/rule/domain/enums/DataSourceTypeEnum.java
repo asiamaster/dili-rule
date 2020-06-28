@@ -17,7 +17,7 @@ public enum DataSourceTypeEnum {
     /**
      * 本地数据
      */
-    LOCAL("local","本地数据"),
+    LOCAL("local","本地数据-暂未支持"),
     /**
      * 远程数据
      */

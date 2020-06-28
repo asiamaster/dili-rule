@@ -7,7 +7,7 @@
             %>
                 <div class="form-group col-auto">
                     <label for="">${input.label}</label>
-                    <input type="text" class="form-control"  name="${input.matchedKey}" value="${params[input.matchedKey]}">
+                    <input type="text" class="form-control"  name="${input.matchKey}" value="${params[input.matchKey]}">
                 </div>
             <%}%>
                 <div class="col align-self-center mt-3">
@@ -41,7 +41,7 @@
                     <%if (has(page) && isNotEmpty(page) ){
                         for(row in page){
                     %>
-                    <tr  bind-id="" data-id="${row[conditionDefinition.matchedColumn]}">
+                    <tr  bind-id="" data-id="${row[conditionDefinition.matchColumn]}">
                         <td><input type="checkbox" /></td>
                         <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
                             for(column in dataSourceColumns){

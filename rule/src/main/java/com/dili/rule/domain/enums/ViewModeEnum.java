@@ -13,7 +13,13 @@ import com.google.common.collect.Maps;
  */
 public enum ViewModeEnum {
 
-    SELECT(10, "选择列表"), TABLE_SINGLE(20, "表格单选"), TABLE_MULTI(25, "表格多选"), RADIO(30, "单选"), CHECK_BOX(40, "复选框"),;
+    TABLE_MULTI(10, "表格多选"),
+    /*** 以下格式暂未支持 ***/
+//    TABLE_SINGLE(20, "表格单选"),
+//    SELECT(25, "选择列表"),
+//    RADIO(30, "单选"),
+//    CHECK_BOX(40, "复选框"),
+    ;
 
     ViewModeEnum(Integer code, String desc) {
         this.code = code;
@@ -51,7 +57,7 @@ public enum ViewModeEnum {
     }
 
     /**
-     * @param code the code to set
+     * @return Integer return the code
      */
     public Integer getCode() {
         return this.code;
