@@ -47,8 +47,8 @@
             isIframe: true,
             closeBtn: true,
             backdrop: 'static',
-            width: '650',
-            height: '650',
+            width: '900px',
+            height: '80%',
             btns: []
         });
     }
@@ -72,8 +72,8 @@
             isIframe: true,
             closeBtn: true,
             backdrop: 'static',
-            width: '700',
-            height: '650',
+            width: '900px',
+            height: '80%',
             btns: []
         });
     }

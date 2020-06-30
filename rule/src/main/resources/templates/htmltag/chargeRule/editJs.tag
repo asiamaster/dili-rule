@@ -2,6 +2,9 @@
 
     /*********************变量定义区 begin*************/
     var dia;
+    var choiceTarget;   //存储多选时的选择项
+    let variable = '';
+
 
     /*********************变量定义区 end***************/
 
@@ -30,6 +33,7 @@
         getRuleCondition();
         getRuleVariable();
     });
+
     /**
      * 获取规则条件信息
      */
@@ -116,15 +120,15 @@
                         let label = this.label;
                         let matchKey = this.matchKey;
                         options.variables.push({variableId: this.id, name: matchKey})
-                        $('#variableListDiv').append('<a href="javascript:void(0);">' + label + '(' + matchKey + ')</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+                        $('#variableListDiv').append('<button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="' + matchKey + '">' + label + '(' + matchKey + ')</button> ')
 
                     });
                     if ($('.expressionInput').attr('exp-id')) {
                         var expid = $('.expressionInput').attr('exp-id');
                         $('.expressionInput').removeAttr('exp-id');
                         var expressionInput = $('.expressionInput').clone();
-                        $('#expressionDiv').html('')
-                        $('#expressionDiv').append(expressionInput)
+                        $('#expressionDiv').html('');
+                        $('#expressionDiv').append(expressionInput);
                         $('div[exp-id="' + expid + '"]').remove();
                     }
                     var expBuilder = $('.expressionInput').expressionBuilder(options);
@@ -154,10 +158,20 @@
         }
     }
 
-    var choiceTarget;
+    // 选择计算参数
+    $(document).on('click', '#calcVariable .btn-variable', function(){
+        variable += $(this).data('variable');
+        $('[name="expressionInput"]').val(variable)
+    })
+
+    $('#calcParamInfo .clear').on('click', function(){
+        variable = '';
+        $('.expressionInput').val(variable);
+    })
+
+
     // 选择数据时的操作事件
     $(document).on('click', '.form-choice .choice', function () {
-        
         let choice = $(this);
         choiceTarget = choice;
         let definitionId = choice.data('definitionid');
@@ -179,7 +193,8 @@
                     }, {label: '确定',className: 'btn btn-primary px-5',onClick(e,$iframe){
                         let diaWindow = $iframe[0].contentWindow;
                         $('#'+targetId).val(diaWindow.checkedids)
-                        //choice.attr('checkedids', diaWindow.checkedids);
+                        debugger
+                        choice.attr('checkedids', diaWindow.checkedids);
                         choice.parents('.input-group').find('.form-control').val(diaWindow.checkedtexts);
                         dia.hide()
 
