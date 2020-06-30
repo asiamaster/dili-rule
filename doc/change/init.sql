@@ -19,7 +19,7 @@ create table charge_rule
    market_id            bigint comment '规则所属于某个市场',
    business_type        varchar(40) comment '所属的业务类型',
    group_id             bigint comment '组别',
-   charge_item          varchar(20) comment '收费项',
+   charge_item          bigint comment '收费项',
    rule_name            varchar(30) comment '规则名称',
    state                int comment '规则状态',
    priority             int comment '优先级',

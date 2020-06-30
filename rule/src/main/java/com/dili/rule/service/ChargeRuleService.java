@@ -1,11 +1,15 @@
 package com.dili.rule.service;
 
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.dto.CalculateFeeDto;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.vo.ChargeRuleVo;
+import com.dili.rule.sdk.domain.input.QueryFeeInput;
 import com.dili.ss.base.BaseService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
+
+import java.util.Map;
 
 /**
  * <B></B>
@@ -42,5 +46,12 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * @param id 需要变更状态的规则ID
      */
     void updateStateByExpires(Long id,OperatorUser operatorUser);
+
+    /**
+     * 根据条件查询规则并计算费用
+     * @param queryFeeInput
+     * @return 费用计算结果
+     */
+    CalculateFeeDto findRuleInfoAnaCalculateFee(QueryFeeInput queryFeeInput);
 
 }

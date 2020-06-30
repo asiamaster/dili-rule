@@ -72,7 +72,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
      * 收费项
      */
     @Column(name = "`charge_item`")
-    private String chargeItem;
+    private Long chargeItem;
 
     /**
      * 规则名称
@@ -296,16 +296,16 @@ public class ChargeRule extends BaseDomain implements Serializable {
     }
 
     /**
-     * @return String return the chargeItem
+     * @return Long return the chargeItem
      */
-    public String getChargeItem() {
+    public Long getChargeItem() {
         return chargeItem;
     }
 
     /**
      * @param chargeItem the chargeItem to set
      */
-    public void setChargeItem(String chargeItem) {
+    public void setChargeItem(Long chargeItem) {
         this.chargeItem = chargeItem;
     }
 

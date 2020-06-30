@@ -1,28 +1,35 @@
 package com.dili.rule.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.dto.CalculateFeeDto;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.enums.RuleStateEnum;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.domain.vo.ConditionVo;
 import com.dili.rule.mapper.ChargeRuleMapper;
 import com.dili.rule.scheduler.ChargeRuleExpiresScheduler;
+import com.dili.rule.sdk.domain.input.QueryFeeInput;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.ConditionDefinitionService;
+import com.dili.rule.service.RuleEngineService;
 import com.dili.ss.base.BaseServiceImpl;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.ss.exception.BusinessException;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.POJOUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.udojava.evalex.Expression;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.MutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +37,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +56,8 @@ import java.util.stream.Collectors;
 @Service
 public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> implements ChargeRuleService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ChargeRuleServiceImpl.class);
+
     public ChargeRuleMapper getActualMapper() {
         return (ChargeRuleMapper)getDao();
     }
@@ -56,6 +68,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     private ConditionDefinitionService conditionDefinitionService;
     @Autowired
     private ChargeRuleExpiresScheduler chargeRuleExpiresScheduler;
+    @Autowired
+    private RuleEngineService ruleEngineService;
 
     @Override
     public EasyuiPageOutput listForEasyuiPage(ChargeRule chargeRule) throws Exception {
@@ -186,6 +200,51 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     public void updateStateByExpires(Long id,OperatorUser operatorUser) {
         ChargeRule rule = this.get(id);
         this.updateStateByExpires(rule,operatorUser);
+    }
+
+    @Override
+    public CalculateFeeDto findRuleInfoAnaCalculateFee(QueryFeeInput queryFeeInput) {
+        ChargeRule queryCondition = new ChargeRule();
+        queryCondition.setMarketId(queryFeeInput.getMarketId());
+        queryCondition.setBusinessType(queryFeeInput.getBusinessType());
+        queryCondition.setChargeItem(queryFeeInput.getChargeItem());
+        queryCondition.setSort("group_id,modified,created");
+        queryCondition.setOrder("DESC,DESC,DESC");
+        queryCondition.setState(RuleStateEnum.ENABLED.getCode());
+        List<ChargeRule> chargeRuleList = this.listByExample(queryCondition);
+        //返回对象
+        CalculateFeeDto result = new CalculateFeeDto();
+        if (CollectionUtil.isEmpty(chargeRuleList)) {
+            result.setMessage(Optional.of("未找到可用的规则"));
+        } else {
+            for (ChargeRule ruleInfo : chargeRuleList) {
+                boolean checkRuleResult = this.ruleEngineService.checkChargeRule(ruleInfo, queryFeeInput.getConditionParams());
+                if (checkRuleResult) {
+                    result.setRuleInfo(ruleInfo);
+                    logger.info("条件匹配的规则: {}", ruleInfo);
+                    try {
+                        BigDecimal fee = this.calcFeeByRule(ruleInfo, queryFeeInput.getCalcParams());
+                        if (fee.equals(new BigDecimal(Integer.MIN_VALUE))) {
+                            result.setMessage(Optional.of("根据规则及参数计算费用时异常"));
+                        } else {
+                            logger.info("条件匹配的规则: {},计算的费用为: {}", ruleInfo, fee);
+                            result.setFee(fee);
+                        }
+                        return result;
+                    }catch (BusinessException e){
+                        logger.error(e.getMessage(), e);
+                        result.setMessage(Optional.of(e.getErrorMsg()));
+                        return result;
+                    } catch (Throwable t) {
+                        logger.error(t.getMessage(), t);
+                        result.setMessage(Optional.of("计算费用金额出错: " + t.getMessage()));
+                        return result;
+                    }
+
+                }
+            }
+        }
+        return result;
     }
 
 
@@ -320,5 +379,27 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         condition.setChargeItem(chargeRule.getChargeItem());
         long sameNameCount = this.listByExample(condition).stream().filter((r) -> !r.getId().equals(chargeRule.getId())).count();
         return sameNameCount > 0;
+    }
+
+    /**
+     * 根据规则信息，计算费用
+     * @param ruleInfo
+     * @param calcParams
+     * @return 计算后的结果值
+     */
+    private BigDecimal calcFeeByRule(ChargeRule ruleInfo, Map<String, Object> calcParams) {
+        Expression expression = new Expression(ruleInfo.getTargetVal());
+        try {
+            for (String var : expression.getUsedVariables()) {
+                if (calcParams.containsKey(var)){
+                    expression.setVariable(var, String.valueOf(calcParams.get(var)));
+                }
+            }
+            return expression.eval();
+        } catch (Exception e) {
+            logger.error(String.format("根据规则[%s]及参数[%s]生成的表达式[%s]计算金额异常[%s]",ruleInfo,calcParams,expression.toString(),e.getMessage() ),e);
+            throw new BusinessException("1","根据规则及参数计算费用异常");
+        }
+
     }
 }
