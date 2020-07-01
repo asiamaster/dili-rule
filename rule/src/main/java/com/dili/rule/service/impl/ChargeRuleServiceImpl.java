@@ -24,6 +24,8 @@ import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.exception.BusinessException;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.POJOUtils;
+import com.dili.uap.sdk.domain.UserTicket;
+import com.dili.uap.sdk.session.SessionContext;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.udojava.evalex.Expression;
@@ -39,10 +41,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -85,59 +84,26 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         return new EasyuiPageOutput((int) total, results);
     }
 
-    @Transactional
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo,OperatorUser operatorUser) {
         ChargeRule inputRuleInfo = new ChargeRule();
         BeanUtils.copyProperties(chargeRuleVo, inputRuleInfo);
-
         inputRuleInfo.setState(RuleStateEnum.UNAUDITED.getCode());
         inputRuleInfo.setRevisable(YesOrNoEnum.YES.getCode());
         inputRuleInfo.setOperatorId(operatorUser.getUserId());
         inputRuleInfo.setOperatorName(operatorUser.getUserName());
-
-        // 检查输入的计算指标及格式
-        //TODO  计算指标相关
-//        if (!TargetTypeEnum.CONSTANT.getCode().equals(inputRuleInfo.getTargetType())) {
-//            // 没有找到计算指标
-//            if (StringUtils.isBlank(inputRuleInfo.getTarget())) {
-//                throw new IllegalArgumentException("没有找到计算指标");
-//            }
-//            String target = StringUtils.trim(inputRuleInfo.getTarget());
-//            List<Integer> codes = JSONArray.parseArray(target, Integer.class);
-//            List<TargetTypeValueEnum> targetTypeValueEnums = TargetTypeValueEnum.findAllEnumsByCodes(codes);
-//            // 没有找到计算指标
-//            if (targetTypeValueEnums.isEmpty()) {
-//                throw new IllegalArgumentException("没有找到计算指标");
-//            }
-//        } else {
-//            // 设置空的默认值
-//            inputRuleInfo.setTarget("[]");
-//        }
         ChargeRule temp = this.saveOrUpdateRuleInfo(inputRuleInfo,operatorUser);
-
         List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(temp, chargeRuleVo);
         // 如果是更新,则先删除原来的设置(如果是插入,下面的delByRuleId将导致死锁)
         if (!CollectionUtils.isEmpty(ruleConditionValList)) {
-
-            /*
-             * if(vo.getId()==null) { //插入新的规则
-             * ruleConditionValService.batchInsert(ruleConditionVals); }else
-             * if(vo.getId().equals(upsertedRule.getId())){ //更新规则(先批量删除原有的,再增加新提交的)
-             * ruleConditionValService.delByRuleId(vo.getId());
-             * ruleConditionValService.batchInsert(ruleConditionVals); }else {
-             * //原有的被改变状态,新的被创建 ruleConditionValService.batchInsert(ruleConditionVals); }
-             */
-
-            // 上面的代码被改为如下:
             if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(temp.getId())) {
                 // 更新规则(先批量删除原有的,再增加新提交的)
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
             }
             chargeConditionValService.batchInsert(ruleConditionValList);
-
         } else {
-            // 上面的代码被改为如下:
             if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(temp.getId())) {
                 // 更新规则(先批量删除原有的,再增加新提交的)
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
@@ -247,6 +213,84 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         return result;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseOutput<Object> approve(Long id, Boolean pass) {
+        ChargeRule rule = this.get(id);
+        if (null == rule) {
+            return BaseOutput.failure("规则不存在");
+        }
+        if (!RuleStateEnum.UNAUDITED.getCode().equals(rule.getState())
+                && !RuleStateEnum.NOT_PASS.getCode().equals(rule.getState())) {
+            return BaseOutput.failure("状态已变更，不能进行此操作");
+        }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        rule.setOperatorId(userTicket.getId());
+        rule.setOperatorName(userTicket.getRealName());
+        rule.setApproverId(userTicket.getId());
+        rule.setApproverName(userTicket.getRealName());
+        rule.setApprovalTime(LocalDateTime.now());
+        if (pass) {
+            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
+        } else {
+            rule.setState(RuleStateEnum.NOT_PASS.getCode());
+        }
+        this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
+        return BaseOutput.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseOutput<Object> enable(Long id, Boolean enable) {
+        ChargeRule rule = this.get(id);
+        if (null == rule) {
+            return BaseOutput.failure("规则不存在");
+        }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        rule.setOperatorId(userTicket.getId());
+        rule.setOperatorName(userTicket.getRealName());
+        if (enable) {
+            List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.DISABLED.getCode());
+            if (!allowedStatus.contains(rule.getState())) {
+                return BaseOutput.failure("状态已变更，不能进行此操作");
+            }
+            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
+        } else {
+            List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.ENABLED.getCode(),
+                    RuleStateEnum.UN_STARTED.getCode());
+            if (!allowedStatus.contains(rule.getState())) {
+                return BaseOutput.failure("状态已变更，不能进行此操作");
+            }
+            rule.setState(this.calculateRuleState(rule, RuleStateEnum.DISABLED).getCode());
+        }
+        this.updateRuleInfoWithExpire(rule,OperatorUser.fromSessionContext());
+        return BaseOutput.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer obsolete(Long id, OperatorUser operatorUser) {
+        ChargeRule rule = new ChargeRule();
+        rule.setId(id);
+        rule.setState(RuleStateEnum.OBSOLETE.getCode());
+        rule.setOperatorId(operatorUser.getUserId());
+        rule.setOperatorName(operatorUser.getUserName());
+        rule.setRevisable(YesOrNoEnum.YES.getCode());
+        return this.updateSelective(rule);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateRuleInfoWithExpire(ChargeRule ruleInfo, OperatorUser operatorUser) {
+        if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
+            // 作废原规则
+            obsolete(ruleInfo.getOriginalId(), operatorUser);
+            ruleInfo.setOriginalId(null);
+        }
+        super.updateSelective(ruleInfo);
+        chargeRuleExpiresScheduler.updateRuleStatus(ruleInfo);
+        return 1;
+    }
 
     /**
      * 根据id是否为空,分别进行插入或者其他操作
@@ -299,39 +343,6 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             this.updateSelective(inputRuleInfo);
         }
         return inputRuleInfo;
-    }
-
-
-    /**
-     * 根据规则有效期，更改规则信息
-     * @param ruleInfo
-     * @return
-     */
-    private int updateRuleInfoWithExpire(ChargeRule ruleInfo,OperatorUser operatorUser) {
-        if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
-            // 作废原规则
-            obsolete(ruleInfo.getOriginalId(),operatorUser);
-            ruleInfo.setOriginalId(null);
-        }
-        super.updateSelective(ruleInfo);
-        chargeRuleExpiresScheduler.updateRuleStatus(ruleInfo);
-        return 1;
-    }
-
-    /**
-     * 作废某条规则信息
-     *
-     * @param id 需要作废的规则ID
-     * @return
-     */
-    private Integer obsolete(Long id,OperatorUser operatorUser) {
-        ChargeRule rule = new ChargeRule();
-        rule.setId(id);
-        rule.setState(RuleStateEnum.OBSOLETE.getCode());
-        rule.setOperatorId(operatorUser.getUserId());
-        rule.setOperatorName(operatorUser.getUserName());
-        rule.setRevisable(YesOrNoEnum.YES.getCode());
-        return this.updateSelective(rule);
     }
 
     /**
@@ -400,6 +411,44 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             logger.error(String.format("根据规则[%s]及参数[%s]生成的表达式[%s]计算金额异常[%s]",ruleInfo,calcParams,expression.toString(),e.getMessage() ),e);
             throw new BusinessException("1","根据规则及参数计算费用异常");
         }
+    }
 
+    /**
+     * 基于当前的状态和时间范围 及期望的状态值,来计算最终可用状态
+     *
+     * @param ruleInfo 规则信息
+     * @param expectedState 预期的下一个状态
+     * @return 最终的状态
+     */
+    private RuleStateEnum calculateRuleState(ChargeRule ruleInfo, RuleStateEnum expectedState) {
+        LocalDateTime start = ruleInfo.getExpireStart();
+        LocalDateTime end = ruleInfo.getExpireEnd();
+        LocalDateTime now = LocalDateTime.now();
+        //规则目前的状态
+        Integer originalState = ruleInfo.getState();
+        /**
+         * 期望下一个状态为启用
+         */
+        if (RuleStateEnum.ENABLED == expectedState) {
+            //当前值为待审核时
+            if (RuleStateEnum.UNAUDITED.getCode().equals(originalState)) {
+                if (end.isBefore(now)) {
+                    return RuleStateEnum.EXPIRED;
+                } else if (start.isAfter(now)) {
+                    return RuleStateEnum.UN_STARTED;
+                } else {
+                    return RuleStateEnum.ENABLED;
+                }
+            }else if (RuleStateEnum.DISABLED.getCode().equals(originalState)) {
+                if (end.isBefore(now)) {
+                    return RuleStateEnum.EXPIRED;
+                } else if (start.isAfter(now)) {
+                    return RuleStateEnum.UN_STARTED;
+                } else {
+                    return RuleStateEnum.ENABLED;
+                }
+            }
+        }
+        return expectedState;
     }
 }

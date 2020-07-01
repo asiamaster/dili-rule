@@ -130,7 +130,39 @@
      * @param enable 是否启用:true-启用
      */
     function doEnableHandler(enable) {
-
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        let selectedRow = rows[0];
+        let msg = (enable || 'true' == enable) ? '确定要启用该规则吗？' : '确定要禁用该规则吗？';
+        bs4pop.confirm(msg, undefined, function (sure) {
+            if(sure){
+                bui.loading.show('努力提交中，请稍候。。。');
+                $.ajax({
+                    type: "POST",
+                    url: "${contextPath}/chargeRule/enable.action",
+                    data: {id: selectedRow.id, enable: enable},
+                    processData:true,
+                    dataType: "json",
+                    async : true,
+                    success : function(ret) {
+                        bui.loading.hide();
+                        if(ret.success){
+                            queryDataHandler();
+                        }else{
+                            bs4pop.alert(ret.result, {type: 'error'});
+                        }
+                    },
+                    error : function() {
+                        bui.loading.hide();
+                        bs4pop.alert('远程访问失败', {type: 'error'});
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -138,7 +170,39 @@
      * @param pass 是否通过:true-通过
      */
     function doCheckHandler(pass) {
-
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        let selectedRow = rows[0];
+        let msg = (pass || 'true' == pass) ? '确定要通过该条规则吗？' : '确定要拒接该条规则吗？';
+        bs4pop.confirm(msg, undefined, function (sure) {
+            if(sure){
+                bui.loading.show('努力提交中，请稍候。。。');
+                $.ajax({
+                    type: "POST",
+                    url: "${contextPath}/chargeRule/approve.action",
+                    data: {id: selectedRow.id, pass: pass},
+                    processData:true,
+                    dataType: "json",
+                    async : true,
+                    success : function(ret) {
+                        bui.loading.hide();
+                        if(ret.success){
+                            queryDataHandler();
+                        }else{
+                            bs4pop.alert(ret.result, {type: 'error'});
+                        }
+                    },
+                    error : function() {
+                        bui.loading.hide();
+                        bs4pop.alert('远程访问失败', {type: 'error'});
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -175,7 +239,33 @@
 
     //选中行事件 -- 可操作按钮控制
     _dataGrid.on('check.bs.table', function (e, row, $element) {
+        let state = row.$_state;
+        /**
+         * 参与控制的操作按钮有：[通过]、[不通过]、[禁用]、[启用]
+         * 在参数控制的按钮上添加了伪css control-btn 用来批量处理
+         * 1.[待审核]状态下，可操作 [通过]、[不通过]
+         * 2.[启用]或[未开始]状态下，可操作 [禁用]
+         * 3.[禁用]状态下，可操作 [启用]
+         * 4.[未通过]状态下，可操作 [通过]
+         * 其它状态，则不可操作以上按钮
+         */
 
+        if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.UNAUDITED.getCode()}) { //待审核
+            $('.control-btn').attr('disabled', true);
+            $('#btn_check_pass').attr('disabled', false);
+            $('#btn_check_not_pass').attr('disabled', false);
+        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}) { //启用
+            $('.control-btn').attr('disabled', true);
+            $('#btn_disable').attr('disabled', false);
+        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}) {  //禁用
+            $('.control-btn').attr('disabled', true);
+            $('#btn_enable').attr('disabled', false);
+        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.NOT_PASS.getCode()}) {  //未通过
+            $('.control-btn').attr('disabled', true);
+            $('#btn_check_pass').attr('disabled', false);
+        } else {
+            $('.control-btn').attr('disabled', true);
+        }
     });
 
 

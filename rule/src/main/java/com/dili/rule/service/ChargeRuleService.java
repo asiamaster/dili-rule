@@ -54,4 +54,36 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      */
     CalculateFeeDto findRuleInfoAnaCalculateFee(QueryFeeInput queryFeeInput);
 
+    /**
+     * 规则审核结果
+     * @param id   需要审核的规则ID
+     * @param pass 是否通过
+     * @return
+     */
+    BaseOutput<Object> approve(Long id, Boolean pass);
+
+    /**
+     * 规则禁启用
+     * @param id       需要禁启用的规则ID
+     * @param enable 是否启用
+     * @return
+     */
+    BaseOutput<Object> enable(Long id, Boolean enable);
+
+
+    /**
+     * 作废某条规则
+     * @param id 规则ID
+     * @param operatorUser 操作人信息
+     * @return
+     */
+    Integer obsolete(Long id, OperatorUser operatorUser);
+
+    /**
+     * 根据规则有效期，更改规则信息
+     * @param ruleInfo
+     * @return
+     */
+    Integer updateRuleInfoWithExpire(ChargeRule ruleInfo, OperatorUser operatorUser);
+
 }

@@ -146,6 +146,32 @@ public class ChargeRuleController {
     }
 
     /**
+     * 规则审核
+     *
+     * @param id   需要审核的规则ID
+     * @param pass 是否通过 true-是
+     * @return
+     */
+    @RequestMapping(value = "/approve.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public BaseOutput<Object> approve(Long id, Boolean pass) {
+        return chargeRuleService.approve(id, pass);
+    }
+
+    /**
+     * 规则禁启用
+     *
+     * @param id       需要禁启用的规则ID
+     * @param enable 是否启用 true-是
+     * @return
+     */
+    @RequestMapping(value = "/enable.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public BaseOutput<Object> enable(Long id, Boolean enable) {
+        return chargeRuleService.enable(id, enable);
+    }
+
+    /**
      * 获取费用业务类型
      * @return
      */
