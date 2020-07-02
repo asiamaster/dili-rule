@@ -17,7 +17,7 @@ import java.util.List;
  * @author yuehongbo
  * @date 2020/6/30 15:57
  */
-@FeignClient(name = "rule-service", contextId = "chargeRuleRpc")
+@FeignClient(name = "dili-rule", contextId = "chargeRuleRpc")
 public interface ChargeRuleRpc {
 
     /**
