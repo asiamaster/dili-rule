@@ -2,14 +2,14 @@
 
     <%if (has(conditionDefinitions) && isNotEmpty(conditionDefinitions) && conditionDefinitions.~size >0 ){
         for(cd in conditionDefinitions){%>
-         <input name="conditions[${cdLP.index-1}][definitionId]" value="${cd.id}" type="hidden">
-         <input name="conditions[${cdLP.index-1}][matchKey]" value="${cd.matchKey}" type="hidden">
+         <input name="conditionList[${cdLP.index-1}][definitionId]" value="${cd.id}" type="hidden">
+         <input name="conditionList[${cdLP.index-1}][matchKey]" value="${cd.matchKey}" type="hidden">
         <%if(isNotEmpty(cd.dataSourceId)){%>
         <!--/*  如果数据源不为空，则认为此项为选择框类型  */-->
         <div class="form-group col form-choice">
             <label for="">${cd.label}</label>
             <div class="input-group">
-         		<input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+         		<input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                 <input value="${stringListJoin(cd.texts,',')}" type="text" class="form-control dsInput">
                 <div class="input-group-append">
                     <span class="input-group-text card-btn  text-primary clear"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
@@ -25,21 +25,21 @@
                 <!--/*  输入框的值类型：  小数类型*/-->
                 <div class="form-group col">
                     <label for="" >${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <input id="${cd.id}_${cd.matchKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"class="form-control floatReserve eqInput"  min="0" max="9999999.99">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.INTEGER.getCode()){%>
                 <!--/*  输入框的值类型：  整数类型*/-->
                 <div class="form-group col form-number">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <input id="${cd.id}_${cd.matchKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control isNaturalNum  eqInput"  min="0" max="9999999">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.TEXT.getCode()){%>
                 <!--/*  输入框的值类型：  文本类型*/-->
                 <div class="form-group col form-text">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <input id="${cd.id}_${cd.matchKey}" data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control  eqInput" maxlength="22">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()){%>
@@ -54,7 +54,7 @@
                 <!--/*  输入框的值类型：  小数类型*/-->
                 <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
                     <label for="" >${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden"data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden"data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
                             <input  data-target="${cdLP.index-1}"  value="${cd.values.~size?cd.values.get(0):''}" type="text" class="form-control cusFloatReserve betweenMinInput">
@@ -70,7 +70,7 @@
                 <!--/*  输入框的值类型：  整数类型*/-->
                 <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
                             <input data-target="${cdLP.index-1}" value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput">

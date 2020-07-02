@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.google.common.base.MoreObjects;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -109,10 +110,10 @@ public class ChargeRule extends BaseDomain implements Serializable {
     private LocalDateTime expireEnd;
 
     /**
-     * 计算指标类型
+     * 计算指标
      */
-    @Column(name = "`target_type`")
-    private Integer targetType;
+    @Column(name = "`target_val`")
+    private String targetVal;
 
     /**
      * 匹配到此规则时最低应支付的金额
@@ -185,12 +186,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvalTime;
-
-    /**
-     * 计算指标
-     */
-    @Column(name = "`target_val`")
-    private String targetVal;
 
     /**
      * 有效期文本
@@ -363,20 +358,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
      */
     public void setExpireEnd(LocalDateTime expireEnd) {
         this.expireEnd = expireEnd;
-    }
-
-    /**
-     * @return Integer return the targetType
-     */
-    public Integer getTargetType() {
-        return targetType;
-    }
-
-    /**
-     * @param targetType the targetType to set
-     */
-    public void setTargetType(Integer targetType) {
-        this.targetType = targetType;
     }
 
     /**
@@ -569,16 +550,34 @@ public class ChargeRule extends BaseDomain implements Serializable {
     }
 
 
-	@Override
-	public String toString() {
-		return "ChargeRule [id=" + id + ", originalId=" + originalId + ", code=" + code + ", marketId=" + marketId
-				+ ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem
-				+ ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart="
-				+ expireStart + ", expireEnd=" + expireEnd + ", targetType=" + targetType + ", minPayment=" + minPayment
-				+ ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId="
-				+ operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime="
-				+ modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime="
-				+ approvalTime + ", targetVal=" + targetVal + ", expireValue=" + expireValue + "]";
-	}
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("originalId", originalId)
+                .add("code", code)
+                .add("marketId", marketId)
+                .add("businessType", businessType)
+                .add("groupId", groupId)
+                .add("chargeItem", chargeItem)
+                .add("ruleName", ruleName)
+                .add("state", state)
+                .add("priority", priority)
+                .add("expireStart", expireStart)
+                .add("expireEnd", expireEnd)
+                .add("targetVal", targetVal)
+                .add("minPayment", minPayment)
+                .add("maxPayment", maxPayment)
+                .add("remark", remark)
+                .add("revisable", revisable)
+                .add("operatorId", operatorId)
+                .add("operatorName", operatorName)
+                .add("createTime", createTime)
+                .add("modifyTime", modifyTime)
+                .add("approverId", approverId)
+                .add("approverName", approverName)
+                .add("approvalTime", approvalTime)
+                .add("expireValue", expireValue)
+                .toString();
+    }
 }

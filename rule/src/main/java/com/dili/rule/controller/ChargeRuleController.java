@@ -1,10 +1,17 @@
 package com.dili.rule.controller;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
+import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.dto.OperatorUser;
+import com.dili.rule.domain.vo.ChargeRuleVo;
+import com.dili.rule.service.ChargeConditionValService;
+import com.dili.rule.service.ChargeRuleService;
+import com.dili.rule.service.ConditionDefinitionService;
+import com.dili.rule.service.remote.MarketRpcService;
+import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.uap.sdk.domain.DataDictionaryValue;
+import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.dili.rule.domain.ChargeRule;
-import com.dili.rule.domain.ConditionDefinition;
-import com.dili.rule.domain.dto.OperatorUser;
-import com.dili.rule.domain.vo.ChargeRuleVo;
-import com.dili.rule.service.ChargeConditionValService;
-import com.dili.rule.service.ChargeRuleService;
-import com.dili.rule.service.remote.MarketRpcService;
-import com.dili.ss.domain.BaseOutput;
-import com.dili.ss.domain.EasyuiPageOutput;
-import com.dili.uap.sdk.domain.DataDictionaryValue;
-import com.dili.uap.sdk.rpc.DataDictionaryRpc;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * <B></B>
@@ -48,6 +48,8 @@ public class ChargeRuleController {
     private ChargeConditionValService chargeConditionValService;
     @Autowired
     private DataDictionaryRpc dataDictionaryRpc;
+    @Autowired
+    private ConditionDefinitionService conditionDefinitionService;
 
     /**
      * 跳转到计费规则管理首页面
@@ -71,7 +73,7 @@ public class ChargeRuleController {
     @ResponseBody
     public String listPage(ChargeRule chargeRule) {
         try {
-            return chargeRuleService.listEasyuiPageByExample(chargeRule, true).toString();
+            return chargeRuleService.listForEasyuiPage(chargeRule).toString();
         } catch (Exception e) {
             log.error(String.format("根据[%s]查询计费规则列表异常,[%s]", chargeRule, e.getMessage()), e);
             return new EasyuiPageOutput(0, Collections.emptyList()).toString();
@@ -91,6 +93,9 @@ public class ChargeRuleController {
             if (null != chargeRule.getId()) {
                 chargeRule = chargeRuleService.get(chargeRule.getId());
                 if (Objects.nonNull(chargeRule)) {
+                    //转换获取计算参数
+                    String targetVal = conditionDefinitionService.convertTargetValDefinition(chargeRule.getTargetVal(),false);
+                    chargeRule.setTargetVal(targetVal);
                     modelMap.addAttribute("action", "update");
                 }
             }

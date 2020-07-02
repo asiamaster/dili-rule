@@ -144,10 +144,10 @@
                             $(target).val("");
                         }
                     });
-                    // $.each(options.variables, function () {
-                    //     var val = $('.expressionInput').val().replace('[' + this.variableId + ']', this.name);
-                    //     $('.expressionInput').val(val)
-                    // });
+                    $.each(options.variables, function () {
+                        var val = $('.expressionInput').val().replace('[' + this.variableId + ']', this.name);
+                        $('.expressionInput').val(val)
+                    });
                     expBuilder.isValid();
 
                 },
@@ -258,21 +258,21 @@
 
     /* ---------- 规则整个form data----START------ */
     // 基础项和计算指标项data
-    function buildData(){
-		var formJson=$('#addForm').serializeJSON({
-					useIntKeysAsArrayIndex: true,
-					customTypes:{
-						stringToArray:function(str){
-									if(str){
-										return $.makeArray(str.split(","));
-									}
-									return [];
-								},
-						calculateExpression:function(str){
-							
-						}
-					 }//end customTypes
-		});
+    function buildData() {
+        let formJson = $('#addForm').serializeJSON({
+            useIntKeysAsArrayIndex: true,
+            customTypes: {
+                stringToArray: function (str) {
+                    if (str) {
+                        return $.makeArray(str.split(","));
+                    }
+                    return [];
+                },
+                calculateExpression: function (str) {
+
+                }
+            }//end customTypes
+        });
         return formJson;
     }
 
@@ -302,29 +302,36 @@
     $(document).on('click', '.btn-cancel', function () {
         window.location.href = document.referrer;
     });
+    /**
+     * 表单保存操作
+     */
     $(document).on('click', '#formSubmit', function () {
         if ($('#addForm').validate().form() === true && validCondition()) {
+            bui.loading.show('努力提交中，请稍候。。。');
             let id = $('#id').val();
             let url = '${contextPath}/chargeRule/save.action';
-            let data=buildData();
+            let data = buildData();
             console.info(data);
             $.ajax({
                 type: "POST",
                 dataType: "json",
-                data : JSON.stringify(data),
-                contentType : 'application/json',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
                 url: url,
                 success: function (ret) {
+                    bui.loading.hide();
                     if (ret.success) {
-                        bs4pop.notice('操作成功', {type: 'info', position: 'center'})
-                        window.location.href = document.referrer;
+                        bs4pop.notice('操作成功', {type: 'info', position: 'center'});
+                        parent.dia.hide();
+                        parent.queryDataHandler();
                     } else {
-                        bs4pop.notice(ret.message, {type: 'danger', position: 'center'})
+                        bs4pop.alert(ret.message, {type: 'warning', position: 'center'})
                         return false;
                     }
                 },
                 error: function (error) {
-                    bs4pop.notice(error, {type: 'danger', position: 'center'})
+                    bui.loading.hide();
+                    bs4pop.alert(error, {type: 'error', position: 'center'})
                     return false;
                 }
             })

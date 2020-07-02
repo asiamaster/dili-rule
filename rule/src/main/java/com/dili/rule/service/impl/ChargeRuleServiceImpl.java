@@ -352,9 +352,9 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @return
      */
     private List<ChargeConditionVal> parseRuleConditionVal(ChargeRule rule, ChargeRuleVo vo) {
-    	List<ConditionVo> conditions = vo.getConditions();
+        List<ConditionVo> conditionList = vo.getConditionList();
         // 需要保存的规则条件信息
-        List<ChargeConditionVal> ruleConditionVals = conditions.stream().map((c) -> {
+        List<ChargeConditionVal> ruleConditionVals = conditionList.stream().map((c) -> {
             // 获得对应的ConditionDefinition并进行数据格式校验
             Long definitionId = c.getDefinitionId();
             ConditionDefinition definition = conditionDefinitionService.get(definitionId);

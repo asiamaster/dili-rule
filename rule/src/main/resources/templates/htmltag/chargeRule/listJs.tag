@@ -72,6 +72,11 @@
         }
         //table选择模式是单选时可用
         let selectedRow = rows[0];
+        let revisable = selectedRow.revisable;
+        if (revisable != ${@com.dili.commons.glossary.YesOrNoEnum.YES.getCode()}) {
+            bs4pop.alert('此规则已存在被修改的记录，暂时不能修改', {type: 'warning'});
+            return;
+        }
         let url = "/chargeRule/preSave.html?id=" + selectedRow.id + "&dataSourceId=" + selectedRow.dataSourceId;
         dia = bs4pop.dialog({
             title: '更新数据列',

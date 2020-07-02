@@ -30,31 +30,19 @@ public class ChargeRuleVo extends ChargeRule implements Serializable {
      * json格式
      */
     @Transient
-    private List<ConditionVo> conditions;
-    
+    private List<ConditionVo> conditionList;
 
-    /**
-     * @return String return the conditionLabel
-     */
+
     public String getConditionLabel() {
         return conditionLabel;
     }
-
-    /**
-     * @param conditionLabel the conditionLabel to set
-     */
     public void setConditionLabel(String conditionLabel) {
         this.conditionLabel = conditionLabel;
     }
-
-	public List<ConditionVo> getConditions() {
-		return conditions;
+	public List<ConditionVo> getConditionList() {
+		return conditionList;
 	}
-
-	public void setConditions(List<ConditionVo> conditions) {
-		this.conditions = conditions;
+	public void setConditionList(List<ConditionVo> conditionList) {
+		this.conditionList = conditionList;
 	}
-
-
-
 }
