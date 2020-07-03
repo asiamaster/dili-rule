@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.google.common.base.MoreObjects;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -71,10 +72,11 @@ public class ConditionDefinition extends BaseDomain {
     private Integer dataType;
 
     /**
-     * 是否是计算指标
+     * 指标类型
+     * {@link com.dili.rule.domain.enums.TargetTypeEnum}
      */
-    @Column(name = "`is_variable`")
-    private Integer isVariable;
+    @Column(name = "`target_type`")
+    private Integer targetType;
 
     /**
      * 数据来源ID(用于设置规则时，通过什么方法获取数据)
@@ -122,6 +124,10 @@ public class ConditionDefinition extends BaseDomain {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifyTime;
 
+
+    public Long getId() {
+        return id;
+    }
 
     /**
      * @param id the id to set
@@ -222,6 +228,14 @@ public class ConditionDefinition extends BaseDomain {
         this.dataType = dataType;
     }
 
+    public Integer getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(Integer targetType) {
+        this.targetType = targetType;
+    }
+
     /**
      * @return Long return the dataSourceId
      */
@@ -320,26 +334,26 @@ public class ConditionDefinition extends BaseDomain {
         this.modifyTime = modifyTime;
     }
 
-	public Long getId() {
-		return id;
-	}
 
-	public Integer getIsVariable() {
-		return isVariable;
-	}
-
-	public void setIsVariable(Integer isVariable) {
-		this.isVariable = isVariable;
-	}
-
-	@Override
-	public String toString() {
-		return "ConditionDefinition [id=" + id + ", marketId=" + marketId + ", businessType=" + businessType
-				+ ", label=" + label + ", matchKey=" + matchKey + ", matchType=" + matchType + ", defaultValues="
-				+ defaultValues + ", dataType=" + dataType + ", dataSourceId=" + dataSourceId + ", matchColumn="
-				+ matchColumn + ", viewMode=" + viewMode + ", dataTargetId=" + dataTargetId + ", ruleCondition="
-				+ ruleCondition + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", isVariable="
-				+ isVariable + "]";
-	}
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("marketId", marketId)
+                .add("businessType", businessType)
+                .add("label", label)
+                .add("matchKey", matchKey)
+                .add("matchType", matchType)
+                .add("defaultValues", defaultValues)
+                .add("dataType", dataType)
+                .add("targetType", targetType)
+                .add("dataSourceId", dataSourceId)
+                .add("matchColumn", matchColumn)
+                .add("viewMode", viewMode)
+                .add("dataTargetId", dataTargetId)
+                .add("ruleCondition", ruleCondition)
+                .add("createTime", createTime)
+                .add("modifyTime", modifyTime)
+                .toString();
+    }
 }

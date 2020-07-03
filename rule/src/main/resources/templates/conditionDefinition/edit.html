@@ -23,9 +23,9 @@
                 <input type="text" class="form-control" id="matchKey" name="matchKey" maxlength="20" value="${conditionDefinition.matchKey!}" required />
             </div>
             <div class="form-group col">
-                <label for="isVariable" class="">是否计算指标<i class="red">*</i></label>
-                <select id="isVariable" name="isVariable" class="form-control" value="${conditionDefinition.isVariable!}"  required></select>
-                <#bcomboProvider _id="isVariable" _provider="yesOrNoProvider" _queryParams='{emptyText:"-- 请选择 --"}'  _valueField="value" _textField="text" _value="${conditionDefinition.isVariable!}" />
+                <label for="targetType" class="">指标类型<i class="red">*</i></label>
+                <select id="targetType" name="targetType" class="form-control" value="${conditionDefinition.targetType!}"  required></select>
+                <#bcomboProvider _id="targetType" _provider="targetTypeProvider" _queryParams='{emptyText:"-- 请选择 --"}'  _valueField="value" _textField="text" _value="${conditionDefinition.targetType!}" />
             </div>
             <div class="form-group col">
                 <label for="matchType" class="">条件类型<i class="red">*</i></label>
@@ -137,14 +137,14 @@
         }
         $('#matchColumn').html(data.join(''));
     }
-	$('select[name="isVariable"]').change(function(){
+	$('select[name="targetType"]').change(function(){
 		var elList=$('select[name="matchType"],select[name="dataSourceId"],select[name="matchColumn"],select[name="viewMode"]');
 		
-		var isVariable=$(this).val();
-		if(isVariable==null){
-			isVariable=$('select[name="isVariable"]').attr('value')
+		var targetType=$(this).val();
+		if(targetType==null){
+			targetType=$('select[name="targetType"]').attr('value')
 		}
-		if(isVariable=='${@com.dili.commons.glossary.YesOrNoEnum.YES.getCode()}'){
+		if(targetType=='${@com.dili.rule.domain.enums.TargetTypeEnum.VARIABLE.getCode()}'){
 			elList.attr('readonly','readonly');
 			elList.attr('disabled','disabled')
 		}else{
@@ -153,8 +153,8 @@
 		}
 	});
 	
-	if($('select[name="isVariable"]').attr('value')!=''){
-		$('select[name="isVariable"]').trigger('change')
+	if($('select[name="targetType"]').attr('value')!=''){
+		$('select[name="targetType"]').trigger('change')
 	}
     /**
      * 保存定义数据

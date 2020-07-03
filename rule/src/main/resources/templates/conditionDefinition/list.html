@@ -18,9 +18,9 @@
             
             
             <div class="form-group col">
-                <label for="isVariable">计算指标</label>
-                <select class="form-control" id="isVariable" name="isVariable"></select>
-                <#bcomboProvider _id="isVariable" _provider="yesOrNoProvider" _valueField="value" _textField="text" _value="" _queryParams='{emptyText:"-- 全部 --"}' />
+                <label for="targetType">指标类型</label>
+                <select class="form-control" id="targetType" name="targetType"></select>
+                <#bcomboProvider _id="targetType" _provider="targetTypeProvider" _valueField="value" _textField="text" _value="" _queryParams='{emptyText:"-- 全部 --"}' />
             </div>
             <div class="form-group col">
                 <label for="matchType">条件类型</label>
@@ -90,7 +90,7 @@
                         <th data-width-unit="%" data-width="10" data-field="matchKey" data-align="center">
                             匹配Key
                         </th>
-                        <th data-width-unit="%" data-width="5" data-field="isVariable" data-sortable="true" data-sort-name="is_variable" data-align="center" data-provider="yesOrNoProvider">
+                        <th data-width-unit="%" data-width="5" data-field="targetType" data-sortable="true" data-sort-name="target_type" data-align="center" data-provider="targetTypeProvider">
                             计算指标
                         </th>
                         <th data-width-unit="%" data-width="5" data-field="matchType" data-sortable="true" data-sort-name="match_type" data-align="center" data-provider="matchTypeProvider">
@@ -117,9 +117,9 @@
 <#conditionDefinition_listJs />
 <script type="text/javascript">
 //<!--
-$('select[name="isVariable"]').change(function(){
+$('select[name="targetType"]').change(function(){
 	var elList=$('select[name="matchType"]');
-	if($(this).val()=='${@com.dili.commons.glossary.YesOrNoEnum.YES.getCode()}'){
+	if($(this).val()=='${@com.dili.rule.domain.enums.TargetTypeEnum.VARIABLE.getCode()}'){
 		elList.attr('readonly','readonly');
 		elList.attr('disabled','disabled')
 	}else{

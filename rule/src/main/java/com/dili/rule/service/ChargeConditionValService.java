@@ -18,14 +18,14 @@ import java.util.Map;
 public interface ChargeConditionValService extends BaseService<ChargeConditionVal, Long> {
 
 	/**
-	 * 根据规则ID获取规则条件详细信息
+	 * 根据规则ID获取规则条件指标详细信息
 	 * 
 	 * @param chargeRule 规则对象
 	 */
 	Map<String, Object> getRuleCondition(ChargeRule chargeRule);
 
 	/**
-	 * 根据规则ID获取计算条件(变量)详细信息
+	 * 根据规则ID获取计算条件(变量)指标详细信息
 	 * 
 	 * @param chargeRule 规则对象
 	 */

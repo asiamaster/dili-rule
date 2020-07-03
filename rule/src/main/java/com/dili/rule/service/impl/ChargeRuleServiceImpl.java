@@ -174,7 +174,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         queryCondition.setMarketId(queryFeeInput.getMarketId());
         queryCondition.setBusinessType(queryFeeInput.getBusinessType());
         queryCondition.setChargeItem(queryFeeInput.getChargeItem());
-        queryCondition.setSort("group_id,modified,created");
+        queryCondition.setSort("group_id,modifyTime,createTime");
         queryCondition.setOrder("DESC,DESC,DESC");
         queryCondition.setState(RuleStateEnum.ENABLED.getCode());
         List<ChargeRule> chargeRuleList = this.listByExample(queryCondition);
