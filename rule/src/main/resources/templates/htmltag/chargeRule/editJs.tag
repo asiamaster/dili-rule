@@ -3,7 +3,7 @@
     /*********************变量定义区 begin*************/
     var dia;
     var choiceTarget;   //存储多选时的选择项
-    let variable = '';
+    let variable ;
 
 
     /*********************变量定义区 end***************/
@@ -72,8 +72,8 @@
                 			$('#'+taget).val(currentVal.split(",")[0]+','+$(this).val());
                 		}
                 	});
-                	
-                	
+
+
                     $('[name="condition"]').on('blur', '.cusIsNaturalNum', function(){
                         $(this).siblings('.error').text('');
                         if ($(this).val() && ( !(/^(0|[1-9][0-9]*)$/.test($(this).val())) || parseFloat($(this).val()) > 9999999)) {
@@ -98,7 +98,7 @@
             })
         }
     }
-    
+
     /**
      * 获取规则计算指标(变量)信息
      */
@@ -132,8 +132,10 @@
                         $('div[exp-id="' + expid + '"]').remove();
                     }
                     var expBuilder = $('.expressionInput').expressionBuilder(options);
+                    // $('.expressionInput').trigger('input')
                     $('.expressionInput').on('input', function () {
                         var target = $(this).data('target');
+                        debugger
                         if (expBuilder.isValid() == true) {
                             var inputExpression = expBuilder.getInput();
                             $.each(options.variables, function () {
@@ -158,10 +160,14 @@
         }
     }
 
-    // 选择计算参数
+
+
+    //点击计算参数项
     $(document).on('click', '#calcVariable .btn-variable', function(){
-        variable += $(this).data('variable');
+        debugger
+        variable  = $('.expressionInput').val() + $(this).data('variable');
         $('[name="expressionInput"]').val(variable)
+        $('.expressionInput').trigger('input')
     })
 
     $('#calcParamInfo .clear').on('click', function(){

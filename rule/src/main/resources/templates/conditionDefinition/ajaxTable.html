@@ -1,7 +1,7 @@
 
     <form id="queryForm" role="form">
         <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
-        <div class="row row-cols-6">
+        <div class="row row-cols-4">
             <%if (has(inputConditionDefinitions) && isNotEmpty(inputConditionDefinitions) && inputConditionDefinitions.~size >0 ){
                 for(input in inputConditionDefinitions){
             %>
@@ -93,6 +93,9 @@
     </div>
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <script>
+
+
+
     /**
      * 条件查询操作
      */
@@ -152,13 +155,6 @@
         }
     });
 
-    $.each(checkedids, function(k,ele) {
-        debugger
-        $('body').find('.checkboxWrap [data-id="' + parseInt(ele) + '"]').find(':checkbox').click();
-        if (!$('.checkedShow .table [data-id="' + ele + '"]').length) {
-            $('.checkedShow .table').append('<tr data-id="' + parseInt(ele) + '"><td>' + checkedtexts[k] + '<i class="fa fa-times remove-btn float-right" aria-hidden="true"></i></td></tr>');
-        }
-    });
 
     // 移除已选项
     $(document).on('click', '.checkedShow .remove-btn', function () {

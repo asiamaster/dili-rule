@@ -62,7 +62,7 @@
                                 <label for="expireStart" class="input-group-text fa fa-calendar"></label>
                             </div>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
-                        <div class="input-group" id="datetimepicker3">
+                        <div class="input-group">
                             <input type="text" name="expireEnd" id="expireEnd"  autocomplete="off"  class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
                             <div class="input-group-append">
                                 <label for="expireEnd" class="input-group-text fa fa-calendar"></label>
@@ -94,25 +94,30 @@
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="8">8</button>
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="9">9</button>
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="0">0</button>
+                    <br>
+                    <br>
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="+">+</button>
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="-">-</button>
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="*">*</button>
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="/">/</button>
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="(">(</button>
                     <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable=")">)</button>
+                    <br>
+                    <br>
                     <div class="d-inline-block" id="variableListDiv"></div>
                 </div>
                 <input type="hidden" id="targetVal" name="targetVal"  autocomplete="off" value="${chargeRule.targetVal!}" />
             	<div class="form-group col-12">
                     <label for="">表达式<i class="red">*</i></label>
                    <div class="row">
-                       <div class="col-6 pr-0" id="expressionDiv">
-                           <input type="text" name="expressionInput" data-target="#targetVal" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.targetVal!}"  value="${chargeRule.targetVal!}" autocomplete="off" data-value-type="skip" required="required"/>
+                       <div class="input-group col-6">
+                           <div class="w-75 pr-0" id="expressionDiv">
+                               <input type="text" name="expressionInput" data-target="#targetVal" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.targetVal!}"  value="${chargeRule.targetVal!}" autocomplete="off" data-value-type="skip" required="required"/>
+                           </div>
+                           <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
                        </div>
-                       <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
                    </div>
                 </div>
-  				
             </div>
             <div class="breadcrumb">
                 	其它信息<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
