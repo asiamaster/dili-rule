@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
@@ -99,11 +100,13 @@ public class RemoteDataQueryService {
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = conditionDataSource.getDataJson();
             jsonDataOpt = Optional.ofNullable(localJsonData);
-
         } else {
             //构建查询参数
             Map<String,Object> params = Maps.newHashMap();
             params.put(conditionDataSource.getKeysField(),keys);
+            //强制内置两个参数，根据当前用户的市场隔离
+            params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
+            params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
             HttpResponse response = HttpUtil.createPost(conditionDataSource.getKeysUrl()).body(JSONObject.toJSONString(params)).execute();
             if (response.isOk()) {
                 jsonDataOpt = Optional.ofNullable(response.body());
@@ -162,6 +165,9 @@ public class RemoteDataQueryService {
         }
         params.put("index", pageNumber + 1);
         params.put("pageSize", pageSize);
+        //强制内置两个参数，根据当前用户的市场隔离
+        params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
+        params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         Optional<String> result = null;
         HttpResponse response = HttpUtil.createPost(url).body(JSONObject.toJSONString(params)).execute();
         if (response.isOk()) {

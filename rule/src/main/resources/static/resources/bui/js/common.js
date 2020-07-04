@@ -87,9 +87,7 @@ function laydateInt() {
 
 //开始结束时间对比
 function isStartEndDatetime (el, value){
-    debugger
     let start, end;
-
     if ($(el).hasClass('laystart')) {
         start = moment(new Date(value), 'MM-DD-YYYY HH:mm:ss');
         if ($(el).parents('.form-group').find('.layend').length) {

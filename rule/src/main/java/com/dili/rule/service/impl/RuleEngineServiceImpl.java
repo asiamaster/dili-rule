@@ -49,9 +49,9 @@ public class RuleEngineServiceImpl implements RuleEngineService {
         conditionValCondition.setRuleId(ruleInfo.getId());
         List<ChargeConditionVal> ruleConditionValList = chargeConditionValService.list(conditionValCondition);
         Map<String, RuleFactsDto> ruleFactsVoMap = this.buildRuleFactsMap(ruleConditionValList, conditionParams);
-        if (ruleConditionValList.size() != ruleFactsVoMap.size()) {
-            return false;
-        }
+//        if (ruleConditionValList.size() != ruleFactsVoMap.size()) {
+//            return false;
+//        }
         // define facts
         Facts facts = this.buildFacts(ruleFactsVoMap);
         // define rules

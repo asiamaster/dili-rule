@@ -7,7 +7,6 @@
     -->
     <id column="id"  property="id" />
     <result column="original_id"  property="originalId" />
-    <result column="code"  property="code" />
     <result column="market_id"  property="marketId" />
     <result column="business_type"  property="businessType" />
     <result column="group_id"  property="groupId" />
@@ -35,7 +34,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    id, original_id, code, market_id, business_type, group_id, charge_item,
+    id, original_id, market_id, business_type, group_id, charge_item,
     rule_name, state, priority, expire_start, expire_end, target_val, min_payment, max_payment,
     remark, revisable, operator_id, operator_name, create_time, modify_time, approver_id, 
     approver_name, approval_time

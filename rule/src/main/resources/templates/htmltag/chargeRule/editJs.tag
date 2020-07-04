@@ -135,7 +135,6 @@
                     // $('.expressionInput').trigger('input')
                     $('.expressionInput').on('input', function () {
                         var target = $(this).data('target');
-                        debugger
                         if (expBuilder.isValid() == true) {
                             var inputExpression = expBuilder.getInput();
                             $.each(options.variables, function () {
@@ -151,7 +150,6 @@
                         $('.expressionInput').val(val)
                     });
                     expBuilder.isValid();
-
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     bs4pop.alert('获取计算指标失败', {type: 0});
@@ -164,7 +162,6 @@
 
     //点击计算参数项
     $(document).on('click', '#calcVariable .btn-variable', function(){
-        debugger
         variable  = $('.expressionInput').val() + $(this).data('variable');
         $('[name="expressionInput"]').val(variable)
         $('.expressionInput').trigger('input')
@@ -199,7 +196,6 @@
                     }, {label: '确定',className: 'btn btn-primary px-5',onClick(e,$iframe){
                         let diaWindow = $iframe[0].contentWindow;
                         $('#'+targetId).val(diaWindow.checkedids)
-                        debugger
                         choice.attr('checkedids', diaWindow.checkedids);
                         choice.parents('.input-group').find('.form-control').val(diaWindow.checkedtexts);
                         dia.hide()

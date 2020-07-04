@@ -12,6 +12,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
+import com.dili.uap.sdk.session.SessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value="/index.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
-        modelMap.put("marketList", marketRpcService.getCurrentUserFirms());
+        modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         modelMap.put("businessTypeList", getBusinessType());
         return "chargeRule/list";
     }
@@ -90,6 +91,7 @@ public class ChargeRuleController {
     public String preSave(ChargeRule chargeRule, ModelMap modelMap) {
         if (Objects.nonNull(chargeRule)) {
             modelMap.addAttribute("action", "insert");
+            chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
             if (null != chargeRule.getId()) {
                 chargeRule = chargeRuleService.get(chargeRule.getId());
                 if (Objects.nonNull(chargeRule)) {
@@ -99,7 +101,6 @@ public class ChargeRuleController {
                     modelMap.addAttribute("action", "update");
                 }
             }
-            modelMap.put("marketList", marketRpcService.getCurrentUserFirms());
             modelMap.put("businessTypeList", getBusinessType());
             modelMap.addAttribute("chargeRule", chargeRule);
         }

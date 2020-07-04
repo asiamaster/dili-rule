@@ -10,16 +10,7 @@
                    aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
             <div class="row row-cols-6 collapse show form-baseParam-box" id="baseInfo">
-                <div class="form-group col">
-                    <label for="marketId">所属市场<i class="red">*</i></label>
-                    <select class="form-control" id="marketId" name="marketId" required>
-                        <%if (has(marketList) && isNotEmpty(marketList) && marketList.~size >0 ){
-                            for(market in marketList){
-                        %>
-                            <option  value="${market.id!}" <%if(market.id==chargeRule.marketId){%> selected <%}%> >${market.name!}</option>
-                        <%}}%>
-                    </select>
-                </div>
+                <input type="hidden" id="marketId" name="marketId" value="${chargeRule.marketId!}">
                 <div class="form-group col">
                     <label for="businessType">业务类型<i class="red">*</i></label>
                     <select class="form-control" id="businessType" name="businessType" required>

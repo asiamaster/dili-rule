@@ -2,6 +2,7 @@ package com.dili.rule.service;
 
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.ss.base.BaseService;
+import com.dili.ss.domain.BaseOutput;
 
 /**
  * 由MyBatis Generator工具自动生成
@@ -17,4 +18,11 @@ public interface ConditionDefinitionService extends BaseService<ConditionDefinit
      * @return
      */
     String convertTargetValDefinition(String targetVal,Boolean label);
+
+    /**
+     * 保存规则条件预定义信息
+     * @param conditionDefinition 条件定义数据
+     * @return 处理结果
+     */
+    BaseOutput save(ConditionDefinition conditionDefinition);
 }

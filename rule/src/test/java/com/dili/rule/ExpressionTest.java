@@ -1,4 +1,4 @@
-package rule;
+package com.dili.rule;
 
 import java.math.BigDecimal;
 

@@ -46,12 +46,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
     private Long originalId;
 
     /**
-     * 计费规则编码
-     */
-    @Column(name = "`code`", updatable = false)
-    private String code;
-
-    /**
      * 规则所属于某个市场
      */
     @Column(name = "`market_id`", updatable = false)
@@ -232,20 +226,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
      */
     public void setOriginalId(Long originalId) {
         this.originalId = originalId;
-    }
-
-    /**
-     * @return String return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * @param code the code to set
-     */
-    public void setCode(String code) {
-        this.code = code;
     }
 
     /**
@@ -555,7 +535,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("originalId", originalId)
-                .add("code", code)
                 .add("marketId", marketId)
                 .add("businessType", businessType)
                 .add("groupId", groupId)

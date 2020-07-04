@@ -209,6 +209,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 
                 }
             }
+            result.setMessage(Optional.of("未匹配到任何规则"));
         }
         return result;
     }
@@ -371,6 +372,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             conditionValItem.setDataType(definition.getDataType());
             conditionValItem.setVal(val);
             conditionValItem.setDefinitionId(definition.getId());
+            conditionValItem.setCreateTime(LocalDateTime.now());
+            conditionValItem.setModifyTime(conditionValItem.getCreateTime());
             return conditionValItem;
         }).collect(Collectors.toList());
         return ruleConditionVals;
@@ -399,7 +402,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @return 计算后的结果值
      */
     private BigDecimal calcFeeByRule(ChargeRule ruleInfo, Map<String, Object> calcParams) {
-        Expression expression = new Expression(ruleInfo.getTargetVal());
+        String targetVal = conditionDefinitionService.convertTargetValDefinition(ruleInfo.getTargetVal(),false);
+        Expression expression = new Expression(targetVal);
         try {
             for (String var : expression.getUsedVariables()) {
                 if (calcParams.containsKey(var)){

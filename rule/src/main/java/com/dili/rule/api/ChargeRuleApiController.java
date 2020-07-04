@@ -103,7 +103,7 @@ public class ChargeRuleApiController {
             return Optional.of("收费项不能为空");
         }
         if (CollectionUtil.isEmpty(queryFeeInput.getConditionParams())) {
-            return Optional.of("dataParams不能为空");
+            return Optional.of("条件指标数据不能为空");
         }
         return Optional.empty();
     }
