@@ -410,7 +410,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     expression.setVariable(var, String.valueOf(calcParams.get(var)));
                 }
             }
-            return expression.eval();
+            return new BigDecimal(expression.eval().toPlainString());
         } catch (Exception e) {
             logger.error(String.format("根据规则[%s]及参数[%s]生成的表达式[%s]计算金额异常[%s]",ruleInfo,calcParams,expression.toString(),e.getMessage() ),e);
             throw new BusinessException("1","根据规则及参数计算费用异常");
