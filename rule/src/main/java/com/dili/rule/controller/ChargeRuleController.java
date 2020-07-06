@@ -178,6 +178,40 @@ public class ChargeRuleController {
     }
 
     /**
+     * 计费规则详情查看
+     * @param id 规则ID
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/view.action", method = {RequestMethod.GET, RequestMethod.POST})
+    public String view(Long id, ModelMap modelMap) {
+        if (Objects.nonNull(id)) {
+            ChargeRule chargeRule = chargeRuleService.get(id);
+            if (Objects.nonNull(chargeRule)) {
+                //转换获取计算参数
+                String targetVal = conditionDefinitionService.convertTargetValDefinition(chargeRule.getTargetVal(), true);
+                chargeRule.setTargetVal(targetVal);
+                modelMap.put("businessTypeList", getBusinessType());
+                modelMap.addAttribute("chargeRule", chargeRule);
+            }
+        }
+        return "chargeRule/view";
+    }
+
+    /**
+     * 查看详情-获取对应的规则条件值
+     * @param chargeRule
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/viewRuleCondition.action", method = { RequestMethod.GET, RequestMethod.POST })
+    public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap) {
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule);
+        modelMap.addAllAttributes(map);
+        return "chargeRule/viewCondition";
+    }
+
+    /**
      * 获取费用业务类型
      * @return
      */

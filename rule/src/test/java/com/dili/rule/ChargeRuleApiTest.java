@@ -52,9 +52,9 @@ public class ChargeRuleApiTest {
         try {
             MvcResult result = mockMvc.perform(post("/api/chargeRule/queryFee").content(JSONObject.toJSONString(queryFeeInput))
                     .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())// 模拟向testRest发送请求
-                    .andExpect(content().contentType("application/json;charset=UTF-8"))// 预期返回值的媒体类型text/plain;
-                    .andReturn();// 返回执行请求的结果
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType("application/json;charset=UTF-8"))
+                    .andReturn();
             System.out.println(result.getResponse().getContentAsString());
         } catch (Exception e) {
             e.printStackTrace();

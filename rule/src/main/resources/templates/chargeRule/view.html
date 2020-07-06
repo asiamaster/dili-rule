@@ -1,0 +1,172 @@
+<#bs4Body>
+<link rel="stylesheet" type="text/css" href="${contextPath}/resources/css/main.css" />
+<div class="container-fluid">
+    <%if (has(chargeRule)){%>
+    <form id="addForm" role="form" novalidate>
+        <input type="hidden" id="id" name="id" value="${chargeRule.id!}">
+        <div class="breadcrumb" >
+            基础信息
+            <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true"
+               aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="row row-cols-6 collapse show form-baseParam-box" id="baseInfo">
+            <input type="hidden" id="marketId" name="marketId" value="${chargeRule.marketId!}">
+            <div class="form-group col">
+                <label for="businessType">业务类型</label>
+                <select class="form-control" id="businessType" name="businessType" required>
+                    <%if (has(businessTypeList) && isNotEmpty(businessTypeList) && businessTypeList.~size > 0 ){
+                    for(bType in businessTypeList){
+                    %>
+                    <option value="${bType.code!}" <%if(bType.code==chargeRule.businessType){%> selected <%}%> >${bType.name!}</option>
+                    <%}}%>
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="businessType">费用科目</label>
+                <input type="hidden" id="oldChargeItem" value="${chargeRule.chargeItem!}">
+                <select class="form-control" id="chargeItem" name="chargeItem" required>
+                    <option value="">-- 请选择 --</option>
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="ruleName">规则名称</label>
+                <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="30" value="${chargeRule.ruleName!}" required>
+            </div>
+            <div class="form-group col">
+                <label for="groupId">分组</label>
+                <input type="" class="form-control isInt" id="groupId" name="groupId" placeholder="" value="${chargeRule.groupId!}" min="0" max="999" required>
+            </div>
+            <div class="form-group col">
+                <label for="minPayment">最低支付金额</label>
+                <input type="" class="form-control floatReserve" id="minPayment" name="minPayment" placeholder="" value="${chargeRule.minPayment!}" range="0 999999.99">
+            </div>
+            <div class="form-group col">
+                <label for="maxPayment">最高支付金额</label>
+                <input type="" class="form-control floatReserve" id="maxPayment" name="maxPayment" placeholder="" value="${chargeRule.maxPayment!}" range="0 99999999.99">
+            </div>
+            <div class="form-group col-auto">
+                <label for="expireStart">有效期</label>
+                <div class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="expireStart" id="expireStart"  autocomplete="off"  class="form-control" value="${chargeRule.expireStart!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
+                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                    <div class="input-group">
+                        <input type="text" name="expireEnd" id="expireEnd"  autocomplete="off"  class="form-control" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="breadcrumb">
+            条件指标
+            <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#conditionInfo" aria-expanded="true" aria-controls="conditionInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div id="conditionInfo" class="collapse show">
+            <div id="viewRuleConditionDiv"></div>
+        </div>
+        <div class="breadcrumb">
+            计算指标<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParamInfo">
+            <div class="col-auto mt-2 mb-2" id="calcVariable">
+                <label class="d-block" for="">计算参数</label>
+                <div class="d-inline-block" id="variableListDiv"></div>
+            </div>
+
+            <div class="form-group col-12">
+                <label for="">数学表达式</label>
+                <div class="row">
+                    <div class="input-group col-6">
+                        <div class="w-75 pr-0" id="expressionDiv">
+                            <input type="text" class="form-control" id="targetVal" name="targetVal"  value="${chargeRule.targetVal!}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="breadcrumb">
+            其它信息<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="row  row-cols-4 collapse show" id="otherInfo">
+            <div class="form-group col-8">
+                <label for="remark">备注</label>
+                <textarea id="remark" class="form-control" name="remark" rows="1" maxlength="100"></textarea>
+            </div>
+        </div>
+    </form>
+    <%}else{%>
+    <h4 class="red"><span class="px-3">参数丢失</span></h4>
+    <%}%>
+</div>
+</#bs4Body>
+<link rel="stylesheet" href="${contextPath}/resources/jquery-expression-builder/expression-builder.css" />
+<script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2-exd.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
+<script>
+    $(function () {
+        defaultGetChargeItem($("#oldChargeItem").val(),'');
+        getRuleCondition();
+        getRuleVariable();
+        $(":input").attr("disabled", true);
+        $("select").addClass("select-no-down");
+
+    });
+
+    /**
+     * 获取规则条件信息
+     */
+    function getRuleCondition(){
+        let ruleId = $('#id').val();
+        let marketId = $('#marketId').val();
+        let businessType = $('#businessType').val();
+        $('#viewRuleConditionDiv').html('');
+        if (marketId && businessType){
+            $.ajax({
+                type: "POST",
+                url: "${contextPath}/chargeRule/viewRuleCondition.action",
+                async:false,
+                data: {id: ruleId, marketId: marketId, businessType: businessType},
+                success: function (ret) {
+                    $('#viewRuleConditionDiv').html(ret);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    bs4pop.notice('获取规则条件失败');
+                }
+            })
+        }
+    }
+
+    /**
+     * 获取规则计算指标(变量)信息
+     */
+    function getRuleVariable() {
+        let ruleId = $('#id').val();
+        let marketId = $('#marketId').val();
+        let businessType = $('#businessType').val();
+        $('#ruleConditionDiv').html('');
+        if (marketId && businessType) {
+            $('#variableListDiv').html('');
+            $.ajax({
+                type: "POST",
+                url: "${contextPath}/chargeRule/getRuleVariable.action",
+                async: true,
+                data: {id: ruleId, marketId: marketId, businessType: businessType},
+                success: function (ret) {
+                    let options = {variables: []};
+                    $.each(ret, function () {
+                        let label = this.label;
+                        let matchKey = this.matchKey;
+                        options.variables.push({variableId: this.id, name: matchKey})
+                        $('#variableListDiv').append('<button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="' + matchKey + '">' + label + '(' + matchKey + ')</button> ')
+
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    bs4pop.alert('获取计算指标失败', {type: 0});
+                }
+            })
+        }
+    }
+
+</script>

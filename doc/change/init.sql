@@ -15,7 +15,6 @@ create table charge_rule
 (
    id                   bigint not null auto_increment comment '唯一ID',
    original_id          bigint comment '原始ID(在非启用状态下，修改数据，会生成一条新规则，需记录原始规则ID)',
-   code                 varchar(50) comment '计费规则编码',
    market_id            bigint comment '规则所属于某个市场',
    business_type        varchar(40) comment '所属的业务类型',
    group_id             bigint comment '组别',

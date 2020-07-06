@@ -37,51 +37,51 @@
     /**
      * 获取规则条件信息
      */
-    function getRuleCondition(){
+    function getRuleCondition() {
         let ruleId = $('#id').val();
         let marketId = $('#marketId').val();
         let businessType = $('#businessType').val();
         $('#ruleConditionDiv').html('');
-        if (marketId && businessType){
+        if (marketId && businessType) {
             $.ajax({
                 type: "POST",
                 url: "${contextPath}/chargeRule/getRuleCondition.action",
-                async:true,
+                async: true,
                 data: {id: ruleId, marketId: marketId, businessType: businessType},
                 success: function (ret) {
                     $('#ruleConditionDiv').html(ret);
-                	$('.eqInput').on('input',function(){
-                		var taget=$(this).data('target')
-                		$('#'+taget).val($(this).val());
-                	});
-                	$('.betweenMinInput').on('input',function(){
-                		var taget=$(this).data('target')
-                		var currentVal=$('#'+taget).val();
-                		if(currentVal.indexOf(",")==-1){
-                			$('#'+taget).val($(this).val()+',');
-                		}else{
-                			$('#'+taget).val($(this).val()+','+currentVal.split(",")[1]);
-                		}
-                	});
-                   	$('.betweenMaxInput').on('input',function(){
-                		var taget=$(this).data('target')
-                		var currentVal=$('#'+taget).val();
-                		if(currentVal.indexOf(",")==-1){
-                			$('#'+taget).val(","+$(this).val());
-                		}else{
-                			$('#'+taget).val(currentVal.split(",")[0]+','+$(this).val());
-                		}
-                	});
+                    $('.eqInput').on('input', function () {
+                        var taget = $(this).data('target')
+                        $('#' + taget).val($(this).val());
+                    });
+                    $('.betweenMinInput').on('input', function () {
+                        var taget = $(this).data('target')
+                        var currentVal = $('#' + taget).val();
+                        if (currentVal.indexOf(",") == -1) {
+                            $('#' + taget).val($(this).val() + ',');
+                        } else {
+                            $('#' + taget).val($(this).val() + ',' + currentVal.split(",")[1]);
+                        }
+                    });
+                    $('.betweenMaxInput').on('input', function () {
+                        var taget = $(this).data('target')
+                        var currentVal = $('#' + taget).val();
+                        if (currentVal.indexOf(",") == -1) {
+                            $('#' + taget).val("," + $(this).val());
+                        } else {
+                            $('#' + taget).val(currentVal.split(",")[0] + ',' + $(this).val());
+                        }
+                    });
 
 
-                    $('[name="condition"]').on('blur', '.cusIsNaturalNum', function(){
+                    $('[name="condition"]').on('blur', '.cusIsNaturalNum', function () {
                         $(this).siblings('.error').text('');
-                        if ($(this).val() && ( !(/^(0|[1-9][0-9]*)$/.test($(this).val())) || parseFloat($(this).val()) > 9999999)) {
+                        if ($(this).val() && (!(/^(0|[1-9][0-9]*)$/.test($(this).val())) || parseFloat($(this).val()) > 9999999)) {
                             $(this).siblings('.error').text('请输0到9999999之间数');
                             $(this).val('');
                         }
                     });
-                    $('[name="condition"]').on('blur', '.cusFloatReserve', function(){
+                    $('[name="condition"]').on('blur', '.cusFloatReserve', function () {
                         $(this).siblings('.error').text('');
                         if ($(this).val() && !(/^(([1-9]\d+)|\d)(\.\d{1,2})?$/.test($(this).val()))) {
                             $(this).siblings('.error').text('最多两位小数');
@@ -93,7 +93,7 @@
                     });
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    bs4pop.alert('获取规则条件失败', { type: 0 });
+                    bs4pop.alert('获取规则条件失败', {type: 0});
                 }
             })
         }
@@ -164,13 +164,13 @@
     $(document).on('click', '#calcVariable .btn-variable', function(){
         variable  = $('.expressionInput').val() + $(this).data('variable');
         $('[name="expressionInput"]').val(variable)
-        $('.expressionInput').trigger('input')
-    })
+        $('.expressionInput').trigger('input');
+    });
 
     $('#calcParamInfo .clear').on('click', function(){
         variable = '';
         $('.expressionInput').val(variable);
-    })
+    });
 
 
     // 选择数据时的操作事件
@@ -278,29 +278,6 @@
         return formJson;
     }
 
-    // 条件指标data
-    function buildConditionData() {
-    	
-
-        // 直接输入区间范围的项
-        /*$('.form-conditionParam-box .form-range').each(function(i, ele){
-            // 判断范围开始/结束比较
-            let start =  $(ele).find('.input-group:nth-of-type(1) .form-control').val();
-            let end = $(ele).find('.input-group:nth-of-type(2) .form-control').val();
-            if (start && end) {
-                let key = $(ele).attr('name');
-                data[key] = '['+start + ',' + end+']';
-            }
-        });*/
-
-     
-    }
-
-    
-
-    /* ------------- 规则整个form data---END------------- */
-
-
     $(document).on('click', '.btn-cancel', function () {
         window.location.href = document.referrer;
     });
@@ -309,11 +286,16 @@
      */
     $(document).on('click', '#formSubmit', function () {
         if ($('#addForm').validate().form() === true && validCondition()) {
+            let expressionInput = $('#expressionInput').expressionBuilder();
+            if (!expressionInput.isValid()){
+                bs4pop.alert("计算表达式输入不正确", {type: 'error', position: 'center'});
+                return;
+            }
             bui.loading.show('努力提交中，请稍候。。。');
             let id = $('#id').val();
             let url = '${contextPath}/chargeRule/save.action';
             let data = buildData();
-            console.info(data);
+
             $.ajax({
                 type: "POST",
                 dataType: "json",

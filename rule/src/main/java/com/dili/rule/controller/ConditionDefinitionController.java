@@ -141,6 +141,23 @@ public class ConditionDefinitionController {
         }
     }
 
+
+    /**
+     * 跳转到编辑页面
+     * @param id 数据ID
+     * @return
+     */
+    @RequestMapping(value = "/view.action", method = RequestMethod.GET)
+    public String view(Long id, ModelMap modelMap) {
+        if (Objects.nonNull(id)) {
+            ConditionDefinition conditionDefinition = conditionDefinitionService.get(id);
+            if (Objects.nonNull(conditionDefinition)) {
+                modelMap.put("conditionDefinition", conditionDefinition);
+            }
+        }
+        return "conditionDefinition/view";
+    }
+
     /**
      * 根据数据定义获取条件信息并返回条件数据页
      * @param definitionId 条件预定义ID

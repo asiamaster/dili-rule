@@ -57,7 +57,7 @@
                     <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden"data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input  data-target="${cdLP.index-1}"  value="${cd.values.~size?cd.values.get(0):''}" type="text" class="form-control cusFloatReserve betweenMinInput">
+                            <input  data-target="${cdLP.index-1}"  value="${cd.values.~size>0?cd.values.get(0):''}" type="text" class="form-control cusFloatReserve betweenMinInput">
                             <label class="error" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">

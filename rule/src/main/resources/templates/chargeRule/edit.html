@@ -99,11 +99,11 @@
                 </div>
                 <input type="hidden" id="targetVal" name="targetVal"  autocomplete="off" value="${chargeRule.targetVal!}" />
             	<div class="form-group col-12">
-                    <label for="">表达式<i class="red">*</i></label>
+                    <label for="">数学表达式<i class="red">*</i></label>
                    <div class="row">
                        <div class="input-group col-6">
                            <div class="w-75 pr-0" id="expressionDiv">
-                               <input type="text" name="expressionInput" data-target="#targetVal" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.targetVal!}"  value="${chargeRule.targetVal!}" autocomplete="off" data-value-type="skip" required="required"/>
+                               <input type="text" id="expressionInput" name="expressionInput" data-target="#targetVal" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.targetVal!}"  value="${chargeRule.targetVal!}" autocomplete="off" data-value-type="skip" required="required"/>
                            </div>
                            <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
                        </div>
@@ -131,7 +131,7 @@
 </#bs4Body>
   <link rel="stylesheet" href="${contextPath}/resources/jquery-expression-builder/expression-builder.css" />
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
-<script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2-exd.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <#chargeRule_editJs />
 <script>

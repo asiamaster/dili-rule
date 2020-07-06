@@ -44,7 +44,6 @@
      */
     function openInsertHandler() {
         let marketId = $('#marketId').val()==null?'':$('#marketId').val();
-       // let systemCode = $('#systemCode').val();
         let businessType = $('#businessType').val()==null?'':$('#businessType').val();
         let chargeItem = $('#chargeItem').val()==null?'':$('#chargeItem').val();
         let url = "/chargeRule/preSave.html?marketId=" + marketId+'&businessType='+businessType+'&chargeItem='+chargeItem;
@@ -77,9 +76,9 @@
             bs4pop.alert('此规则已存在被修改的记录，暂时不能修改', {type: 'warning'});
             return;
         }
-        let url = "/chargeRule/preSave.html?id=" + selectedRow.id + "&dataSourceId=" + selectedRow.dataSourceId;
+        let url = "/chargeRule/preSave.html?id=" + selectedRow.id;
         dia = bs4pop.dialog({
-            title: '更新数据列',
+            title: '更新规则',
             content: url,
             isIframe: true,
             closeBtn: true,
@@ -129,6 +128,30 @@
         });
     }
 
+    /**
+     * 查看规则详细信息
+     */
+    function openViewHandler() {
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        //table选择模式是单选时可用
+        let selectedRow = rows[0];
+        let url = "/chargeRule/view.action?id=" + selectedRow.id;
+        dia = bs4pop.dialog({
+            title: '规则详情',
+            content: url,
+            isIframe: true,
+            closeBtn: true,
+            backdrop: 'static',
+            width: '98%',
+            height: '98%',
+            btns: []
+        });
+    }
 
     /**
      * 禁启用操作

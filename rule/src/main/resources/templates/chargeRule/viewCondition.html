@@ -1,0 +1,45 @@
+<div class="form-conditionParam-box row row-cols-6" name="condition">
+
+    <%if (has(conditionDefinitions) && isNotEmpty(conditionDefinitions) && conditionDefinitions.~size >0 ){
+        for(cd in conditionDefinitions){%>
+         <input name="conditionList[${cdLP.index-1}][definitionId]" value="${cd.id}" type="hidden">
+         <input name="conditionList[${cdLP.index-1}][matchKey]" value="${cd.matchKey}" type="hidden">
+        <%if(isNotEmpty(cd.dataSourceId)){%>
+        <!--/*  如果数据源不为空，则认为此项为选择框类型  */-->
+        <div class="form-group col form-choice">
+            <label for="">${cd.label}</label>
+            <div class="input-group">
+         		<input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                <input value="${stringListJoin(cd.texts,',')}" type="text" class="form-control dsInput">
+            </div>
+        </div>
+    <%}else{%>
+         <!--/*  如果数据源为空，则认为此项为输入框类型   */-->
+            <!--/*  输入框的条件类型：  等于 */-->
+         <%if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.EQUALS.getCode()){%>
+            <div class="form-group col">
+                <label for="" >${cd.label}</label>
+                <input id="${cd.id}_${cd.matchKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"class="form-control"  min="0" max="9999999.99">
+            </div>
+        <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.BETWEEN.getCode()){%>
+            <!--/*  输入框的条件类型：  范围 */-->
+            <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
+                <label for="" >${cd.label}</label>
+                <div class="form-inline">
+                    <div class="input-group">
+                        <input  value="${cd.values.~size>0?cd.values.get(0):''}" type="text" class="form-control">
+                        <label class="error" ></label>
+                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                    <div class="input-group">
+                        <input  value="${cd.values.~size>1?cd.values.get(1):''}" type="text" class="form-control">
+                    </div>
+                </div>
+            </div>
+        <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.IN.getCode()){%>
+            <div class="form-group col form-text">
+                <label for="">${cd.label}</label>
+                <input id="${cd.id}_${cd.matchKey}" name="${cd.id}_${cd.matchKey}" matchKey="${cd.matchKey}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control" maxlength="50">
+            </div>
+        <%}%>
+    <%}}}%>
+</div>
