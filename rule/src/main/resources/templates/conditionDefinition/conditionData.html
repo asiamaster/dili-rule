@@ -19,12 +19,12 @@
 </#bs4Body>
 <script>
 
+    var choice = parent.window.choiceTarget;
+    var checkedids = choice.data('checkedids');
+    var checkedtexts = choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : [];
+
     /* 选择项 子父页面的存储 处理  */
     $(document).ready(function () {
-        var choice = parent.window.choiceTarget;
-        var checkedids = choice.data('checkedids');
-        var checkedtexts = choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : [];
-
         let definitionId = $('#definitionId').val();
         loadAjaxTable(definitionId);
         $.each(checkedids, function(k,ele) {
