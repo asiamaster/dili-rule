@@ -363,7 +363,11 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 throw new IllegalArgumentException("条件指标参数不正确");
             }
             // 转换为RuleConditionVal对象
-            String val = JSONObject.toJSONString(c.getMatchValues());
+
+            String val = "[]";
+            if (Objects.nonNull(c.getMatchValues())){
+                val = JSONObject.toJSONString(c.getMatchValues());
+            }
             ChargeConditionVal conditionValItem = new ChargeConditionVal();
             conditionValItem.setRuleId(rule.getId());
             conditionValItem.setLabel(definition.getLabel());

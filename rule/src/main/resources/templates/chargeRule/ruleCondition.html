@@ -91,7 +91,7 @@
         <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.IN.getCode()){%>
             <div class="form-group col form-text">
                 <label for="">${cd.label}</label>
-                <input id="${cd.id}_${cd.matchKey}" name="${cd.id}_${cd.matchKey}" matchKey="${cd.matchKey}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control" maxlength="50" placeholder="如有多个值，以英文逗号隔开">
+                <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]"  value="${stringListJoin(cd.values,',')}" type="text"  class="form-control" maxlength="50" placeholder="如有多个值，以英文逗号隔开" data-value-type="stringToArray">
             </div>
         <%}%>
     <%}}}%>

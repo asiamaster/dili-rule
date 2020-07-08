@@ -51,25 +51,25 @@
                 success: function (ret) {
                     $('#ruleConditionDiv').html(ret);
                     $('.eqInput').on('input', function () {
-                        var taget = $(this).data('target')
-                        $('#' + taget).val($(this).val());
+                        var target = $(this).data('target')
+                        $('#' + target).val($(this).val());
                     });
                     $('.betweenMinInput').on('input', function () {
-                        var taget = $(this).data('target')
-                        var currentVal = $('#' + taget).val();
+                        var target = $(this).data('target')
+                        var currentVal = $('#' + target).val();
                         if (currentVal.indexOf(",") == -1) {
-                            $('#' + taget).val($(this).val() + ',');
+                            $('#' + target).val($(this).val() + ',');
                         } else {
-                            $('#' + taget).val($(this).val() + ',' + currentVal.split(",")[1]);
+                            $('#' + target).val($(this).val() + ',' + currentVal.split(",")[1]);
                         }
                     });
                     $('.betweenMaxInput').on('input', function () {
-                        var taget = $(this).data('target')
-                        var currentVal = $('#' + taget).val();
+                        var target = $(this).data('target')
+                        var currentVal = $('#' + target).val();
                         if (currentVal.indexOf(",") == -1) {
-                            $('#' + taget).val("," + $(this).val());
+                            $('#' + target).val("," + $(this).val());
                         } else {
-                            $('#' + taget).val(currentVal.split(",")[0] + ',' + $(this).val());
+                            $('#' + target).val(currentVal.split(",")[0] + ',' + $(this).val());
                         }
                     });
 
@@ -238,26 +238,6 @@
         }
     };
 
-    // 条件指标的校验
-    function validCondition(){
-        let flag = true;
-        /*$('.form-conditionParam-box .form-range').each(function(i, ele){
-            // 判断范围开始/结束比较
-            let start =  $(ele).find('.input-group:nth-of-type(1) .form-control').val();
-            let itemName = $(ele).find('label:first').text();
-            let end = $(ele).find('.input-group:nth-of-type(2) .form-control').val();
-            if ((start !== '' && end === '') || (start === '' && end !== '')) {
-                bs4pop.notice(itemName + '范围输入不完整')
-                flag = false
-            }
-            if (parseFloat(start) > parseFloat(end)) {
-                bs4pop.notice(itemName + '开始不能大于结束')
-                flag = false
-            }
-        });*/
-        return flag;
-    }
-
     /* ---------- 规则整个form data----START------ */
     // 基础项和计算指标项data
     function buildData() {
@@ -285,7 +265,7 @@
      * 表单保存操作
      */
     $(document).on('click', '#formSubmit', function () {
-        if ($('#addForm').validate().form() === true && validCondition()) {
+        if ($('#addForm').validate().form() === true) {
             let expressionInput = $('#expressionInput').expressionBuilder();
             if (!expressionInput.isValid()){
                 bs4pop.alert("计算表达式输入不正确", {type: 'error', position: 'center'});

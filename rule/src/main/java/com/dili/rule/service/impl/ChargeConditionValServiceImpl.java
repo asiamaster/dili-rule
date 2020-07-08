@@ -106,29 +106,34 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                 } else if (matchType == MatchTypeEnum.IN) {
                     vo.getValues().addAll(objects);
                     ConditionDataSource conditionDataSource = conditionDataSourceService.get(conditionDefinition.getDataSourceId());
-                    String matchColumn = conditionDefinition.getMatchColumn();
-                    List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects);
-                    DataSourceColumn condition = new DataSourceColumn();
-                    condition.setDataSourceId(conditionDefinition.getDataSourceId());
-                    List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
-                    for (Object value : objects) {
-                        for (Map<String, Object> row : keyTextMap) {
-                            Object matchValue = row.get(matchColumn);
-                            if (String.valueOf(value).equals(String.valueOf(matchValue))) {
-                                List<String> displayedText = new ArrayList<>();
-                                for (DataSourceColumn column : columns) {
-                                    if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
-                                        Object obj=row.get(column.getColumnCode());
-                                        if(obj!=null) {
-                                            displayedText.add(String.valueOf(obj));
-                                        }
+                    if (Objects.nonNull(conditionDataSource)){
+                        String matchColumn = conditionDefinition.getMatchColumn();
+                        List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects);
+                        DataSourceColumn condition = new DataSourceColumn();
+                        condition.setDataSourceId(conditionDefinition.getDataSourceId());
+                        List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
+                        for (Object value : objects) {
+                            for (Map<String, Object> row : keyTextMap) {
+                                Object matchValue = row.get(matchColumn);
+                                if (String.valueOf(value).equals(String.valueOf(matchValue))) {
+                                    List<String> displayedText = new ArrayList<>();
+                                    for (DataSourceColumn column : columns) {
+                                        if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
+                                            Object obj=row.get(column.getColumnCode());
+                                            if(obj!=null) {
+                                                displayedText.add(String.valueOf(obj));
+                                            }
 
+                                        }
                                     }
+                                    vo.getTexts().add(String.join("#", displayedText));
                                 }
-                                vo.getTexts().add(String.join("#", displayedText));
                             }
                         }
+                    }else{
+                        vo.getTexts().add(objects);
                     }
+
                 }
             }
             voList.add(vo);
