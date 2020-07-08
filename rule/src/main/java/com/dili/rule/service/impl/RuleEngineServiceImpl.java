@@ -71,6 +71,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
      * @return
      */
     private Map<String, RuleFactsDto> buildRuleFactsMap(List<ChargeConditionVal> ruleConditionValList, Map<String, Object> conditionParams) {
+        LOGGER.info("conditionParams = {}", conditionParams);
         Map<String, RuleFactsDto> ruleFactsVoMap = ruleConditionValList.stream()
                 .filter(rcv -> conditionParams.containsKey(rcv.getMatchKey()))
                 .map(rcv -> {
