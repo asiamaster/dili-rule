@@ -285,7 +285,7 @@
         } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}) { //启用
             $('.control-btn').attr('disabled', true);
             $('#btn_disable').attr('disabled', false);
-        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}) {  //禁用
+        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.DISABLED.getCode()}) {  //禁用
             $('.control-btn').attr('disabled', true);
             $('#btn_enable').attr('disabled', false);
         } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.NOT_PASS.getCode()}) {  //未通过

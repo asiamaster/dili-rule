@@ -1,5 +1,6 @@
 package com.dili.rule.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
@@ -8,7 +9,6 @@ import com.dili.rule.domain.enums.MatchTypeEnum;
 import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.RuleEngineService;
-import org.apache.commons.lang3.StringUtils;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 import org.jeasy.rules.api.Rules;
@@ -23,7 +23,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -69,30 +72,25 @@ public class RuleEngineServiceImpl implements RuleEngineService {
      */
     private Map<String, RuleFactsDto> buildRuleFactsMap(List<ChargeConditionVal> ruleConditionValList, Map<String, Object> conditionParams) {
         Map<String, RuleFactsDto> ruleFactsVoMap = ruleConditionValList.stream()
-                .filter(rcv -> conditionParams.containsKey(rcv.getMatchKey()))
+//                .filter(rcv -> conditionParams.containsKey(rcv.getMatchKey()))
+                .filter(rcv -> CollectionUtil.isNotEmpty(JSON.parseArray(rcv.getVal())))    //过滤掉未设置条件项数据的条件指标
                 .map(rcv -> {
                     String matchKey = rcv.getMatchKey();
-                    String val = rcv.getVal();
-                    if (StringUtils.isBlank(val)) {
-                        val = "[]";
-                    }
                     MatchTypeEnum matchTypeEnum = MatchTypeEnum.getInitDataMaps().get(rcv.getMatchType());
                     ValueDataTypeEnum valueDataTypeEnum = ValueDataTypeEnum.getInitDataMaps().get(rcv.getDataType());
-                    List<Object> conditionValues = JSON.parseArray(val);
-                    Object o = conditionParams.get(matchKey);
-                    if (Objects.nonNull(o)) {
+                    RuleFactsDto ruleFactsDto = new RuleFactsDto();
+                    ruleFactsDto.setMatchTypeEnum(matchTypeEnum);
+                    ruleFactsDto.setValueDataTypeEnum(valueDataTypeEnum);
+                    ruleFactsDto.setMatchKey(matchKey);
+                    ruleFactsDto.setConditionValues(JSON.parseArray(rcv.getVal()));
+                    if (conditionParams.containsKey(matchKey)) {
+                        Object o = conditionParams.get(matchKey);
                         String givenValue = String.valueOf(o);
-                        LOGGER.info("givenValue = {}", givenValue);
-                        RuleFactsDto ruleFactsDto = new RuleFactsDto();
-                        ruleFactsDto.setGivenValue(givenValue);
-                        ruleFactsDto.setConditionValues(conditionValues);
-                        ruleFactsDto.setMatchTypeEnum(matchTypeEnum);
-                        ruleFactsDto.setValueDataTypeEnum(valueDataTypeEnum);
-                        ruleFactsDto.setMatchKey(matchKey);
-                        return ruleFactsDto;
-                    } else {
-                        return null;
+                        if (Objects.nonNull(o)) {
+                            ruleFactsDto.setGivenValue(givenValue);
+                        }
                     }
+                    return ruleFactsDto;
                 }).filter(Objects::nonNull).collect(Collectors.toMap(RuleFactsDto::getMatchKey, Function.identity()));
         return ruleFactsVoMap;
     }
@@ -155,11 +153,13 @@ public class RuleEngineServiceImpl implements RuleEngineService {
         ValueDataTypeEnum valueDataTypeEnum = ruleFactsVo.getValueDataTypeEnum();
         List<Object> conditionValues = ruleFactsVo.getConditionValues();
         Comparable<Object> givenValue = convertValue(ruleFactsVo.getGivenValue(), valueDataTypeEnum);
+        //需要匹配的值为空，则表示调用方未传入该值，则返回false-未匹配上
         if (Objects.isNull(givenValue)) {
             return false;
         }
-        if (Objects.isNull(conditionValues) || conditionValues.isEmpty()) {
-            conditionValues = Arrays.asList(null, null);
+        //已设置的的条件匹配项，如果为空，则表示未设置该条件，则默认通过匹配
+        if (CollectionUtil.isEmpty(conditionValues)) {
+            return true;
         }
         List<Comparable<Object>> conditionList = convertValues(conditionValues, valueDataTypeEnum);
 
