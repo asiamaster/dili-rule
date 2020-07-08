@@ -53,9 +53,6 @@ public class RuleEngineServiceImpl implements RuleEngineService {
         conditionValCondition.setRuleId(ruleInfo.getId());
         List<ChargeConditionVal> ruleConditionValList = chargeConditionValService.list(conditionValCondition);
         Map<String, RuleFactsDto> ruleFactsVoMap = this.buildRuleFactsMap(ruleConditionValList, conditionParams);
-//        if (ruleConditionValList.size() != ruleFactsVoMap.size()) {
-//            return false;
-//        }
         // define facts
         Facts facts = this.buildFacts(ruleFactsVoMap);
         // define rules
@@ -71,8 +68,6 @@ public class RuleEngineServiceImpl implements RuleEngineService {
      * @return
      */
     private Map<String, RuleFactsDto> buildRuleFactsMap(List<ChargeConditionVal> ruleConditionValList, Map<String, Object> conditionParams) {
-        LOGGER.info("conditionParams = {}", conditionParams);
-        LOGGER.info("ruleConditionValList = {}", ruleConditionValList);
         Map<String, RuleFactsDto> ruleFactsVoMap = ruleConditionValList.stream()
                 .filter(rcv -> conditionParams.containsKey(rcv.getMatchKey()))
                 .map(rcv -> {
@@ -84,16 +79,21 @@ public class RuleEngineServiceImpl implements RuleEngineService {
                     MatchTypeEnum matchTypeEnum = MatchTypeEnum.getInitDataMaps().get(rcv.getMatchType());
                     ValueDataTypeEnum valueDataTypeEnum = ValueDataTypeEnum.getInitDataMaps().get(rcv.getDataType());
                     List<Object> conditionValues = JSON.parseArray(val);
-                    String givenValue = String.valueOf(conditionParams.get(matchKey));
-                    LOGGER.info("givenValue = {}",givenValue);
-                    RuleFactsDto ruleFactsDto = new RuleFactsDto();
-                    ruleFactsDto.setGivenValue(givenValue);
-                    ruleFactsDto.setConditionValues(conditionValues);
-                    ruleFactsDto.setMatchTypeEnum(matchTypeEnum);
-                    ruleFactsDto.setValueDataTypeEnum(valueDataTypeEnum);
-                    ruleFactsDto.setMatchKey(matchKey);
-                    return ruleFactsDto;
-                }).collect(Collectors.toMap(RuleFactsDto::getMatchKey, Function.identity()));
+                    Object o = conditionParams.get(matchKey);
+                    if (Objects.nonNull(o)) {
+                        String givenValue = String.valueOf(o);
+                        LOGGER.info("givenValue = {}", givenValue);
+                        RuleFactsDto ruleFactsDto = new RuleFactsDto();
+                        ruleFactsDto.setGivenValue(givenValue);
+                        ruleFactsDto.setConditionValues(conditionValues);
+                        ruleFactsDto.setMatchTypeEnum(matchTypeEnum);
+                        ruleFactsDto.setValueDataTypeEnum(valueDataTypeEnum);
+                        ruleFactsDto.setMatchKey(matchKey);
+                        return ruleFactsDto;
+                    } else {
+                        return null;
+                    }
+                }).filter(Objects::isNull).collect(Collectors.toMap(RuleFactsDto::getMatchKey, Function.identity()));
         return ruleFactsVoMap;
     }
 
@@ -187,7 +187,6 @@ public class RuleEngineServiceImpl implements RuleEngineService {
             return null;
         }
         String str = String.valueOf(value);
-        LOGGER.info("str={}",str);
         switch (valueDataTypeEnum) {
             case DATE:
                 return (Comparable<T>) Instant.parse(str);
