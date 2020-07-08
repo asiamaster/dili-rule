@@ -93,7 +93,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
                     } else {
                         return null;
                     }
-                }).filter(Objects::isNull).collect(Collectors.toMap(RuleFactsDto::getMatchKey, Function.identity()));
+                }).filter(Objects::nonNull).collect(Collectors.toMap(RuleFactsDto::getMatchKey, Function.identity()));
         return ruleFactsVoMap;
     }
 

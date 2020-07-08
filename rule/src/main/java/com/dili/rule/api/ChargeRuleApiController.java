@@ -54,7 +54,7 @@ public class ChargeRuleApiController {
         }
         QueryFeeOutput vo = this.queryRule(queryFeeInput);
         if (StringUtils.isNotBlank(vo.getMessage())) {
-            return BaseOutput.failure();
+            return BaseOutput.failure().setData(vo);
         } else {
             return BaseOutput.successData(vo);
         }
