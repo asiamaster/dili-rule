@@ -83,6 +83,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
                     ValueDataTypeEnum valueDataTypeEnum = ValueDataTypeEnum.getInitDataMaps().get(rcv.getDataType());
                     List<Object> conditionValues = JSON.parseArray(val);
                     String givenValue = String.valueOf(conditionParams.get(matchKey));
+                    LOGGER.info("givenValue = {}",givenValue);
                     RuleFactsDto ruleFactsDto = new RuleFactsDto();
                     ruleFactsDto.setGivenValue(givenValue);
                     ruleFactsDto.setConditionValues(conditionValues);
