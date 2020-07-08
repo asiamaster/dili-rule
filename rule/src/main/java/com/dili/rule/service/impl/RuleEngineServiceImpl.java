@@ -15,6 +15,8 @@ import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RuleBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RuleEngineServiceImpl implements RuleEngineService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RuleEngineServiceImpl.class);
 
     private final RulesEngine rulesEngine = new DefaultRulesEngine();
 
@@ -180,6 +184,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
             return null;
         }
         String str = String.valueOf(value);
+        LOGGER.info("str={}",str);
         switch (valueDataTypeEnum) {
             case DATE:
                 return (Comparable<T>) Instant.parse(str);
