@@ -48,13 +48,12 @@ public class ChargeRuleApiController {
     public BaseOutput<QueryFeeOutput> queryFee(@RequestBody QueryFeeInput queryFeeInput) {
         logger.info("queryFeeInput: {}", JSONObject.toJSONString(queryFeeInput));
         Optional<String> checkResult = this.checkInput(queryFeeInput);
-
         if (checkResult.isPresent()) {
             return BaseOutput.failure(checkResult.get());
         }
         QueryFeeOutput vo = this.queryRule(queryFeeInput);
         if (StringUtils.isNotBlank(vo.getMessage())) {
-            return BaseOutput.failure().setData(vo);
+            return BaseOutput.failure(vo.getMessage()).setData(vo);
         } else {
             return BaseOutput.successData(vo);
         }
@@ -101,9 +100,6 @@ public class ChargeRuleApiController {
         }
         if (Objects.isNull(queryFeeInput.getChargeItem())) {
             return Optional.of("收费项不能为空");
-        }
-        if (CollectionUtil.isEmpty(queryFeeInput.getConditionParams())) {
-            return Optional.of("条件指标数据不能为空");
         }
         return Optional.empty();
     }
