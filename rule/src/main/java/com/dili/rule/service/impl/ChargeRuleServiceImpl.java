@@ -36,7 +36,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
@@ -97,7 +96,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         ChargeRule temp = this.saveOrUpdateRuleInfo(inputRuleInfo,operatorUser);
         List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(temp, chargeRuleVo);
         // 如果是更新,则先删除原来的设置(如果是插入,下面的delByRuleId将导致死锁)
-        if (!CollectionUtils.isEmpty(ruleConditionValList)) {
+        if (CollectionUtil.isNotEmpty(ruleConditionValList)) {
             if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(temp.getId())) {
                 // 更新规则(先批量删除原有的,再增加新提交的)
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
@@ -353,6 +352,9 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @return
      */
     private List<ChargeConditionVal> parseRuleConditionVal(ChargeRule rule, ChargeRuleVo vo) {
+        if (CollectionUtil.isEmpty(vo.getConditionList())){
+            return Collections.emptyList();
+        }
         List<ConditionVo> conditionList = vo.getConditionList();
         // 需要保存的规则条件信息
         List<ChargeConditionVal> ruleConditionVals = conditionList.stream().map((c) -> {

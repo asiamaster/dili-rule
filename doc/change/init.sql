@@ -16,7 +16,7 @@ create table charge_rule
    id                   bigint not null auto_increment comment '唯一ID',
    original_id          bigint comment '原始ID(在非启用状态下，修改数据，会生成一条新规则，需记录原始规则ID)',
    market_id            bigint comment '规则所属于某个市场',
-   business_type        varchar(40) comment '所属的业务类型',
+   business_type        varchar(120) comment '所属的业务类型',
    group_id             bigint comment '组别',
    charge_item          bigint comment '收费项',
    rule_name            varchar(30) comment '规则名称',
@@ -104,7 +104,7 @@ create table condition_definition
 (
    id                   bigint not null auto_increment comment '唯一ID',
    market_id            bigint comment '所属市场',
-   business_type        varchar(40) comment '所属某个业务',
+   business_type        varchar(120) comment '所属某个业务',
    `label`              varchar(20) comment '条件标签(显示文本)',
    match_key            varchar(20) comment '条件定义key值(关联匹配字段)',
    match_type           integer comment '条件类型(大于,小于,等于),具体参考MatchTypeEnum',
