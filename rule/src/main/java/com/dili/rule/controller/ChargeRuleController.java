@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -96,13 +97,20 @@ public class ChargeRuleController {
                 chargeRule = chargeRuleService.get(chargeRule.getId());
                 if (Objects.nonNull(chargeRule)) {
                     //转换获取计算参数
-                    String targetVal = conditionDefinitionService.convertTargetValDefinition(chargeRule.getTargetVal(),false);
+                    String targetVal = conditionDefinitionService.convertTargetValDefinition(chargeRule.getTargetVal(), false);
                     chargeRule.setTargetVal(targetVal);
                     modelMap.addAttribute("action", "update");
+                } else {
+                    chargeRule.setExpireStart(LocalDateTime.now());
                 }
+            } else {
+                chargeRule.setExpireStart(LocalDateTime.now());
             }
             modelMap.put("businessTypeList", getBusinessType());
             modelMap.addAttribute("chargeRule", chargeRule);
+        } else {
+            chargeRule = new ChargeRule();
+            chargeRule.setExpireStart(LocalDateTime.now());
         }
         return "chargeRule/edit";
     }

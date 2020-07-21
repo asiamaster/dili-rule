@@ -1,14 +1,15 @@
 package com.dili.rule.service.remote;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.dili.commons.glossary.YesOrNoEnum;
+import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.domain.enums.DataSourceTypeEnum;
+import com.dili.ss.domain.PageOutput;
 import com.dili.uap.sdk.session.SessionContext;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
@@ -20,15 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.alibaba.fastjson.JSONObject;
-import com.dili.commons.glossary.YesOrNoEnum;
-import com.dili.rule.domain.ConditionDataSource;
-import com.dili.rule.domain.enums.DataSourceTypeEnum;
-import com.dili.ss.domain.PageOutput;
-import com.google.common.collect.Maps;
-
-import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <B></B>
@@ -94,7 +88,10 @@ public class RemoteDataQueryService {
      * @return
      */
     public List<Map<String, Object>> queryKeys(ConditionDataSource conditionDataSource, List<Object> keys) {
-        Optional<String> jsonDataOpt = null;
+        if (CollectionUtil.isEmpty(keys)) {
+            return Collections.emptyList();
+        }
+        Optional<String> jsonDataOpt = Optional.empty();
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps()
                 .get(conditionDataSource.getDataSourceType());
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
