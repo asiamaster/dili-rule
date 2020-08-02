@@ -154,7 +154,7 @@ public class ChargeRuleController {
         } catch (IllegalArgumentException ex) {
             return BaseOutput.failure(ex.getMessage());
         } catch (Exception e) {
-            log.error(String.format("保存计费规则信息[%s] 失败：[s%]", chargeRuleVo.toString(), e.getMessage()), e);
+            log.error(String.format("保存计费规则信息[%s] 失败：[%s]", chargeRuleVo.toString(), e.getMessage()), e);
             return BaseOutput.failure(e.getMessage());
         }
     }
@@ -217,6 +217,26 @@ public class ChargeRuleController {
         Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule);
         modelMap.addAllAttributes(map);
         return "chargeRule/viewCondition";
+    }
+
+
+    /**
+     * 规则优先级调整
+     * @param id      需要调整的规则ID
+     * @param enlarge 是否调升 true-是
+     * @return
+     */
+    @RequestMapping(value = "/adjustPriority.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput<Boolean> adjustPriority(Long id, Boolean enlarge) {
+        if (Objects.isNull(id) || Objects.isNull(enlarge)) {
+            return BaseOutput.failure("参数丢失");
+        }
+        if (enlarge) {
+            return chargeRuleService.enlargePriority(id);
+        } else {
+            return chargeRuleService.reducePriority(id);
+        }
     }
 
     /**

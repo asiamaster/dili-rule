@@ -173,8 +173,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         queryCondition.setMarketId(queryFeeInput.getMarketId());
         queryCondition.setBusinessType(queryFeeInput.getBusinessType());
         queryCondition.setChargeItem(queryFeeInput.getChargeItem());
-        queryCondition.setSort("group_id,modifyTime,createTime");
-        queryCondition.setOrder("DESC,DESC,DESC");
+        queryCondition.setSort("group_id,priority,modifyTime,createTime");
+        queryCondition.setOrder("DESC,DESC,DESC,DESC");
         queryCondition.setState(RuleStateEnum.ENABLED.getCode());
         List<ChargeRule> chargeRuleList = this.listByExample(queryCondition);
         //返回对象
@@ -292,6 +292,55 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         return 1;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseOutput<Boolean> enlargePriority(long id) {
+        ChargeRule chargeRule = get(id);
+        ChargeRule query = new ChargeRule();
+        query.setMarketId(chargeRule.getMarketId());
+        query.setBusinessType(chargeRule.getBusinessType());
+        query.setChargeItem(chargeRule.getChargeItem());
+        query.setPriority(chargeRule.getPriority() + 1);
+        List<ChargeRule> ruleList = list(query);
+        if (CollectionUtil.isEmpty(ruleList)) {
+            return BaseOutput.failure("当前优先级已经最高！");
+        } else {
+            ChargeRule old = ruleList.get(0);
+            old.setPriority(old.getPriority() - 1);
+            update(old);
+            chargeRule.setPriority(chargeRule.getPriority() + 1);
+            this.update(chargeRule);
+            return BaseOutput.successData(true);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseOutput<Boolean> reducePriority(long id) {
+        ChargeRule chargeRule = get(id);
+        if (chargeRule.getPriority() == 1) {
+            return BaseOutput.failure("当前优先级已经最低！");
+        }
+        ChargeRule query = new ChargeRule();
+        query.setMarketId(chargeRule.getMarketId());
+        query.setBusinessType(chargeRule.getBusinessType());
+        query.setChargeItem(chargeRule.getChargeItem());
+        query.setPriority(chargeRule.getPriority() - 1);
+        List<ChargeRule> ruleList = list(query);
+        if (CollectionUtil.isEmpty(ruleList)) {
+            chargeRule.setPriority(chargeRule.getPriority() - 1);
+            this.update(chargeRule);
+            return BaseOutput.successData(true);
+        } else {
+            ChargeRule old = ruleList.get(0);
+            old.setPriority(old.getPriority() + 1);
+            update(old);
+            chargeRule.setPriority(chargeRule.getPriority() - 1);
+            this.update(chargeRule);
+            return BaseOutput.successData(true);
+        }
+    }
+
     /**
      * 根据id是否为空,分别进行插入或者其他操作
      *
@@ -304,7 +353,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             // 插入新的记录
-            this.insertSelective(inputRuleInfo);
+            getActualMapper().insertBy(inputRuleInfo);
             return inputRuleInfo;
         } else {
             ChargeRule old = this.get(inputRuleInfo.getId());
@@ -332,7 +381,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             	throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             // 插入一条新的RuleInfo
-            this.insertSelective(inputRuleInfo);
+            getActualMapper().insertBy(inputRuleInfo);
             old.setRevisable(YesOrNoEnum.NO.getCode());
             // 更改原来数据的状态
             this.updateRuleInfoWithExpire(old,operatorUser);
@@ -340,6 +389,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             if (this.isExistsSameRuleName(inputRuleInfo)) {
             	throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
+            inputRuleInfo.setModifyTime(old.getModifyTime());
             this.updateSelective(inputRuleInfo);
         }
         return inputRuleInfo;

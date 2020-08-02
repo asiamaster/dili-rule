@@ -237,9 +237,13 @@
      * 查询处理
      */
     function queryDataHandler() {
-        currentSelectRowIndex = undefined;
-        $('#toolbar button').attr('disabled', false);
-        _dataGrid.bootstrapTable('refresh');
+        if ($('#chargeRuleQueryForm').validate().form()) {
+            currentSelectRowIndex = undefined;
+            $('#toolbar button').attr('disabled', false);
+            _dataGrid.bootstrapTable('refresh');
+        } else {
+            bs4pop.notice("请完善必填项", {type: 'warning', position: 'topleft'});
+        }
     }
 
     /**
@@ -300,6 +304,35 @@
     /*****************************************自定义事件区 end**************************************/
 
     /**
+     * 规则优先级调整
+     * @param id 规则ID
+     * @param _flag 是否调升
+     */
+    function adjustPriorityHandler(id, _flag) {
+        bui.loading.show('努力提交中，请稍候。。。');
+        $.ajax({
+            type: "POST",
+            url: "${contextPath}/chargeRule/adjustPriority.action",
+            data: {id: id, enlarge: _flag},
+            processData: true,
+            dataType: "json",
+            async: true,
+            success: function (ret) {
+                bui.loading.hide();
+                if (ret.success) {
+                    queryDataHandler();
+                } else {
+                    bs4pop.notice(ret.result, {type: 'warning',position: 'center'});
+                }
+            },
+            error: function () {
+                bui.loading.hide();
+                bs4pop.alert('远程访问失败', {type: 'error',position: 'center'});
+            }
+        });
+    }
+
+    /**
      * 显示栏格式化显示tip
      * @param value
      * @param row
@@ -311,6 +344,18 @@
         } else {
             return "";
         }
+    }
+
+    /**
+     * 优先级数据格式化操作显示
+     */
+    function priorityFormatter(value,row,index) {
+        <%if(hasResource("adjustPriority")) {%>
+            return '<a class="like" href="javascript:void(0)" onclick="adjustPriorityHandler(' + row.id + ',true)" >向上</a>&nbsp;&nbsp;' +
+            '<a class="like" href="javascript:void(0)" onclick="adjustPriorityHandler(' + row.id + ',false)" >向下</a>';
+        <%}else{%>
+            return '向上&nbsp;&nbsp;向下';
+        <%}%>
     }
 
     /**

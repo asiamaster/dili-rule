@@ -1,24 +1,18 @@
 package com.dili.rule.domain;
 
+import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.dili.ss.dao.sql.DateNextVersion;
+import com.dili.ss.domain.BaseDomain;
+import com.google.common.base.MoreObjects;
+import org.springframework.format.annotation.DateTimeFormat;
+import tk.mybatis.mapper.annotation.Version;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import com.google.common.base.MoreObjects;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.alibaba.fastjson.annotation.JSONField;
-import com.dili.ss.domain.BaseDomain;
-
-import cn.hutool.core.date.DateUtil;
 
 /**
  * 由MyBatis Generator工具自动生成
@@ -82,7 +76,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
     private Integer state;
 
     /**
-     * 优先级
+     * 优先级(数字越大，优先级越高)
      */
     @Column(name = "`priority`")
     private Integer priority;
@@ -159,6 +153,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @Column(name = "`modify_time`")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Version(nextVersion = DateNextVersion.class)
     private LocalDateTime modifyTime;
 
     /**

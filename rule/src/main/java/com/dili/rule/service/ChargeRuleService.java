@@ -86,4 +86,18 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      */
     Integer updateRuleInfoWithExpire(ChargeRule ruleInfo, OperatorUser operatorUser);
 
+    /**
+     * 扩大优先级
+     * @param id 需要扩大优先级的数据ID
+     * @return 是否成功
+     */
+    BaseOutput<Boolean> enlargePriority(long id);
+
+    /**
+     * 缩小优先级
+     * @param id 需要缩小优先级的数据ID
+     * @return 是否成功
+     */
+    BaseOutput<Boolean> reducePriority(long id);
+
 }

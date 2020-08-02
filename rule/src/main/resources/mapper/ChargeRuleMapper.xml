@@ -78,4 +78,54 @@
     </where>
   </sql>
 
+  <insert id="insertBy" parameterType="com.dili.rule.domain.ChargeRule" useGeneratedKeys="true" keyProperty="id">
+    <selectKey keyProperty="id" resultType="long" order="AFTER">
+      SELECT LAST_INSERT_ID();
+    </selectKey>
+    INSERT INTO charge_rule (
+        original_id,
+        market_id,
+        business_type,
+        group_id,
+        charge_item,
+        rule_name,
+        state,
+        priority,
+        expire_start,
+        expire_end,
+        target_val,
+        min_payment,
+        max_payment,
+        remark,
+        revisable,
+        operator_id,
+        operator_name,
+        approver_id,
+        approver_name,
+        approval_time
+    )
+    SELECT
+		#{originalId},
+        #{marketId},
+        #{businessType},
+        #{groupId},
+        #{chargeItem},
+        #{ruleName},
+        #{state},
+        IFNULL( MAX( priority ), 0 )+ 1,
+        #{expireStart},
+        #{expireEnd},
+        #{targetVal},
+        #{minPayment},
+        #{maxPayment},
+        #{remark},
+        #{revisable},
+        #{operatorId},
+        #{operatorName},
+        #{approverId},
+        #{approverName},
+        #{approvalTime}
+	    FROM charge_rule where market_id=#{marketId} and business_type=#{businessType} AND charge_item =#{chargeItem}
+  </insert>
+
 </mapper>

@@ -5,8 +5,8 @@
             <input type="hidden" id="marketId" name="marketId" value="${marketId!}">
             <div class="row  row-cols-6">
                 <div class="form-group col">
-                    <label for="businessType">业务类型</label>
-                    <select class="form-control" id="businessType" name="businessType" onchange="defaultGetChargeItem()">
+                    <label for="businessType">业务类型<i class="red">*</i></label>
+                    <select class="form-control" id="businessType" name="businessType" onchange="defaultGetChargeItem()" required>
                         <%if (has(businessTypeList) && isNotEmpty(businessTypeList) && businessTypeList.~size > 0 ){
                             for(businessType in businessTypeList){
                         %>
@@ -15,8 +15,8 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="chargeItem">费用科目</label>
-                    <select class="form-control" id="chargeItem" name="chargeItem">
+                    <label for="chargeItem">费用科目<i class="red">*</i></label>
+                    <select class="form-control" id="chargeItem" name="chargeItem" required>
                         <option value="">-- 全部 --</option>
                     </select>
                 </div>
@@ -87,12 +87,15 @@
                        data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
                        data-side-pagination="server" data-method="POST"
                        data-content-type="application/x-www-form-urlencoded" data-single-select="true"
-                       data-click-to-select="true" data-checkbox-header="true" data-unique-id="id" data-sort-name="id"
+                       data-click-to-select="true" data-checkbox-header="true" data-unique-id="id" data-sort-name="priority"
                        data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary"
                        data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
                     <thead>
                     <tr>
                         <th data-width-unit="%" data-width="2" data-radio="true"></th>
+                        <th data-width-unit="%" data-width="10"  data-align="center" data-sortable="true" data-sort-name="priority" data-formatter="priorityFormatter">
+                            优先级
+                        </th>
                         <th data-width-unit="%" data-width="10" data-field="businessType" data-sortable="true" data-sort-name="business_type" data-provider="dataDictionaryValueProvider" data-query-params="{dd_code:'base_business_type'}" data-align="center" >
                             业务类型
                         </th>
