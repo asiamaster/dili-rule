@@ -3,7 +3,7 @@
 <div class="container-fluid">
 
     <form id="addForm" role="form" novalidate>
-        <div class="row row-cols-1">
+        <div class="row row-cols-2">
             <div class="form-group col">
                 <label for="" class="">名称<i class="red">*</i></label>
                 <input type="text" class="form-control" id="name" name="name" maxlength="20" required/>
@@ -18,6 +18,10 @@
                 <input type="text" class="form-control url" id="queryUrl" name="queryUrl" maxlength="255" placeholder="如果来源为远程，则需设置数据URL" />
             </div>
             <div class="form-group col">
+                <label for="" class="">查询条件</label>
+                <input type="text" class="form-control isJSON" id="queryCondition" name="queryCondition" maxlength="255" placeholder="远程数据查询时，固定值查询条件(JSON格式)" />
+            </div>
+            <div class="form-group col">
                 <label for="paged" class="">是否分页<i class="red">*</i></label>
                 <select id="paged" name="paged" class="form-control" required title="远程接口数据是否需要分页"></select>
                 <#bcomboProvider _id="paged" _provider="yesOrNoProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="" />
@@ -27,7 +31,7 @@
                 <input type="text" class="form-control url" id="keysUrl" name="keysUrl" maxlength="255" placeholder="数据查询时的URL" />
             </div>
             <div class="form-group col">
-                <label for="keysField" class="">查询字段<i class="red">*</i></label>
+                <label for="keysField" class="">查询字段</label>
                 <input type="text" class="form-control" id="keysField" name="keysField" maxlength="50" placeholder="通过数据查询时的字段名称" />
             </div>
             <div class="form-group col">
@@ -42,4 +46,5 @@
     </form>
 </div>
 </#bs4Body>
+<script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <#conditionDataSource_editJs />

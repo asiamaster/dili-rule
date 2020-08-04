@@ -68,6 +68,7 @@ create table condition_data_source
    id                   bigint not null auto_increment comment '唯一ID',
    name                 varchar(20) comment '数据源名称',
    query_url            varchar(255) comment '通过用户输入的url查询数据',
+   query_condition      json comment '数据查询时固定参数',
    keys_url             varchar(255) comment '通过ids/keys输入查询url',
    keys_field           varchar(50) comment '关键key查询时的字段名称',
    data_json            json comment '如果是本地数据，则保存再此json中，如果为远程数据，则不保存',

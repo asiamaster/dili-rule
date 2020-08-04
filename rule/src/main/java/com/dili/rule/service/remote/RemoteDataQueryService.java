@@ -1,6 +1,7 @@
 package com.dili.rule.service.remote;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -66,9 +67,10 @@ public class RemoteDataQueryService {
      */
     public Page<Map<String, Object>> queryData(ConditionDataSource conditionDataSource, Map<String, Object> params) {
         Optional<String> jsonDataOpt = Optional.empty();
-        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps()
-                .get(conditionDataSource.getDataSourceType());
-
+        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
+        if (StrUtil.isNotBlank(conditionDataSource.getQueryCondition())) {
+            params.putAll(JSONObject.parseObject(conditionDataSource.getQueryCondition()));
+        }
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = conditionDataSource.getDataJson();
             jsonDataOpt = Optional.ofNullable(localJsonData);
@@ -92,18 +94,23 @@ public class RemoteDataQueryService {
             return Collections.emptyList();
         }
         Optional<String> jsonDataOpt = Optional.empty();
-        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps()
-                .get(conditionDataSource.getDataSourceType());
+        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = conditionDataSource.getDataJson();
             jsonDataOpt = Optional.ofNullable(localJsonData);
         } else {
             //构建查询参数
-            Map<String,Object> params = Maps.newHashMap();
-            params.put(conditionDataSource.getKeysField(),keys);
+            Map<String, Object> params = Maps.newHashMap();
+            if (StrUtil.isNotBlank(conditionDataSource.getQueryCondition())) {
+                params.putAll(JSONObject.parseObject(conditionDataSource.getQueryCondition()));
+            }
+            if (StrUtil.isNotBlank(conditionDataSource.getKeysField())){
+                params.put(conditionDataSource.getKeysField(), keys);
+            }
             //强制内置两个参数，根据当前用户的市场隔离
             params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
             params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
+            params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
             HttpResponse response = HttpUtil.createPost(conditionDataSource.getKeysUrl()).body(JSONObject.toJSONString(params)).execute();
             if (response.isOk()) {
                 jsonDataOpt = Optional.ofNullable(response.body());
@@ -165,6 +172,7 @@ public class RemoteDataQueryService {
         //强制内置两个参数，根据当前用户的市场隔离
         params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
         params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
+        params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         Optional<String> result = null;
         HttpResponse response = HttpUtil.createPost(url).body(JSONObject.toJSONString(params)).execute();
         if (response.isOk()) {

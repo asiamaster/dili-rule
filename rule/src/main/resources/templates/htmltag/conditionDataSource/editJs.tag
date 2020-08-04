@@ -24,13 +24,14 @@
                 }
             }
             bui.loading.show('努力提交中，请稍候。。。');
-            // let _formData = new FormData($('#addForm')[0]);
-            let _formData = $('#addForm').serialize();
+            let _formData = $('#addForm').serializeJSON();
             let url = "${contextPath}/conditionDataSource/save.action";
             $.ajax({
                 type: "POST",
                 url: url,
-                data: _formData,
+                dataType: "json",
+                data: JSON.stringify(_formData),
+                contentType: 'application/json',
                 async: true,
                 success: function (ret) {
                     bui.loading.hide();
