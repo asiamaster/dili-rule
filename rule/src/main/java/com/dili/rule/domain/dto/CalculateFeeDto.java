@@ -26,6 +26,11 @@ public class CalculateFeeDto {
     private BigDecimal fee;
 
     /**
+     *
+     */
+    private String code;
+
+    /**
      * 错误信息
      */
     private Optional<String> message = Optional.empty();
@@ -47,5 +52,11 @@ public class CalculateFeeDto {
     }
     public void setMessage(Optional<String> message) {
         this.message = message;
+    }
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
     }
 }

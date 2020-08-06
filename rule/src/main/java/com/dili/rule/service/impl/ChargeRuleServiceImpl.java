@@ -6,7 +6,6 @@ import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
-import com.dili.rule.domain.dto.CalculateFeeDto;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.enums.RuleStateEnum;
 import com.dili.rule.domain.vo.ChargeRuleVo;
@@ -14,11 +13,13 @@ import com.dili.rule.domain.vo.ConditionVo;
 import com.dili.rule.mapper.ChargeRuleMapper;
 import com.dili.rule.scheduler.ChargeRuleExpiresScheduler;
 import com.dili.rule.sdk.domain.input.QueryFeeInput;
+import com.dili.rule.sdk.domain.output.QueryFeeOutput;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.RuleEngineService;
 import com.dili.ss.base.BaseServiceImpl;
+import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.exception.BusinessException;
@@ -168,7 +169,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     }
 
     @Override
-    public CalculateFeeDto findRuleInfoAnaCalculateFee(QueryFeeInput queryFeeInput) {
+    public QueryFeeOutput findRuleInfoAnaCalculateFee(QueryFeeInput queryFeeInput) {
         ChargeRule queryCondition = new ChargeRule();
         queryCondition.setMarketId(queryFeeInput.getMarketId());
         queryCondition.setBusinessType(queryFeeInput.getBusinessType());
@@ -178,37 +179,45 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         queryCondition.setState(RuleStateEnum.ENABLED.getCode());
         List<ChargeRule> chargeRuleList = this.listByExample(queryCondition);
         //返回对象
-        CalculateFeeDto result = new CalculateFeeDto();
+        QueryFeeOutput result = new QueryFeeOutput();
+        BeanUtils.copyProperties(queryFeeInput, result);
         if (CollectionUtil.isEmpty(chargeRuleList)) {
-            result.setMessage(Optional.of("未找到可用的规则"));
+            result.setCode(ResultCode.NOT_FOUND);
+            result.setMessage("未找到可用的规则");
         } else {
             for (ChargeRule ruleInfo : chargeRuleList) {
                 boolean checkRuleResult = this.ruleEngineService.checkChargeRule(ruleInfo, queryFeeInput.getConditionParams());
                 if (checkRuleResult) {
-                    result.setRuleInfo(ruleInfo);
+                    result.setRuleId(ruleInfo.getId());
+                    result.setRuleName(ruleInfo.getRuleName());
                     logger.info("条件匹配的规则: {}", ruleInfo);
                     try {
                         BigDecimal fee = this.calcFeeByRule(ruleInfo, queryFeeInput.getCalcParams());
                         if (fee.equals(new BigDecimal(Integer.MIN_VALUE))) {
-                            result.setMessage(Optional.of("根据规则及参数计算费用时异常"));
+                            result.setMessage("根据规则及参数计算费用时异常");
+                            result.setCode(ResultCode.APP_ERROR);
                         } else {
                             logger.info("条件匹配的规则: {},计算的费用为: {}", ruleInfo, fee);
-                            result.setFee(fee);
+                            result.setCode(ResultCode.OK);
+                            result.setSuccess(true);
+                            result.setTotalFee(fee);
                         }
                         return result;
-                    }catch (BusinessException e){
+                    } catch (BusinessException e) {
                         logger.error(e.getMessage(), e);
-                        result.setMessage(Optional.of(e.getErrorMsg()));
+                        result.setMessage(e.getErrorMsg());
+                        result.setCode(ResultCode.APP_ERROR);
                         return result;
                     } catch (Throwable t) {
                         logger.error(t.getMessage(), t);
-                        result.setMessage(Optional.of("计算费用金额出错: " + t.getMessage()));
+                        result.setMessage("计算费用金额出错: " + t.getMessage());
+                        result.setCode(ResultCode.APP_ERROR);
                         return result;
                     }
-
                 }
             }
-            result.setMessage(Optional.of("未匹配到任何规则"));
+            result.setCode(ResultCode.DATA_ERROR);
+            result.setMessage("未匹配到任何规则");
         }
         return result;
     }

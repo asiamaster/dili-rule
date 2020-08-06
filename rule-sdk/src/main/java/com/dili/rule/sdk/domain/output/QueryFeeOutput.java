@@ -20,11 +20,6 @@ public class QueryFeeOutput extends QueryFeeInput {
     private Long ruleId;
 
     /**
-     * 规则code
-     */
-    private String ruleCode;
-
-    /**
      * 规则名称
      */
     private String ruleName;
@@ -40,21 +35,22 @@ public class QueryFeeOutput extends QueryFeeInput {
     private String message;
 
     /**
+     * 错误状态码
+     */
+    private String code;
+
+    /**
      * 此条记录是否匹配计算成功
      */
     private Boolean success;
+
+
 
     public Long getRuleId() {
         return ruleId;
     }
     public void setRuleId(Long ruleId) {
         this.ruleId = ruleId;
-    }
-    public String getRuleCode() {
-        return ruleCode;
-    }
-    public void setRuleCode(String ruleCode) {
-        this.ruleCode = ruleCode;
     }
     public String getRuleName() {
         return ruleName;
@@ -79,5 +75,11 @@ public class QueryFeeOutput extends QueryFeeInput {
     }
     public void setSuccess(Boolean success) {
         this.success = success;
+    }
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
     }
 }

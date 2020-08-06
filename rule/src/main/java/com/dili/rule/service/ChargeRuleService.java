@@ -1,15 +1,13 @@
 package com.dili.rule.service;
 
 import com.dili.rule.domain.ChargeRule;
-import com.dili.rule.domain.dto.CalculateFeeDto;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.sdk.domain.input.QueryFeeInput;
+import com.dili.rule.sdk.domain.output.QueryFeeOutput;
 import com.dili.ss.base.BaseService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
-
-import java.util.Map;
 
 /**
  * <B></B>
@@ -52,7 +50,7 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * @param queryFeeInput
      * @return 费用计算结果
      */
-    CalculateFeeDto findRuleInfoAnaCalculateFee(QueryFeeInput queryFeeInput);
+    QueryFeeOutput findRuleInfoAnaCalculateFee(QueryFeeInput queryFeeInput);
 
     /**
      * 规则审核结果

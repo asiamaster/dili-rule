@@ -3,9 +3,6 @@ package com.dili.rule.domain;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.ss.domain.BaseDomain;
 import com.dili.ss.domain.annotation.Like;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -18,9 +15,6 @@ import java.time.LocalDateTime;
  * This file was generated on 2020-05-13 11:19:20.
  */
 @Table(name = "`condition_data_source`")
-@Getter
-@Setter
-@ToString
 public class ConditionDataSource extends BaseDomain {
     /**
      * 唯一ID
@@ -96,5 +90,72 @@ public class ConditionDataSource extends BaseDomain {
     @Column(name = "`data_json`")
     private String dataJson;
 
-
+    @Override
+    public Long getId() {
+        return id;
+    }
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getQueryUrl() {
+        return queryUrl;
+    }
+    public void setQueryUrl(String queryUrl) {
+        this.queryUrl = queryUrl;
+    }
+    public String getQueryCondition() {
+        return queryCondition;
+    }
+    public void setQueryCondition(String queryCondition) {
+        this.queryCondition = queryCondition;
+    }
+    public String getKeysUrl() {
+        return keysUrl;
+    }
+    public void setKeysUrl(String keysUrl) {
+        this.keysUrl = keysUrl;
+    }
+    public String getKeysField() {
+        return keysField;
+    }
+    public void setKeysField(String keysField) {
+        this.keysField = keysField;
+    }
+    public String getDataSourceType() {
+        return dataSourceType;
+    }
+    public void setDataSourceType(String dataSourceType) {
+        this.dataSourceType = dataSourceType;
+    }
+    public Integer getPaged() {
+        return paged;
+    }
+    public void setPaged(Integer paged) {
+        this.paged = paged;
+    }
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+    public LocalDateTime getModifyTime() {
+        return modifyTime;
+    }
+    public void setModifyTime(LocalDateTime modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+    public String getDataJson() {
+        return dataJson;
+    }
+    public void setDataJson(String dataJson) {
+        this.dataJson = dataJson;
+    }
 }

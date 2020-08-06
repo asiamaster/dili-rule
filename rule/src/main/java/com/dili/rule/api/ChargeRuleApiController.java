@@ -41,8 +41,14 @@ public class ChargeRuleApiController {
 
     /**
      * 根据条件匹配规则并返回费用信息
-     * @param queryFeeInput
-     * @return
+     * <resultCode>
+     *     200-找到并匹配到规则，正常返回计算出的费用;
+     *     404-根据业务费用项未找到可用（有效）的规则;
+     *     2000-根据传入的匹配条件未匹配到规则;
+     *     5000-其它错误信息;
+     * </resultCode>
+     * @param queryFeeInput 费用计算输入条件
+     * @return 费用计算结果
      */
     @RequestMapping("/queryFee")
     public BaseOutput<QueryFeeOutput> queryFee(@RequestBody QueryFeeInput queryFeeInput) {
@@ -53,7 +59,7 @@ public class ChargeRuleApiController {
         }
         QueryFeeOutput vo = this.queryRule(queryFeeInput);
         if (StringUtils.isNotBlank(vo.getMessage())) {
-            return BaseOutput.failure(vo.getMessage()).setData(vo);
+            return BaseOutput.failure(vo.getMessage()).setData(vo).setCode(vo.getCode());
         } else {
             return BaseOutput.successData(vo);
         }
@@ -61,6 +67,12 @@ public class ChargeRuleApiController {
 
     /**
      * 批量获取费用信息
+     * <resultCode>
+     *     200-找到并匹配到规则，正常返回计算出的费用;
+     *     404-根据业务费用项未找到可用（有效）的规则;
+     *     2000-根据传入的匹配条件未匹配到规则;
+     *     5000-其它错误信息;
+     * </resultCode>
      * @param queryFeeInputList 批量获取的输入条件
      * @return 处理结果
      */
@@ -71,9 +83,7 @@ public class ChargeRuleApiController {
             return BaseOutput.failure("数据为空").setCode(ResultCode.PARAMS_ERROR);
         }
         return this.checkInputList(queryFeeInputList)
-                .map(BaseOutput.failure()::setMessage).orElseGet(() -> {
-                    return this.queryRules(queryFeeInputList);
-                });
+                .map(BaseOutput.failure()::setMessage).orElseGet(() -> this.queryRules(queryFeeInputList));
 
     }
 
@@ -111,23 +121,17 @@ public class ChargeRuleApiController {
      */
     private QueryFeeOutput queryRule(QueryFeeInput queryFeeInput) {
         QueryFeeOutput output = new QueryFeeOutput();
-        BeanUtils.copyProperties(queryFeeInput,output);
         try {
-            CalculateFeeDto calculateFeeDto = chargeRuleService.findRuleInfoAnaCalculateFee(queryFeeInput);
-            if (calculateFeeDto.getMessage().isPresent()) {
-                output.setMessage(calculateFeeDto.getMessage().get());
+            output = chargeRuleService.findRuleInfoAnaCalculateFee(queryFeeInput);
+            if (!output.getCode().equals(ResultCode.OK)) {
                 output.setSuccess(false);
-            } else {
-                output.setTotalFee(calculateFeeDto.getFee());
-                output.setRuleId(calculateFeeDto.getRuleInfo().getId());
-                output.setRuleName(calculateFeeDto.getRuleInfo().getRuleName());
-                output.setSuccess(true);
             }
             return output;
         } catch (Exception e) {
             logger.error("规则计算费用时异常:" + e.getMessage(), e);
             output.setMessage("规则无法计算，请输入金额");
             output.setSuccess(false);
+            output.setCode(ResultCode.APP_ERROR);
             return output;
         }
     }
