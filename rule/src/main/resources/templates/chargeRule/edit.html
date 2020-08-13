@@ -12,21 +12,14 @@
             <div class="row row-cols-6 collapse show form-baseParam-box" id="baseInfo">
                 <input type="hidden" id="marketId" name="marketId" value="${chargeRule.marketId!}">
                 <div class="form-group col">
-                    <label for="businessType">业务类型<i class="red">*</i></label>
-                    <select class="form-control" id="businessType" name="businessType" required>
-                        <%if (has(businessTypeList) && isNotEmpty(businessTypeList) && businessTypeList.~size > 0 ){
-                            for(bType in businessTypeList){
-                        %>
-                            <option value="${bType.code!}" <%if(bType.code==chargeRule.businessType){%> selected <%}%> >${bType.name!}</option>
-                        <%}}%>
-                    </select>
+                    <input type="hidden" id="businessType" name="businessType" value="${chargeRule.businessType!}">
+                    <label for="businessTypeName">业务类型<i class="red">*</i></label>
+                    <input type="" class="form-control" id="businessTypeName" readonly value="${businessTypeName!}" required>
                 </div>
                 <div class="form-group col">
-                    <label for="businessType">费用科目<i class="red">*</i></label>
-                    <input type="hidden" id="oldChargeItem" value="${chargeRule.chargeItem!}">
-                    <select class="form-control" id="chargeItem" name="chargeItem" required>
-                        <option value="">-- 请选择 --</option>
-                    </select>
+                    <input type="hidden" id="chargeItem" name="chargeItem" value="${chargeRule.chargeItem!}">
+                    <label for="chargeItemName">费用科目<i class="red">*</i></label>
+                    <input type="" class="form-control" id="chargeItemName" readonly value="${chargeItemName!}" required>
                 </div>
                 <div class="form-group col">
                     <label for="ruleName">规则名称<i class="red">*</i></label>

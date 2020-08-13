@@ -10,7 +10,6 @@
 
     /******************************驱动执行区 begin***************************/
     $(function () {
-        defaultGetChargeItem($("#oldChargeItem").val(),'-- 请选择 --');
         //获取规则条件数据
         getRuleCondition();
         getRuleVariable();
@@ -26,13 +25,6 @@
 
 
     /*****************************************自定义事件区 end**************************************/
-
-    //市场信息变更时，获取收费项、规则条件信息
-    $('#marketId,#businessType').on('change', function () {
-        defaultGetChargeItem('', '-- 请选择 --');
-        getRuleCondition();
-        getRuleVariable();
-    });
 
     /**
      * 获取规则条件信息

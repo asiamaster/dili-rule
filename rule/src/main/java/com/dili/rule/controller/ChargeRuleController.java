@@ -1,5 +1,6 @@
 package com.dili.rule.controller;
 
+import com.dili.assets.sdk.dto.BusinessChargeItemDto;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.dto.OperatorUser;
@@ -7,7 +8,7 @@ import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.ConditionDefinitionService;
-import com.dili.rule.service.remote.MarketRpcService;
+import com.dili.rule.service.remote.BusinessChargeItemRpcService;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
@@ -24,10 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * <B></B>
@@ -45,13 +43,13 @@ public class ChargeRuleController {
     @Autowired
     private ChargeRuleService chargeRuleService;
     @Autowired
-    private MarketRpcService marketRpcService;
-    @Autowired
     private ChargeConditionValService chargeConditionValService;
     @Autowired
     private DataDictionaryRpc dataDictionaryRpc;
     @Autowired
     private ConditionDefinitionService conditionDefinitionService;
+    @Autowired
+    private BusinessChargeItemRpcService businessChargeItemRpcService;
 
     /**
      * 跳转到计费规则管理首页面
@@ -106,7 +104,16 @@ public class ChargeRuleController {
             } else {
                 chargeRule.setExpireStart(LocalDateTime.now());
             }
-            modelMap.put("businessTypeList", getBusinessType());
+            List<DataDictionaryValue> businessTypeList = getBusinessType();
+            String businessType = chargeRule.getBusinessType();
+            Optional<DataDictionaryValue> dataDictionaryValue = businessTypeList.stream().filter(t -> businessType.equals(t.getCode())).findFirst();
+            if (dataDictionaryValue.isPresent()) {
+                modelMap.put("businessTypeName", dataDictionaryValue.get().getName());
+            }
+            Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
+            if (businessChargeItemDto.isPresent()) {
+                modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
+            }
             modelMap.addAttribute("chargeRule", chargeRule);
         } else {
             chargeRule = new ChargeRule();
