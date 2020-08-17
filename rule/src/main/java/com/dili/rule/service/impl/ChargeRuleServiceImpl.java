@@ -205,7 +205,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                         return result;
                     } catch (BusinessException e) {
                         logger.error(e.getMessage(), e);
-                        result.setMessage(e.getErrorMsg());
+                        result.setMessage(e.getMessage());
                         result.setCode(ResultCode.APP_ERROR);
                         return result;
                     } catch (Throwable t) {
