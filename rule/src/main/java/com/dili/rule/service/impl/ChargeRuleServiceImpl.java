@@ -90,7 +90,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo,OperatorUser operatorUser) {
         ChargeRule inputRuleInfo = new ChargeRule();
         BeanUtils.copyProperties(chargeRuleVo, inputRuleInfo);
-        inputRuleInfo.setState(RuleStateEnum.UNAUDITED.getCode());
+        inputRuleInfo.setState(RuleStateEnum.UN_STARTED.getCode());
         inputRuleInfo.setRevisable(YesOrNoEnum.YES.getCode());
         inputRuleInfo.setOperatorId(operatorUser.getUserId());
         inputRuleInfo.setOperatorName(operatorUser.getUserName());
@@ -109,6 +109,13 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
             }
         }
+        this.chargeRuleExpiresScheduler.checkRuleStateEnum(temp.getId()).map(updatableItem->{
+            int v=this.updateSelective(updatableItem);
+            return temp.getId();
+        }).orElseGet(()->{
+            return this.chargeRuleExpiresScheduler.queryAndScheduleUpdateRuleStatusById(chargeRuleVo.getId()).map(ChargeRule::getId).orElse(null);
+        });
+     
         return BaseOutput.success().setData(temp);
     }
 
@@ -279,8 +286,13 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer obsolete(Long id, OperatorUser operatorUser) {
+        ChargeRule item=this.get(id);
+        if(item==null){
+            return 0;
+        }
         ChargeRule rule = new ChargeRule();
         rule.setId(id);
+        rule.setModifyTime(item.getModifyTime());
         rule.setState(RuleStateEnum.OBSOLETE.getCode());
         rule.setOperatorId(operatorUser.getUserId());
         rule.setOperatorName(operatorUser.getUserName());
@@ -382,7 +394,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @return
      */
     private ChargeRule createRuleForRevisable(ChargeRule inputRuleInfo, ChargeRule old,OperatorUser operatorUser) {
-        if (RuleStateEnum.ENABLED.getCode().equals(old.getState())) {
+        /*if (RuleStateEnum.ENABLED.getCode().equals(old.getState())) {
             inputRuleInfo.setOriginalId(old.getId());
             inputRuleInfo.setId(null);
 
@@ -397,10 +409,10 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         } else {
             if (this.isExistsSameRuleName(inputRuleInfo)) {
             	throw new IllegalArgumentException("已存在规则名称相同的记录");
-            }
+            }*/
             inputRuleInfo.setModifyTime(old.getModifyTime());
             this.updateSelective(inputRuleInfo);
-        }
+        //}
         return inputRuleInfo;
     }
 
