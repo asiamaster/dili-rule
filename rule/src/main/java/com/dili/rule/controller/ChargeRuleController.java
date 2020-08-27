@@ -1,10 +1,19 @@
 package com.dili.rule.controller;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
+import com.dili.assets.sdk.dto.BusinessChargeItemDto;
+import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.dto.OperatorUser;
+import com.dili.rule.domain.vo.ChargeRuleVo;
+import com.dili.rule.service.ChargeConditionValService;
+import com.dili.rule.service.ChargeRuleService;
+import com.dili.rule.service.ConditionDefinitionService;
+import com.dili.rule.service.remote.BusinessChargeItemRpcService;
+import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.uap.sdk.domain.DataDictionaryValue;
+import com.dili.uap.sdk.rpc.DataDictionaryRpc;
+import com.dili.uap.sdk.session.SessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.dili.rule.domain.ChargeRule;
-import com.dili.rule.domain.ConditionDefinition;
-import com.dili.rule.domain.dto.OperatorUser;
-import com.dili.rule.domain.vo.ChargeRuleVo;
-import com.dili.rule.service.ChargeConditionValService;
-import com.dili.rule.service.ChargeRuleService;
-import com.dili.rule.service.remote.MarketRpcService;
-import com.dili.ss.domain.BaseOutput;
-import com.dili.ss.domain.EasyuiPageOutput;
-import com.dili.uap.sdk.domain.DataDictionaryValue;
-import com.dili.uap.sdk.rpc.DataDictionaryRpc;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * <B></B>
@@ -43,11 +43,13 @@ public class ChargeRuleController {
     @Autowired
     private ChargeRuleService chargeRuleService;
     @Autowired
-    private MarketRpcService marketRpcService;
-    @Autowired
     private ChargeConditionValService chargeConditionValService;
     @Autowired
     private DataDictionaryRpc dataDictionaryRpc;
+    @Autowired
+    private ConditionDefinitionService conditionDefinitionService;
+    @Autowired
+    private BusinessChargeItemRpcService businessChargeItemRpcService;
 
     /**
      * 跳转到计费规则管理首页面
@@ -56,7 +58,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value="/index.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
-        modelMap.put("marketList", marketRpcService.getCurrentUserFirms());
+        modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         modelMap.put("businessTypeList", getBusinessType());
         return "chargeRule/list";
     }
@@ -71,7 +73,7 @@ public class ChargeRuleController {
     @ResponseBody
     public String listPage(ChargeRule chargeRule) {
         try {
-            return chargeRuleService.listEasyuiPageByExample(chargeRule, true).toString();
+            return chargeRuleService.listForEasyuiPage(chargeRule).toString();
         } catch (Exception e) {
             log.error(String.format("根据[%s]查询计费规则列表异常,[%s]", chargeRule, e.getMessage()), e);
             return new EasyuiPageOutput(0, Collections.emptyList()).toString();
@@ -88,15 +90,34 @@ public class ChargeRuleController {
     public String preSave(ChargeRule chargeRule, ModelMap modelMap) {
         if (Objects.nonNull(chargeRule)) {
             modelMap.addAttribute("action", "insert");
+            chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
             if (null != chargeRule.getId()) {
                 chargeRule = chargeRuleService.get(chargeRule.getId());
                 if (Objects.nonNull(chargeRule)) {
+                    //转换获取计算参数
+                    String targetVal = conditionDefinitionService.convertTargetValDefinition(chargeRule.getTargetVal(), false);
+                    chargeRule.setTargetVal(targetVal);
                     modelMap.addAttribute("action", "update");
+                } else {
+                    chargeRule.setExpireStart(LocalDateTime.now());
                 }
+            } else {
+                chargeRule.setExpireStart(LocalDateTime.now());
             }
-            modelMap.put("marketList", marketRpcService.getCurrentUserFirms());
-            modelMap.put("businessTypeList", getBusinessType());
+            List<DataDictionaryValue> businessTypeList = getBusinessType();
+            String businessType = chargeRule.getBusinessType();
+            Optional<DataDictionaryValue> dataDictionaryValue = businessTypeList.stream().filter(t -> businessType.equals(t.getCode())).findFirst();
+            if (dataDictionaryValue.isPresent()) {
+                modelMap.put("businessTypeName", dataDictionaryValue.get().getName());
+            }
+            Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
+            if (businessChargeItemDto.isPresent()) {
+                modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
+            }
             modelMap.addAttribute("chargeRule", chargeRule);
+        } else {
+            chargeRule = new ChargeRule();
+            chargeRule.setExpireStart(LocalDateTime.now());
         }
         return "chargeRule/edit";
     }
@@ -140,8 +161,88 @@ public class ChargeRuleController {
         } catch (IllegalArgumentException ex) {
             return BaseOutput.failure(ex.getMessage());
         } catch (Exception e) {
-            log.error(String.format("保存计费规则信息[%s] 失败：[s%]", chargeRuleVo.toString(), e.getMessage()), e);
+            log.error(String.format("保存计费规则信息[%s] 失败：[%s]", chargeRuleVo.toString(), e.getMessage()), e);
             return BaseOutput.failure(e.getMessage());
+        }
+    }
+
+    /**
+     * 规则审核
+     *
+     * @param id   需要审核的规则ID
+     * @param pass 是否通过 true-是
+     * @return
+     */
+    @RequestMapping(value = "/approve.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public BaseOutput<Object> approve(Long id, Boolean pass) {
+        return chargeRuleService.approve(id, pass);
+    }
+
+    /**
+     * 规则禁启用
+     *
+     * @param id       需要禁启用的规则ID
+     * @param enable 是否启用 true-是
+     * @return
+     */
+    @RequestMapping(value = "/enable.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public BaseOutput<Object> enable(Long id, Boolean enable) {
+        return chargeRuleService.enable(id, enable);
+    }
+
+    /**
+     * 计费规则详情查看
+     * @param id 规则ID
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/view.action", method = {RequestMethod.GET, RequestMethod.POST})
+    public String view(Long id, ModelMap modelMap) {
+        if (Objects.nonNull(id)) {
+            ChargeRule chargeRule = chargeRuleService.get(id);
+            if (Objects.nonNull(chargeRule)) {
+                //转换获取计算参数
+                String targetVal = conditionDefinitionService.convertTargetValDefinition(chargeRule.getTargetVal(), true);
+                chargeRule.setTargetVal(targetVal);
+                modelMap.put("businessTypeList", getBusinessType());
+                modelMap.addAttribute("chargeRule", chargeRule);
+            }
+        }
+        return "chargeRule/view";
+    }
+
+    /**
+     * 查看详情-获取对应的规则条件值
+     * @param chargeRule
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/viewRuleCondition.action", method = { RequestMethod.GET, RequestMethod.POST })
+    public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap) {
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule);
+        modelMap.addAllAttributes(map);
+        return "chargeRule/viewCondition";
+    }
+
+
+    /**
+     * 规则优先级调整
+     * @param id      需要调整的规则ID
+     * @param enlarge 是否调升 true-是
+     * @return
+     */
+    @RequestMapping(value = "/adjustPriority.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput<Boolean> adjustPriority(Long id, Boolean enlarge) {
+        if (Objects.isNull(id) || Objects.isNull(enlarge)) {
+            return BaseOutput.failure("参数丢失");
+        }
+        if (enlarge) {
+            return chargeRuleService.enlargePriority(id);
+        } else {
+            return chargeRuleService.reducePriority(id);
         }
     }
 

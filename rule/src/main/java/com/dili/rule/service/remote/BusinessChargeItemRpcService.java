@@ -1,20 +1,19 @@
 package com.dili.rule.service.remote;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
+import cn.hutool.core.collection.CollectionUtil;
+import com.dili.assets.sdk.dto.BusinessChargeItemDto;
+import com.dili.assets.sdk.rpc.BusinessChargeItemRpc;
+import com.dili.commons.glossary.YesOrNoEnum;
+import com.dili.ss.domain.BaseOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dili.assets.sdk.dto.BusinessChargeItemDto;
-import com.dili.assets.sdk.rpc.BusinessChargeItemRpc;
-import com.dili.commons.glossary.YesOrNoEnum;
-import com.dili.ss.domain.BaseOutput;
-
-import cn.hutool.core.collection.CollectionUtil;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <B></B>
@@ -32,9 +31,9 @@ public class BusinessChargeItemRpcService {
 
     /**
      * 获取业务收费项数据集
-     * @param marketId
-     * @param businessType
-     * @param isEnable
+     * @param marketId 市场ID
+     * @param businessType 业务类型
+     * @param isEnable 是否启用
      * @return
      */
     public List<BusinessChargeItemDto> list(Long marketId, String businessType, Boolean isEnable) {
@@ -51,5 +50,18 @@ public class BusinessChargeItemRpcService {
             log.error(String.format("根据条件[%d::%s::%s]远程查询业务费用项失败[%s]", marketId, businessType, isEnable, t.getMessage()), t);
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * 根据ID获取收费项信息
+     * @param id 费用项id
+     * @return
+     */
+    public Optional<BusinessChargeItemDto> get(Long id) {
+        if (Objects.isNull(id)) {
+            return Optional.empty();
+        }
+        BaseOutput<BusinessChargeItemDto> byId = businessChargeItemRpc.getById(id);
+        return Optional.ofNullable(byId.getData());
     }
 }

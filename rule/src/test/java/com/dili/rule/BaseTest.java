@@ -1,4 +1,4 @@
-package rule;
+package com.dili.rule;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

@@ -47,8 +47,8 @@
             isIframe: true,
             closeBtn: true,
             backdrop: 'static',
-            width: '650',
-            height: '650',
+            width: '900px',
+            height: '80%',
             btns: []
         });
     }
@@ -72,8 +72,33 @@
             isIframe: true,
             closeBtn: true,
             backdrop: 'static',
-            width: '700',
-            height: '650',
+            width: '900px',
+            height: '80%',
+            btns: []
+        });
+    }
+
+    /**
+     * 打开更新窗口
+     */
+    function openViewHandler() {
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        //table选择模式是单选时可用
+        let selectedRow = rows[0];
+        let url = "/conditionDefinition/view.action?id=" + selectedRow.id;
+        dia = bs4pop.dialog({
+            title: '修改预定义条件',
+            content: url,
+            isIframe: true,
+            closeBtn: true,
+            backdrop: 'static',
+            width: '900px',
+            height: '80%',
             btns: []
         });
     }

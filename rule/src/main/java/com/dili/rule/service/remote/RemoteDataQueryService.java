@@ -1,13 +1,16 @@
 package com.dili.rule.service.remote;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.dili.commons.glossary.YesOrNoEnum;
+import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.domain.enums.DataSourceTypeEnum;
+import com.dili.ss.domain.PageOutput;
+import com.dili.uap.sdk.session.SessionContext;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
@@ -19,15 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.alibaba.fastjson.JSONObject;
-import com.dili.commons.glossary.YesOrNoEnum;
-import com.dili.rule.domain.ConditionDataSource;
-import com.dili.rule.domain.enums.DataSourceTypeEnum;
-import com.dili.ss.domain.PageOutput;
-import com.google.common.collect.Maps;
-
-import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <B></B>
@@ -71,9 +67,10 @@ public class RemoteDataQueryService {
      */
     public Page<Map<String, Object>> queryData(ConditionDataSource conditionDataSource, Map<String, Object> params) {
         Optional<String> jsonDataOpt = Optional.empty();
-        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps()
-                .get(conditionDataSource.getDataSourceType());
-
+        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
+        if (StrUtil.isNotBlank(conditionDataSource.getQueryCondition())) {
+            params.putAll(JSONObject.parseObject(conditionDataSource.getQueryCondition()));
+        }
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = conditionDataSource.getDataJson();
             jsonDataOpt = Optional.ofNullable(localJsonData);
@@ -93,17 +90,27 @@ public class RemoteDataQueryService {
      * @return
      */
     public List<Map<String, Object>> queryKeys(ConditionDataSource conditionDataSource, List<Object> keys) {
-        Optional<String> jsonDataOpt = null;
-        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps()
-                .get(conditionDataSource.getDataSourceType());
+        if (CollectionUtil.isEmpty(keys)) {
+            return Collections.emptyList();
+        }
+        Optional<String> jsonDataOpt = Optional.empty();
+        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = conditionDataSource.getDataJson();
             jsonDataOpt = Optional.ofNullable(localJsonData);
-
         } else {
             //构建查询参数
-            Map<String,Object> params = Maps.newHashMap();
-            params.put(conditionDataSource.getKeysField(),keys);
+            Map<String, Object> params = Maps.newHashMap();
+            if (StrUtil.isNotBlank(conditionDataSource.getQueryCondition())) {
+                params.putAll(JSONObject.parseObject(conditionDataSource.getQueryCondition()));
+            }
+            if (StrUtil.isNotBlank(conditionDataSource.getKeysField())){
+                params.put(conditionDataSource.getKeysField(), keys);
+            }
+            //强制内置两个参数，根据当前用户的市场隔离
+            params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
+            params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
+            params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
             HttpResponse response = HttpUtil.createPost(conditionDataSource.getKeysUrl()).body(JSONObject.toJSONString(params)).execute();
             if (response.isOk()) {
                 jsonDataOpt = Optional.ofNullable(response.body());
@@ -162,6 +169,10 @@ public class RemoteDataQueryService {
         }
         params.put("index", pageNumber + 1);
         params.put("pageSize", pageSize);
+        //强制内置两个参数，根据当前用户的市场隔离
+        params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
+        params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
+        params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         Optional<String> result = null;
         HttpResponse response = HttpUtil.createPost(url).body(JSONObject.toJSONString(params)).execute();
         if (response.isOk()) {

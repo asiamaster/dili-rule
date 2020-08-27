@@ -3,7 +3,7 @@
     <form id="addForm" role="form" novalidate>
         <input type="hidden" name="ruleCondition" value="1">
         <input type="hidden" id="id" name="id" value="${conditionDefinition.id!}">
-        <div class="row row-cols-1">
+        <div class="row row-cols-2">
             <div class="form-group col">
                 <label for="marketId">所属市场<i class="red">*</i></label>
                 <select class="form-control" id="marketId" name="marketId" required></select>
@@ -19,13 +19,13 @@
                 <input type="text" class="form-control" id="label" name="label" maxlength="20" value="${conditionDefinition.label!}" required placeholder="用于显示的label" />
             </div>
             <div class="form-group col">
-                <label for="matchedKey" class="">匹配Key<i class="red">*</i></label>
-                <input type="text" class="form-control" id="matchedKey" name="matchedKey" maxlength="20" value="${conditionDefinition.matchedKey!}" required />
+                <label for="matchKey" class="">匹配Key<i class="red">*</i></label>
+                <input type="text" class="form-control" id="matchKey" name="matchKey" maxlength="20" value="${conditionDefinition.matchKey!}" required />
             </div>
             <div class="form-group col">
-                <label for="isVariable" class="">是否计算指标<i class="red">*</i></label>
-                <select id="isVariable" name="isVariable" class="form-control" value="${conditionDefinition.isVariable!}"  required></select>
-                <#bcomboProvider _id="isVariable" _provider="yesOrNoProvider" _queryParams='{emptyText:"-- 请选择 --"}'  _valueField="value" _textField="text" _value="${conditionDefinition.isVariable!}" />
+                <label for="targetType" class="">指标类型<i class="red">*</i></label>
+                <select id="targetType" name="targetType" class="form-control" value="${conditionDefinition.targetType!}"  required></select>
+                <#bcomboProvider _id="targetType" _provider="targetTypeProvider" _queryParams='{emptyText:"-- 请选择 --"}'  _valueField="value" _textField="text" _value="${conditionDefinition.targetType!}" />
             </div>
             <div class="form-group col">
                 <label for="matchType" class="">条件类型<i class="red">*</i></label>
@@ -50,9 +50,9 @@
                 </select>
             </div>
             <div class="form-group col">
-                <input type="hidden" id="oldMatchedColumn" value="${conditionDefinition.matchedColumn!}">
-                <label for="matchedColumn">匹配列</label>
-                <select class="form-control" id="matchedColumn" name="matchedColumn" title="设置需要保存数据来源中的哪一列的值">
+                <input type="hidden" id="oldMatchColumn" value="${conditionDefinition.matchColumn!}">
+                <label for="matchColumn">匹配列</label>
+                <select class="form-control" id="matchColumn" name="matchColumn" title="设置需要保存数据来源中的哪一列的值">
                     <option value="">--请选择--</option>
                 </select>
             </div>
@@ -69,92 +69,35 @@
     </form>
 </div>
 </#bs4Body>
-
+<#conditionDefinition_commonJs />
 
 <script>
 
-    /**
-     * 动态加载数据源信息
-     */
-    function getDataSourceInfo(dataSourceId) {
-        $('#dataSourceId').empty();
-        let dataSource = ["<option value=''>--请选择--</option>"];
-        $.ajax({
-            type: 'post',
-            url: "${contextPath}/conditionDataSource/getDataSource.action",
-            async: false,
-            success: function (ret) {
-                if (ret.success) {
-                    $.each(ret.data, function (i, item) {
-                        //数据来源信息判断
-                        if (typeof (dataSourceId) != "undefined" && null != dataSourceId && '' != dataSourceId && parseInt(dataSourceId) == parseInt(item["id"])) {
-                            dataSource.push('<option selected value="' + item["id"] + '">' + item["name"] + '</option>');
-                        } else {
-                            dataSource.push('<option value="' + item["id"] + '">' + item["name"] + '</option>');
-                        }
-                    });
-                }
-            }
-        });
-        $('#dataSourceId').html(dataSource.join(''));
-    }
 
     /**
      * 数据源改变事件处理
      */
     $('#dataSourceId').on('change', function(){
-        getMatchedColumn();
+        getMatchColumn('','matchColumn','-- 请选择 --');
     });
 
-    /**
-     * 获取数据列信息
-     */
-    function getMatchedColumn(defaultValue) {
-        let dataSourceId = $('#dataSourceId').val();
-        $('#matchedColumn').empty();
-        let data = ["<option value=''>--请选择--</option>"];
-        if (dataSourceId) {
-            $.ajax({
-                type: 'post',
-                url: "${contextPath}/dataSourceColumn/getByDataSource.action",
-                data: {dataSourceId: dataSourceId},
-                async: false,
-                success: function (ret) {
-                    if (ret.success) {
-                        $.each(ret.data, function (i, item) {
-                            //数据来源信息判断
-                            if (typeof(defaultValue) != "undefined" && null != defaultValue && '' != defaultValue && defaultValue == item["columnCode"]) {
-                                data.push('<option selected value="' + item["columnCode"] + '">' + item["columnName"] + '</option>');
-                            } else {
-                                data.push('<option value="' + item["columnCode"] + '">' + item["columnName"] + '</option>');
-                            }
-                        });
-                    } else {
-                        bs4pop.alert(ret.result, {width: 400, type: 'error'});
-                    }
-                }
-            });
+    $('select[name="targetType"]').change(function () {
+        let elList = $('select[name="matchType"],select[name="dataSourceId"],select[name="matchColumn"],select[name="viewMode"]');
+        let targetType = $(this).val();
+        if (targetType == null) {
+            targetType = $('select[name="targetType"]').attr('value')
         }
-        $('#matchedColumn').html(data.join(''));
-    }
-	$('select[name="isVariable"]').change(function(){
-		var elList=$('select[name="matchType"],select[name="dataSourceId"],select[name="matchedColumn"],select[name="viewMode"]');
-		
-		var isVariable=$(this).val();
-		if(isVariable==null){
-			isVariable=$('select[name="isVariable"]').attr('value')
-		}
-		if(isVariable=='${@com.dili.commons.glossary.YesOrNoEnum.YES.getCode()}'){
-			elList.attr('readonly','readonly');
-			elList.attr('disabled','disabled')
-		}else{
-			elList.removeAttr('readonly');
-			elList.removeAttr('disabled')
-		}
-	});
+        if (targetType == '${@com.dili.rule.domain.enums.TargetTypeEnum.VARIABLE.getCode()}') {
+            elList.attr('readonly', 'readonly');
+            elList.attr('disabled', 'disabled')
+        } else {
+            elList.removeAttr('readonly');
+            elList.removeAttr('disabled')
+        }
+    });
 	
-	if($('select[name="isVariable"]').attr('value')!=''){
-		$('select[name="isVariable"]').trigger('change')
+	if($('select[name="targetType"]').attr('value')!=''){
+		$('select[name="targetType"]').trigger('change')
 	}
     /**
      * 保存定义数据
@@ -165,13 +108,13 @@
         } else {
             let dataSourceId = $('#dataSourceId').val();
             let viewMode = $('#viewMode').val();
-            let matchedColumn = $('#matchedColumn').val();
+            let matchColumn = $('#matchColumn').val();
             if (null != dataSourceId && '' != dataSourceId) {
                 if (!viewMode) {
                     bs4pop.alert("数据来源不为空时，[显示方式]必选", {type: 'error',width: 400});
                     return;
                 }
-                if (!matchedColumn) {
+                if (!matchColumn) {
                     bs4pop.alert("数据来源不为空时，[匹配列]必选", {type: 'error',width: 400});
                     return;
                 }
@@ -193,7 +136,6 @@
                 error: function (error) {
                     bui.loading.hide();
                     bs4pop.alert(error.result, {width: 400, type: 'error'}, function () {
-
                     });
                 }
             });
@@ -202,9 +144,9 @@
 
     $(function () {
         let dataSourceId = $('#oldDataSourceId').val();
-        getDataSourceInfo(dataSourceId);
-        let matchedColumn = $('#oldMatchedColumn').val();
-        getMatchedColumn(matchedColumn);
+        getDataSourceInfo(dataSourceId, 'dataSourceId', '-- 请选择 --');
+        let matchColumn = $('#oldMatchColumn').val();
+        getMatchColumn(matchColumn, 'matchColumn', '-- 请选择 --');
     });
 
 </script>

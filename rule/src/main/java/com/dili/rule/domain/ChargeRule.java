@@ -1,23 +1,18 @@
 package com.dili.rule.domain;
 
+import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.dili.ss.dao.sql.DateNextVersion;
+import com.dili.ss.domain.BaseDomain;
+import com.google.common.base.MoreObjects;
+import org.springframework.format.annotation.DateTimeFormat;
+import tk.mybatis.mapper.annotation.Version;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.alibaba.fastjson.annotation.JSONField;
-import com.dili.ss.domain.BaseDomain;
-
-import cn.hutool.core.date.DateUtil;
 
 /**
  * 由MyBatis Generator工具自动生成
@@ -45,12 +40,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
     private Long originalId;
 
     /**
-     * 计费规则编码
-     */
-    @Column(name = "`code`", updatable = false)
-    private String code;
-
-    /**
      * 规则所属于某个市场
      */
     @Column(name = "`market_id`", updatable = false)
@@ -72,7 +61,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
      * 收费项
      */
     @Column(name = "`charge_item`")
-    private String chargeItem;
+    private Long chargeItem;
 
     /**
      * 规则名称
@@ -87,7 +76,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
     private Integer state;
 
     /**
-     * 优先级
+     * 优先级(数字越大，优先级越高)
      */
     @Column(name = "`priority`")
     private Integer priority;
@@ -109,10 +98,10 @@ public class ChargeRule extends BaseDomain implements Serializable {
     private LocalDateTime expireEnd;
 
     /**
-     * 计算指标类型
+     * 计算指标
      */
-    @Column(name = "`target_type`")
-    private Integer targetType;
+    @Column(name = "`target_val`")
+    private String targetVal;
 
     /**
      * 匹配到此规则时最低应支付的金额
@@ -164,6 +153,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @Column(name = "`modify_time`")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Version(nextVersion = DateNextVersion.class)
     private LocalDateTime modifyTime;
 
     /**
@@ -185,12 +175,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvalTime;
-
-    /**
-     * 计算指标
-     */
-    @Column(name = "`target_val`")
-    private String targetVal;
 
     /**
      * 有效期文本
@@ -240,20 +224,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
     }
 
     /**
-     * @return String return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * @param code the code to set
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
      * @return Long return the marketId
      */
     public Long getMarketId() {
@@ -296,16 +266,16 @@ public class ChargeRule extends BaseDomain implements Serializable {
     }
 
     /**
-     * @return String return the chargeItem
+     * @return Long return the chargeItem
      */
-    public String getChargeItem() {
+    public Long getChargeItem() {
         return chargeItem;
     }
 
     /**
      * @param chargeItem the chargeItem to set
      */
-    public void setChargeItem(String chargeItem) {
+    public void setChargeItem(Long chargeItem) {
         this.chargeItem = chargeItem;
     }
 
@@ -363,20 +333,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
      */
     public void setExpireEnd(LocalDateTime expireEnd) {
         this.expireEnd = expireEnd;
-    }
-
-    /**
-     * @return Integer return the targetType
-     */
-    public Integer getTargetType() {
-        return targetType;
-    }
-
-    /**
-     * @param targetType the targetType to set
-     */
-    public void setTargetType(Integer targetType) {
-        this.targetType = targetType;
     }
 
     /**
@@ -569,16 +525,33 @@ public class ChargeRule extends BaseDomain implements Serializable {
     }
 
 
-	@Override
-	public String toString() {
-		return "ChargeRule [id=" + id + ", originalId=" + originalId + ", code=" + code + ", marketId=" + marketId
-				+ ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem
-				+ ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart="
-				+ expireStart + ", expireEnd=" + expireEnd + ", targetType=" + targetType + ", minPayment=" + minPayment
-				+ ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId="
-				+ operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime="
-				+ modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime="
-				+ approvalTime + ", targetVal=" + targetVal + ", expireValue=" + expireValue + "]";
-	}
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("originalId", originalId)
+                .add("marketId", marketId)
+                .add("businessType", businessType)
+                .add("groupId", groupId)
+                .add("chargeItem", chargeItem)
+                .add("ruleName", ruleName)
+                .add("state", state)
+                .add("priority", priority)
+                .add("expireStart", expireStart)
+                .add("expireEnd", expireEnd)
+                .add("targetVal", targetVal)
+                .add("minPayment", minPayment)
+                .add("maxPayment", maxPayment)
+                .add("remark", remark)
+                .add("revisable", revisable)
+                .add("operatorId", operatorId)
+                .add("operatorName", operatorName)
+                .add("createTime", createTime)
+                .add("modifyTime", modifyTime)
+                .add("approverId", approverId)
+                .add("approverName", approverName)
+                .add("approvalTime", approvalTime)
+                .add("expireValue", expireValue)
+                .toString();
+    }
 }

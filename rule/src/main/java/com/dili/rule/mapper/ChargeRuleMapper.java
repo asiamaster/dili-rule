@@ -15,4 +15,11 @@ public interface ChargeRuleMapper extends MyMapper<ChargeRule> {
      * @return
      */
     List<ChargeRuleVo> listForPage(ChargeRule user);
+
+    /**
+     * 保存计费规则信息
+     * @param chargeRule
+     * @return
+     */
+    Integer insertBy(ChargeRule chargeRule);
 }

@@ -766,6 +766,10 @@ jQuery.fn.extend({
                     text = text.substr(0, start - 1) + selectedText + tail.trim();
             }
             expressionInput.val(text);
+            /**
+             * 此处手动触发一下input事件，是为了当验证通过后，给隐藏的targetValue赋值(input事件定义在chargeRule/editJs.tag) by yuehongbo 2020.07.04
+             */
+            expressionInput.trigger('input');
             lastText = text;
             inVariable = false;
             hideSuggestions();
@@ -814,4 +818,4 @@ jQuery.fn.extend({
         };
     }
 });
-//# sourceMappingURL=expression-builder-v2.js.map
+//# sourceMappingURL=expression-builder-v2-exd.js.map

@@ -8,7 +8,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="rule_id" jdbcType="BIGINT" property="ruleId" />
     <result column="label" jdbcType="VARCHAR" property="label" />
-    <result column="matched_key" jdbcType="VARCHAR" property="matchedKey" />
+    <result column="match_key" jdbcType="VARCHAR" property="matchKey" />
     <result column="match_type" jdbcType="INTEGER" property="matchType" />
     <result column="data_type" jdbcType="INTEGER" property="dataType" />
     <result column="definition_id" jdbcType="BIGINT" property="definitionId" />
@@ -25,7 +25,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    id, rule_id, label, matched_key, condition_type, data_type, definition_id, create_time, 
+    id, rule_id, label, match_key, match_type, data_type, definition_id, create_time,
     modify_time
   </sql>
   <sql id="Blob_Column_List">
@@ -57,8 +57,8 @@
       <if test="label != null">
         label = #{label,jdbcType=VARCHAR},
       </if>
-      <if test="matchedKey != null">
-        matched_key = #{matchedKey,jdbcType=VARCHAR},
+      <if test="matchKey != null">
+        match_key = #{matchKey,jdbcType=VARCHAR},
       </if>
       <if test="matchType != null">
         match_type = #{matchType,jdbcType=INTEGER},

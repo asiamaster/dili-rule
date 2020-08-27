@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.*;
 import com.dili.rule.domain.enums.MatchTypeEnum;
+import com.dili.rule.domain.enums.TargetTypeEnum;
 import com.dili.rule.domain.vo.ConditionDefinitionVo;
 import com.dili.rule.mapper.ChargeConditionValMapper;
 import com.dili.rule.service.ChargeConditionValService;
@@ -61,7 +62,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
         conditionDefinition.setMarketId(chargeRule.getMarketId());
         conditionDefinition.setBusinessType(chargeRule.getBusinessType());
         conditionDefinition.setRuleCondition(YesOrNoEnum.YES.getCode());
-        conditionDefinition.setIsVariable(YesOrNoEnum.NO.getCode());
+        conditionDefinition.setTargetType(TargetTypeEnum.CONDITION.getCode());
         List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.list(conditionDefinition);
         //组装已选条件与预定义的条件值
         List<ConditionDefinitionVo> conditionDefinitions = generate(chargeConditionValList,conditionDefinitionList);
@@ -105,29 +106,34 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                 } else if (matchType == MatchTypeEnum.IN) {
                     vo.getValues().addAll(objects);
                     ConditionDataSource conditionDataSource = conditionDataSourceService.get(conditionDefinition.getDataSourceId());
-                    String matchColumn = conditionDefinition.getMatchedColumn();
-                    List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects);
-                    DataSourceColumn condition = new DataSourceColumn();
-                    condition.setDataSourceId(conditionDefinition.getDataSourceId());
-                    List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
-                    for (Object value : objects) {
-                        for (Map<String, Object> row : keyTextMap) {
-                            Object matchValue = row.get(matchColumn);
-                            if (String.valueOf(value).equals(String.valueOf(matchValue))) {
-                                List<String> displayedText = new ArrayList<>();
-                                for (DataSourceColumn column : columns) {
-                                    if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
-                                        Object obj=row.get(column.getColumnCode());
-                                        if(obj!=null) {
-                                            displayedText.add(String.valueOf(obj));
-                                        }
+                    if (Objects.nonNull(conditionDataSource)){
+                        String matchColumn = conditionDefinition.getMatchColumn();
+                        List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects);
+                        DataSourceColumn condition = new DataSourceColumn();
+                        condition.setDataSourceId(conditionDefinition.getDataSourceId());
+                        List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
+                        for (Object value : objects) {
+                            for (Map<String, Object> row : keyTextMap) {
+                                Object matchValue = row.get(matchColumn);
+                                if (String.valueOf(value).equals(String.valueOf(matchValue))) {
+                                    List<String> displayedText = new ArrayList<>();
+                                    for (DataSourceColumn column : columns) {
+                                        if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
+                                            Object obj=row.get(column.getColumnCode());
+                                            if(obj!=null) {
+                                                displayedText.add(String.valueOf(obj));
+                                            }
 
+                                        }
                                     }
+                                    vo.getTexts().add(String.join("#", displayedText));
                                 }
-                                vo.getTexts().add(String.join("#", displayedText));
                             }
                         }
+                    }else{
+                        vo.getTexts().add(objects);
                     }
+
                 }
             }
             voList.add(vo);
@@ -137,18 +143,13 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
 
 	@Override
 	public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule) {
-        Map<String,Object>resultMap = new HashMap<>();
-
-
+        Map<String, Object> resultMap = new HashMap<>();
         //根据规则所在的市场、系统、业务，查询预定义的规则条件
         ConditionDefinition conditionDefinition = new ConditionDefinition();
         conditionDefinition.setMarketId(chargeRule.getMarketId());
         conditionDefinition.setBusinessType(chargeRule.getBusinessType());
-//        conditionDefinition.setRuleCondition(YesOrNoEnum.YES.getCode());
-        conditionDefinition.setIsVariable(YesOrNoEnum.YES.getCode());
+        conditionDefinition.setTargetType(TargetTypeEnum.VARIABLE.getCode());
         List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.list(conditionDefinition);
-
-
         return conditionDefinitionList;
 	}
 }

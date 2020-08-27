@@ -2,10 +2,23 @@ package com.dili.rule.domain.vo;
 
 import java.util.List;
 
+/**
+ * 页面条件指标Vo对象
+ */
 public class ConditionVo {
+
+	/**
+	 * 预定义ID
+	 */
 	private Long definitionId;
+	/**
+	 * 匹配key
+	 */
 	private String matchKey;
-	private List<String>matchedValues;
+	/**
+	 * 匹配值信息
+	 */
+	private List<String> matchValues;
 
 	public Long getDefinitionId() {
 		return definitionId;
@@ -19,11 +32,11 @@ public class ConditionVo {
 	public void setMatchKey(String matchKey) {
 		this.matchKey = matchKey;
 	}
-	public List<String> getMatchedValues() {
-		return matchedValues;
+	public List<String> getMatchValues() {
+		return matchValues;
 	}
-	public void setMatchedValues(List<String> matchedValues) {
-		this.matchedValues = matchedValues;
+	public void setMatchValues(List<String> matchValues) {
+		this.matchValues = matchValues;
 	}
 	
 

@@ -7,15 +7,14 @@
     -->
     <id column="id"  property="id" />
     <result column="market_id"  property="marketId" />
-    <result column="system_code"  property="systemCode" />
     <result column="business_type"  property="businessType" />
     <result column="label"  property="label" />
-    <result column="matched_key"  property="matchedKey" />
+    <result column="match_key"  property="matchKey" />
     <result column="match_type"  property="matchType" />
     <result column="default_values"  property="defaultValues" />
     <result column="data_type"  property="dataType" />
     <result column="data_source_id"  property="dataSourceId" />
-    <result column="matched_column"  property="matchedColumn" />
+    <result column="match_column"  property="matchColumn" />
     <result column="view_mode"  property="viewMode" />
     <result column="data_target_id"  property="dataTargetId" />
     <result column="rule_condition"  property="ruleCondition" />
@@ -26,8 +25,8 @@
     <!--
       WARNING - @mbg.generated
     -->
-    id, market_id, system_code, business_type, label, matched_key, condition_type, default_values, 
-    data_type, data_source_id, matched_column, view_mode, data_target_id, rule_condition, 
+    id, market_id, business_type, label, match_key, match_type, default_values,
+    data_type, data_source_id, match_column, view_mode, data_target_id, rule_condition,
     create_time, modify_time
   </sql>
 </mapper>

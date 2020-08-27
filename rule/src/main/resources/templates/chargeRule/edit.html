@@ -10,32 +10,16 @@
                    aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
             <div class="row row-cols-6 collapse show form-baseParam-box" id="baseInfo">
+                <input type="hidden" id="marketId" name="marketId" value="${chargeRule.marketId!}">
                 <div class="form-group col">
-                    <label for="marketId">所属市场<i class="red">*</i></label>
-                    <select class="form-control" id="marketId" name="marketId" required>
-                        <%if (has(marketList) && isNotEmpty(marketList) && marketList.~size >0 ){
-                            for(market in marketList){
-                        %>
-                            <option  value="${market.id!}" <%if(market.id==chargeRule.marketId){%> selected <%}%> >${market.name!}</option>
-                        <%}}%>
-                    </select>
+                    <input type="hidden" id="businessType" name="businessType" value="${chargeRule.businessType!}">
+                    <label for="businessTypeName">业务类型<i class="red">*</i></label>
+                    <input type="" class="form-control" id="businessTypeName" readonly value="${businessTypeName!}" required>
                 </div>
                 <div class="form-group col">
-                    <label for="businessType">业务类型<i class="red">*</i></label>
-                    <select class="form-control" id="businessType" name="businessType" required>
-                        <%if (has(businessTypeList) && isNotEmpty(businessTypeList) && businessTypeList.~size > 0 ){
-                            for(bType in businessTypeList){
-                        %>
-                            <option value="${bType.code!}" <%if(bType.code==chargeRule.businessType){%> selected <%}%> >${bType.name!}</option>
-                        <%}}%>
-                    </select>
-                </div>
-                <div class="form-group col">
-                    <label for="businessType">费用科目<i class="red">*</i></label>
-                    <input type="hidden" id="oldChargeItem" value="${chargeRule.chargeItem!}">
-                    <select class="form-control" id="chargeItem" name="chargeItem" required>
-                        <option value="">-- 请选择 --</option>
-                    </select>
+                    <input type="hidden" id="chargeItem" name="chargeItem" value="${chargeRule.chargeItem!}">
+                    <label for="chargeItemName">费用科目<i class="red">*</i></label>
+                    <input type="" class="form-control" id="chargeItemName" readonly value="${chargeItemName!}" required>
                 </div>
                 <div class="form-group col">
                     <label for="ruleName">规则名称<i class="red">*</i></label>
@@ -43,7 +27,15 @@
                 </div>
                 <div class="form-group col">
                     <label for="groupId">分组<i class="red">*</i></label>
-                    <input type="" class="form-control" id="groupId" name="groupId" placeholder="" maxlength="30" value="${chargeRule.groupId!}" required>
+                    <input type="" class="form-control isInt" id="groupId" name="groupId" placeholder="" value="${chargeRule.groupId!}" min="0" max="999" required>
+                </div>
+                <div class="form-group col">
+                    <label for="minPayment">最低支付金额</label>
+                    <input type="" class="form-control floatReserve" id="minPayment" name="minPayment" placeholder="" value="${chargeRule.minPayment!}" range="0 999999.99">
+                </div>
+                <div class="form-group col">
+                    <label for="maxPayment">最高支付金额</label>
+                    <input type="" class="form-control floatReserve" id="maxPayment" name="maxPayment" placeholder="" value="${chargeRule.maxPayment!}" range="0 99999999.99">
                 </div>
                 <div class="form-group col-auto">
                     <label for="expireStart">有效期<i class="red">*</i></label>
@@ -54,7 +46,7 @@
                                 <label for="expireStart" class="input-group-text fa fa-calendar"></label>
                             </div>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
-                        <div class="input-group" id="datetimepicker3">
+                        <div class="input-group">
                             <input type="text" name="expireEnd" id="expireEnd"  autocomplete="off"  class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
                             <div class="input-group-append">
                                 <label for="expireEnd" class="input-group-text fa fa-calendar"></label>
@@ -74,13 +66,42 @@
                 	计算指标<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
             <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParamInfo">
-            	<div id="variableListDiv"></div>
-            	表达式:
-            	<input type="hidden" id="targetVal" name="targetVal"  autocomplete="off" value="${chargeRule.targetVal!}" />
-            	<div id="expressionDiv">
-            		<input type="text" name="expressionInput" data-target="#targetVal" class="expressionInput"  value="${chargeRule.targetVal!}" autocomplete="off" data-value-type="skip" required="required"/>
-            	</div>
-  				
+            	<div class="col-auto mt-2 mb-2" id="calcVariable">
+                    <label class="d-block" for="">计算参数</label>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="1">1</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="2">2</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="3">3</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="4">4</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="5">5</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="6">6</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="7">7</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="8">8</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="9">9</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="0">0</button>
+                    <br>
+                    <br>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="+">+</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="-">-</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="*">*</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="/">/</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="(">(</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable=")">)</button>
+                    <br>
+                    <br>
+                    <div class="d-inline-block" id="variableListDiv"></div>
+                </div>
+                <input type="hidden" id="targetVal" name="targetVal"  autocomplete="off" value="${chargeRule.targetVal!}" />
+            	<div class="form-group col-12">
+                    <label for="">数学表达式<i class="red">*</i></label>
+                   <div class="row">
+                       <div class="input-group col-6">
+                           <div class="w-75 pr-0" id="expressionDiv">
+                               <input type="text" id="expressionInput" name="expressionInput" data-target="#targetVal" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.targetVal!}"  value="${chargeRule.targetVal!}" autocomplete="off" data-value-type="skip" required="required"/>
+                           </div>
+                           <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
+                       </div>
+                   </div>
+                </div>
             </div>
             <div class="breadcrumb">
                 	其它信息<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
@@ -103,7 +124,7 @@
 </#bs4Body>
   <link rel="stylesheet" href="${contextPath}/resources/jquery-expression-builder/expression-builder.css" />
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
-<script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2-exd.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <#chargeRule_editJs />
 <script>
@@ -131,5 +152,7 @@ Tooltip.prototype.fixTitle = function () {
       $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
     }
   }*/
+
+
 
 </script>

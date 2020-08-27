@@ -1,5 +1,6 @@
 package com.dili.rule.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ChargeConditionVal;
@@ -11,28 +12,36 @@ import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.domain.vo.ConditionVo;
 import com.dili.rule.mapper.ChargeRuleMapper;
 import com.dili.rule.scheduler.ChargeRuleExpiresScheduler;
+import com.dili.rule.sdk.domain.input.QueryFeeInput;
+import com.dili.rule.sdk.domain.output.QueryFeeOutput;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.ConditionDefinitionService;
+import com.dili.rule.service.RuleEngineService;
 import com.dili.ss.base.BaseServiceImpl;
+import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.ss.exception.BusinessException;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.POJOUtils;
+import com.dili.uap.sdk.domain.UserTicket;
+import com.dili.uap.sdk.session.SessionContext;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.udojava.evalex.Expression;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.MutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +55,8 @@ import java.util.stream.Collectors;
 @Service
 public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> implements ChargeRuleService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ChargeRuleServiceImpl.class);
+
     public ChargeRuleMapper getActualMapper() {
         return (ChargeRuleMapper)getDao();
     }
@@ -56,6 +67,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     private ConditionDefinitionService conditionDefinitionService;
     @Autowired
     private ChargeRuleExpiresScheduler chargeRuleExpiresScheduler;
+    @Autowired
+    private RuleEngineService ruleEngineService;
 
     @Override
     public EasyuiPageOutput listForEasyuiPage(ChargeRule chargeRule) throws Exception {
@@ -71,59 +84,26 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         return new EasyuiPageOutput((int) total, results);
     }
 
-    @Transactional
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo,OperatorUser operatorUser) {
         ChargeRule inputRuleInfo = new ChargeRule();
         BeanUtils.copyProperties(chargeRuleVo, inputRuleInfo);
-
         inputRuleInfo.setState(RuleStateEnum.UNAUDITED.getCode());
         inputRuleInfo.setRevisable(YesOrNoEnum.YES.getCode());
         inputRuleInfo.setOperatorId(operatorUser.getUserId());
         inputRuleInfo.setOperatorName(operatorUser.getUserName());
-
-        // 检查输入的计算指标及格式
-        //TODO  计算指标相关
-//        if (!TargetTypeEnum.CONSTANT.getCode().equals(inputRuleInfo.getTargetType())) {
-//            // 没有找到计算指标
-//            if (StringUtils.isBlank(inputRuleInfo.getTarget())) {
-//                throw new IllegalArgumentException("没有找到计算指标");
-//            }
-//            String target = StringUtils.trim(inputRuleInfo.getTarget());
-//            List<Integer> codes = JSONArray.parseArray(target, Integer.class);
-//            List<TargetTypeValueEnum> targetTypeValueEnums = TargetTypeValueEnum.findAllEnumsByCodes(codes);
-//            // 没有找到计算指标
-//            if (targetTypeValueEnums.isEmpty()) {
-//                throw new IllegalArgumentException("没有找到计算指标");
-//            }
-//        } else {
-//            // 设置空的默认值
-//            inputRuleInfo.setTarget("[]");
-//        }
         ChargeRule temp = this.saveOrUpdateRuleInfo(inputRuleInfo,operatorUser);
-
         List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(temp, chargeRuleVo);
         // 如果是更新,则先删除原来的设置(如果是插入,下面的delByRuleId将导致死锁)
-        if (!CollectionUtils.isEmpty(ruleConditionValList)) {
-
-            /*
-             * if(vo.getId()==null) { //插入新的规则
-             * ruleConditionValService.batchInsert(ruleConditionVals); }else
-             * if(vo.getId().equals(upsertedRule.getId())){ //更新规则(先批量删除原有的,再增加新提交的)
-             * ruleConditionValService.delByRuleId(vo.getId());
-             * ruleConditionValService.batchInsert(ruleConditionVals); }else {
-             * //原有的被改变状态,新的被创建 ruleConditionValService.batchInsert(ruleConditionVals); }
-             */
-
-            // 上面的代码被改为如下:
+        if (CollectionUtil.isNotEmpty(ruleConditionValList)) {
             if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(temp.getId())) {
                 // 更新规则(先批量删除原有的,再增加新提交的)
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
             }
             chargeConditionValService.batchInsert(ruleConditionValList);
-
         } else {
-            // 上面的代码被改为如下:
             if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(temp.getId())) {
                 // 更新规则(先批量删除原有的,再增加新提交的)
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
@@ -188,6 +168,187 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         this.updateStateByExpires(rule,operatorUser);
     }
 
+    @Override
+    public QueryFeeOutput findRuleInfoAnaCalculateFee(QueryFeeInput queryFeeInput) {
+        ChargeRule queryCondition = new ChargeRule();
+        queryCondition.setMarketId(queryFeeInput.getMarketId());
+        queryCondition.setBusinessType(queryFeeInput.getBusinessType());
+        queryCondition.setChargeItem(queryFeeInput.getChargeItem());
+        queryCondition.setSort("group_id,priority,modifyTime,createTime");
+        queryCondition.setOrder("DESC,DESC,DESC,DESC");
+        queryCondition.setState(RuleStateEnum.ENABLED.getCode());
+        List<ChargeRule> chargeRuleList = this.listByExample(queryCondition);
+        //返回对象
+        QueryFeeOutput result = new QueryFeeOutput();
+        BeanUtils.copyProperties(queryFeeInput, result);
+        if (CollectionUtil.isEmpty(chargeRuleList)) {
+            result.setCode(ResultCode.NOT_FOUND);
+            result.setMessage("未找到可用的规则");
+        } else {
+            for (ChargeRule ruleInfo : chargeRuleList) {
+                boolean checkRuleResult = this.ruleEngineService.checkChargeRule(ruleInfo, queryFeeInput.getConditionParams());
+                if (checkRuleResult) {
+                    result.setRuleId(ruleInfo.getId());
+                    result.setRuleName(ruleInfo.getRuleName());
+                    logger.info("条件匹配的规则: {}", ruleInfo);
+                    try {
+                        BigDecimal fee = this.calcFeeByRule(ruleInfo, queryFeeInput.getCalcParams());
+                        if (fee.equals(new BigDecimal(Integer.MIN_VALUE))) {
+                            result.setMessage("根据规则及参数计算费用时异常");
+                            result.setCode(ResultCode.APP_ERROR);
+                        } else {
+                            logger.info("条件匹配的规则: {},计算的费用为: {}", ruleInfo, fee);
+                            result.setCode(ResultCode.OK);
+                            result.setSuccess(true);
+                            result.setTotalFee(fee);
+                        }
+                        return result;
+                    } catch (BusinessException e) {
+                        logger.error(e.getMessage(), e);
+                        result.setMessage(e.getMessage());
+                        result.setCode(ResultCode.APP_ERROR);
+                        return result;
+                    } catch (Throwable t) {
+                        logger.error(t.getMessage(), t);
+                        result.setMessage("计算费用金额出错: " + t.getMessage());
+                        result.setCode(ResultCode.APP_ERROR);
+                        return result;
+                    }
+                }
+            }
+            result.setCode(ResultCode.DATA_ERROR);
+            result.setMessage("未匹配到任何规则");
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseOutput<Object> approve(Long id, Boolean pass) {
+        ChargeRule rule = this.get(id);
+        if (null == rule) {
+            return BaseOutput.failure("规则不存在");
+        }
+        if (!RuleStateEnum.UNAUDITED.getCode().equals(rule.getState())
+                && !RuleStateEnum.NOT_PASS.getCode().equals(rule.getState())) {
+            return BaseOutput.failure("状态已变更，不能进行此操作");
+        }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        rule.setOperatorId(userTicket.getId());
+        rule.setOperatorName(userTicket.getRealName());
+        rule.setApproverId(userTicket.getId());
+        rule.setApproverName(userTicket.getRealName());
+        rule.setApprovalTime(LocalDateTime.now());
+        if (pass) {
+            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
+        } else {
+            rule.setState(RuleStateEnum.NOT_PASS.getCode());
+        }
+        this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
+        return BaseOutput.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseOutput<Object> enable(Long id, Boolean enable) {
+        ChargeRule rule = this.get(id);
+        if (null == rule) {
+            return BaseOutput.failure("规则不存在");
+        }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        rule.setOperatorId(userTicket.getId());
+        rule.setOperatorName(userTicket.getRealName());
+        if (enable) {
+            List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.DISABLED.getCode());
+            if (!allowedStatus.contains(rule.getState())) {
+                return BaseOutput.failure("状态已变更，不能进行此操作");
+            }
+            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
+        } else {
+            List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.ENABLED.getCode(),
+                    RuleStateEnum.UN_STARTED.getCode());
+            if (!allowedStatus.contains(rule.getState())) {
+                return BaseOutput.failure("状态已变更，不能进行此操作");
+            }
+            rule.setState(this.calculateRuleState(rule, RuleStateEnum.DISABLED).getCode());
+        }
+        this.updateRuleInfoWithExpire(rule,OperatorUser.fromSessionContext());
+        return BaseOutput.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer obsolete(Long id, OperatorUser operatorUser) {
+        ChargeRule rule = new ChargeRule();
+        rule.setId(id);
+        rule.setState(RuleStateEnum.OBSOLETE.getCode());
+        rule.setOperatorId(operatorUser.getUserId());
+        rule.setOperatorName(operatorUser.getUserName());
+        rule.setRevisable(YesOrNoEnum.YES.getCode());
+        return this.updateSelective(rule);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateRuleInfoWithExpire(ChargeRule ruleInfo, OperatorUser operatorUser) {
+        if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
+            // 作废原规则
+            obsolete(ruleInfo.getOriginalId(), operatorUser);
+            ruleInfo.setOriginalId(null);
+        }
+        super.updateSelective(ruleInfo);
+        chargeRuleExpiresScheduler.updateRuleStatus(ruleInfo);
+        return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseOutput<Boolean> enlargePriority(long id) {
+        ChargeRule chargeRule = get(id);
+        ChargeRule query = new ChargeRule();
+        query.setMarketId(chargeRule.getMarketId());
+        query.setBusinessType(chargeRule.getBusinessType());
+        query.setChargeItem(chargeRule.getChargeItem());
+        query.setPriority(chargeRule.getPriority() + 1);
+        List<ChargeRule> ruleList = list(query);
+        if (CollectionUtil.isEmpty(ruleList)) {
+            return BaseOutput.failure("当前优先级已经最高！");
+        } else {
+            ChargeRule old = ruleList.get(0);
+            old.setPriority(old.getPriority() - 1);
+            update(old);
+            chargeRule.setPriority(chargeRule.getPriority() + 1);
+            this.update(chargeRule);
+            return BaseOutput.successData(true);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseOutput<Boolean> reducePriority(long id) {
+        ChargeRule chargeRule = get(id);
+        if (chargeRule.getPriority() == 1) {
+            return BaseOutput.failure("当前优先级已经最低！");
+        }
+        ChargeRule query = new ChargeRule();
+        query.setMarketId(chargeRule.getMarketId());
+        query.setBusinessType(chargeRule.getBusinessType());
+        query.setChargeItem(chargeRule.getChargeItem());
+        query.setPriority(chargeRule.getPriority() - 1);
+        List<ChargeRule> ruleList = list(query);
+        if (CollectionUtil.isEmpty(ruleList)) {
+            chargeRule.setPriority(chargeRule.getPriority() - 1);
+            this.update(chargeRule);
+            return BaseOutput.successData(true);
+        } else {
+            ChargeRule old = ruleList.get(0);
+            old.setPriority(old.getPriority() + 1);
+            update(old);
+            chargeRule.setPriority(chargeRule.getPriority() - 1);
+            this.update(chargeRule);
+            return BaseOutput.successData(true);
+        }
+    }
 
     /**
      * 根据id是否为空,分别进行插入或者其他操作
@@ -201,7 +362,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             // 插入新的记录
-            this.insertSelective(inputRuleInfo);
+            getActualMapper().insertBy(inputRuleInfo);
             return inputRuleInfo;
         } else {
             ChargeRule old = this.get(inputRuleInfo.getId());
@@ -229,7 +390,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             	throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             // 插入一条新的RuleInfo
-            this.insertSelective(inputRuleInfo);
+            getActualMapper().insertBy(inputRuleInfo);
             old.setRevisable(YesOrNoEnum.NO.getCode());
             // 更改原来数据的状态
             this.updateRuleInfoWithExpire(old,operatorUser);
@@ -237,42 +398,10 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             if (this.isExistsSameRuleName(inputRuleInfo)) {
             	throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
+            inputRuleInfo.setModifyTime(old.getModifyTime());
             this.updateSelective(inputRuleInfo);
         }
         return inputRuleInfo;
-    }
-
-
-    /**
-     * 根据规则有效期，更改规则信息
-     * @param ruleInfo
-     * @return
-     */
-    private int updateRuleInfoWithExpire(ChargeRule ruleInfo,OperatorUser operatorUser) {
-        if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
-            // 作废原规则
-            obsolete(ruleInfo.getOriginalId(),operatorUser);
-            ruleInfo.setOriginalId(null);
-        }
-        super.updateSelective(ruleInfo);
-        chargeRuleExpiresScheduler.updateRuleStatus(ruleInfo);
-        return 1;
-    }
-
-    /**
-     * 作废某条规则信息
-     *
-     * @param id 需要作废的规则ID
-     * @return
-     */
-    private Integer obsolete(Long id,OperatorUser operatorUser) {
-        ChargeRule rule = new ChargeRule();
-        rule.setId(id);
-        rule.setState(RuleStateEnum.OBSOLETE.getCode());
-        rule.setOperatorId(operatorUser.getUserId());
-        rule.setOperatorName(operatorUser.getUserName());
-        rule.setRevisable(YesOrNoEnum.YES.getCode());
-        return this.updateSelective(rule);
     }
 
     /**
@@ -282,9 +411,12 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @return
      */
     private List<ChargeConditionVal> parseRuleConditionVal(ChargeRule rule, ChargeRuleVo vo) {
-    	List<ConditionVo> conditions = vo.getConditions();
+        if (CollectionUtil.isEmpty(vo.getConditionList())){
+            return Collections.emptyList();
+        }
+        List<ConditionVo> conditionList = vo.getConditionList();
         // 需要保存的规则条件信息
-        List<ChargeConditionVal> ruleConditionVals = conditions.stream().map((c) -> {
+        List<ChargeConditionVal> ruleConditionVals = conditionList.stream().map((c) -> {
             // 获得对应的ConditionDefinition并进行数据格式校验
             Long definitionId = c.getDefinitionId();
             ConditionDefinition definition = conditionDefinitionService.get(definitionId);
@@ -292,15 +424,21 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 throw new IllegalArgumentException("条件指标参数不正确");
             }
             // 转换为RuleConditionVal对象
-            String val = JSONObject.toJSONString(c.getMatchedValues());
+
+            String val = "[]";
+            if (Objects.nonNull(c.getMatchValues())){
+                val = JSONObject.toJSONString(c.getMatchValues());
+            }
             ChargeConditionVal conditionValItem = new ChargeConditionVal();
             conditionValItem.setRuleId(rule.getId());
             conditionValItem.setLabel(definition.getLabel());
-            conditionValItem.setMatchedKey(definition.getMatchedKey());
+            conditionValItem.setMatchKey(definition.getMatchKey());
             conditionValItem.setMatchType(definition.getMatchType());
             conditionValItem.setDataType(definition.getDataType());
             conditionValItem.setVal(val);
             conditionValItem.setDefinitionId(definition.getId());
+            conditionValItem.setCreateTime(LocalDateTime.now());
+            conditionValItem.setModifyTime(conditionValItem.getCreateTime());
             return conditionValItem;
         }).collect(Collectors.toList());
         return ruleConditionVals;
@@ -320,5 +458,66 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         condition.setChargeItem(chargeRule.getChargeItem());
         long sameNameCount = this.listByExample(condition).stream().filter((r) -> !r.getId().equals(chargeRule.getId())).count();
         return sameNameCount > 0;
+    }
+
+    /**
+     * 根据规则信息，计算费用
+     * @param ruleInfo
+     * @param calcParams
+     * @return 计算后的结果值
+     */
+    private BigDecimal calcFeeByRule(ChargeRule ruleInfo, Map<String, Object> calcParams) {
+        String targetVal = conditionDefinitionService.convertTargetValDefinition(ruleInfo.getTargetVal(),false);
+        Expression expression = new Expression(targetVal);
+        try {
+            for (String var : expression.getUsedVariables()) {
+                if (calcParams.containsKey(var)){
+                    expression.setVariable(var, String.valueOf(calcParams.get(var)));
+                }
+            }
+            return new BigDecimal(expression.eval().toPlainString());
+        } catch (Exception e) {
+            logger.error(String.format("根据规则[%s]及参数[%s]生成的表达式[%s]计算金额异常[%s]",ruleInfo,calcParams,expression.toString(),e.getMessage() ),e);
+            throw new BusinessException("1","根据规则及参数计算费用异常");
+        }
+    }
+
+    /**
+     * 基于当前的状态和时间范围 及期望的状态值,来计算最终可用状态
+     *
+     * @param ruleInfo 规则信息
+     * @param expectedState 预期的下一个状态
+     * @return 最终的状态
+     */
+    private RuleStateEnum calculateRuleState(ChargeRule ruleInfo, RuleStateEnum expectedState) {
+        LocalDateTime start = ruleInfo.getExpireStart();
+        LocalDateTime end = ruleInfo.getExpireEnd();
+        LocalDateTime now = LocalDateTime.now();
+        //规则目前的状态
+        Integer originalState = ruleInfo.getState();
+        /**
+         * 期望下一个状态为启用
+         */
+        if (RuleStateEnum.ENABLED == expectedState) {
+            //当前值为待审核时
+            if (RuleStateEnum.UNAUDITED.getCode().equals(originalState)) {
+                if (end.isBefore(now)) {
+                    return RuleStateEnum.EXPIRED;
+                } else if (start.isAfter(now)) {
+                    return RuleStateEnum.UN_STARTED;
+                } else {
+                    return RuleStateEnum.ENABLED;
+                }
+            }else if (RuleStateEnum.DISABLED.getCode().equals(originalState)) {
+                if (end.isBefore(now)) {
+                    return RuleStateEnum.EXPIRED;
+                } else if (start.isAfter(now)) {
+                    return RuleStateEnum.UN_STARTED;
+                } else {
+                    return RuleStateEnum.ENABLED;
+                }
+            }
+        }
+        return expectedState;
     }
 }

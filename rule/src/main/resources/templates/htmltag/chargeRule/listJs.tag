@@ -44,7 +44,6 @@
      */
     function openInsertHandler() {
         let marketId = $('#marketId').val()==null?'':$('#marketId').val();
-       // let systemCode = $('#systemCode').val();
         let businessType = $('#businessType').val()==null?'':$('#businessType').val();
         let chargeItem = $('#chargeItem').val()==null?'':$('#chargeItem').val();
         let url = "/chargeRule/preSave.html?marketId=" + marketId+'&businessType='+businessType+'&chargeItem='+chargeItem;
@@ -72,9 +71,14 @@
         }
         //table选择模式是单选时可用
         let selectedRow = rows[0];
-        let url = "/chargeRule/preSave.html?id=" + selectedRow.id + "&dataSourceId=" + selectedRow.dataSourceId;
+        let revisable = selectedRow.revisable;
+        if (revisable != ${@com.dili.commons.glossary.YesOrNoEnum.YES.getCode()}) {
+            bs4pop.alert('此规则已存在被修改的记录，暂时不能修改', {type: 'warning'});
+            return;
+        }
+        let url = "/chargeRule/preSave.html?id=" + selectedRow.id;
         dia = bs4pop.dialog({
-            title: '更新数据列',
+            title: '更新规则',
             content: url,
             isIframe: true,
             closeBtn: true,
@@ -124,13 +128,69 @@
         });
     }
 
+    /**
+     * 查看规则详细信息
+     */
+    function openViewHandler() {
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        //table选择模式是单选时可用
+        let selectedRow = rows[0];
+        let url = "/chargeRule/view.action?id=" + selectedRow.id;
+        dia = bs4pop.dialog({
+            title: '规则详情',
+            content: url,
+            isIframe: true,
+            closeBtn: true,
+            backdrop: 'static',
+            width: '98%',
+            height: '98%',
+            btns: []
+        });
+    }
 
     /**
      * 禁启用操作
      * @param enable 是否启用:true-启用
      */
     function doEnableHandler(enable) {
-
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        let selectedRow = rows[0];
+        let msg = (enable || 'true' == enable) ? '确定要启用该规则吗？' : '确定要禁用该规则吗？';
+        bs4pop.confirm(msg, undefined, function (sure) {
+            if(sure){
+                bui.loading.show('努力提交中，请稍候。。。');
+                $.ajax({
+                    type: "POST",
+                    url: "${contextPath}/chargeRule/enable.action",
+                    data: {id: selectedRow.id, enable: enable},
+                    processData:true,
+                    dataType: "json",
+                    async : true,
+                    success : function(ret) {
+                        bui.loading.hide();
+                        if(ret.success){
+                            queryDataHandler();
+                        }else{
+                            bs4pop.alert(ret.result, {type: 'error'});
+                        }
+                    },
+                    error : function() {
+                        bui.loading.hide();
+                        bs4pop.alert('远程访问失败', {type: 'error'});
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -138,16 +198,52 @@
      * @param pass 是否通过:true-通过
      */
     function doCheckHandler(pass) {
-
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        let selectedRow = rows[0];
+        let msg = (pass || 'true' == pass) ? '确定要通过该条规则吗？' : '确定要拒接该条规则吗？';
+        bs4pop.confirm(msg, undefined, function (sure) {
+            if(sure){
+                bui.loading.show('努力提交中，请稍候。。。');
+                $.ajax({
+                    type: "POST",
+                    url: "${contextPath}/chargeRule/approve.action",
+                    data: {id: selectedRow.id, pass: pass},
+                    processData:true,
+                    dataType: "json",
+                    async : true,
+                    success : function(ret) {
+                        bui.loading.hide();
+                        if(ret.success){
+                            queryDataHandler();
+                        }else{
+                            bs4pop.alert(ret.result, {type: 'error'});
+                        }
+                    },
+                    error : function() {
+                        bui.loading.hide();
+                        bs4pop.alert('远程访问失败', {type: 'error'});
+                    }
+                });
+            }
+        });
     }
 
     /**
      * 查询处理
      */
     function queryDataHandler() {
-        currentSelectRowIndex = undefined;
-        $('#toolbar button').attr('disabled', false);
-        _dataGrid.bootstrapTable('refresh');
+        if ($('#chargeRuleQueryForm').validate().form()) {
+            currentSelectRowIndex = undefined;
+            $('#toolbar button').attr('disabled', false);
+            _dataGrid.bootstrapTable('refresh');
+        } else {
+            bs4pop.notice("请完善必填项", {type: 'warning', position: 'topleft'});
+        }
     }
 
     /**
@@ -175,11 +271,66 @@
 
     //选中行事件 -- 可操作按钮控制
     _dataGrid.on('check.bs.table', function (e, row, $element) {
+        let state = row.$_state;
+        /**
+         * 参与控制的操作按钮有：[通过]、[不通过]、[禁用]、[启用]
+         * 在参数控制的按钮上添加了伪css control-btn 用来批量处理
+         * 1.[待审核]状态下，可操作 [通过]、[不通过]
+         * 2.[启用]或[未开始]状态下，可操作 [禁用]
+         * 3.[禁用]状态下，可操作 [启用]
+         * 4.[未通过]状态下，可操作 [通过]
+         * 其它状态，则不可操作以上按钮
+         */
 
+        if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.UNAUDITED.getCode()}) { //待审核
+            $('.control-btn').attr('disabled', true);
+            $('#btn_check_pass').attr('disabled', false);
+            $('#btn_check_not_pass').attr('disabled', false);
+        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}) { //启用
+            $('.control-btn').attr('disabled', true);
+            $('#btn_disable').attr('disabled', false);
+        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.DISABLED.getCode()}) {  //禁用
+            $('.control-btn').attr('disabled', true);
+            $('#btn_enable').attr('disabled', false);
+        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.NOT_PASS.getCode()}) {  //未通过
+            $('.control-btn').attr('disabled', true);
+            $('#btn_check_pass').attr('disabled', false);
+        } else {
+            $('.control-btn').attr('disabled', true);
+        }
     });
 
 
     /*****************************************自定义事件区 end**************************************/
+
+    /**
+     * 规则优先级调整
+     * @param id 规则ID
+     * @param _flag 是否调升
+     */
+    function adjustPriorityHandler(id, _flag) {
+        bui.loading.show('努力提交中，请稍候。。。');
+        $.ajax({
+            type: "POST",
+            url: "${contextPath}/chargeRule/adjustPriority.action",
+            data: {id: id, enlarge: _flag},
+            processData: true,
+            dataType: "json",
+            async: true,
+            success: function (ret) {
+                bui.loading.hide();
+                if (ret.success) {
+                    queryDataHandler();
+                } else {
+                    bs4pop.notice(ret.result, {type: 'warning',position: 'center'});
+                }
+            },
+            error: function () {
+                bui.loading.hide();
+                bs4pop.alert('远程访问失败', {type: 'error',position: 'center'});
+            }
+        });
+    }
 
     /**
      * 显示栏格式化显示tip
@@ -193,6 +344,18 @@
         } else {
             return "";
         }
+    }
+
+    /**
+     * 优先级数据格式化操作显示
+     */
+    function priorityFormatter(value,row,index) {
+        <%if(hasResource("adjustPriority")) {%>
+            return '<a class="like" href="javascript:void(0)" onclick="adjustPriorityHandler(' + row.id + ',true)" >向上</a>&nbsp;&nbsp;' +
+            '<a class="like" href="javascript:void(0)" onclick="adjustPriorityHandler(' + row.id + ',false)" >向下</a>';
+        <%}else{%>
+            return '向上&nbsp;&nbsp;向下';
+        <%}%>
     }
 
     /**

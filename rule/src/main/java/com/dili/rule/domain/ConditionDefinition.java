@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.google.common.base.MoreObjects;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -49,8 +50,8 @@ public class ConditionDefinition extends BaseDomain {
     /**
      * 条件定义key值(关联匹配字段)
      */
-    @Column(name = "`matched_key`")
-    private String matchedKey;
+    @Column(name = "`match_key`")
+    private String matchKey;
 
     /**
      * 条件类型(大于,小于,等于),具体参考MatchTypeEnum
@@ -71,6 +72,13 @@ public class ConditionDefinition extends BaseDomain {
     private Integer dataType;
 
     /**
+     * 指标类型
+     * {@link com.dili.rule.domain.enums.TargetTypeEnum}
+     */
+    @Column(name = "`target_type`")
+    private Integer targetType;
+
+    /**
      * 数据来源ID(用于设置规则时，通过什么方法获取数据)
      */
     @Column(name = "`data_source_id`")
@@ -79,8 +87,8 @@ public class ConditionDefinition extends BaseDomain {
     /**
      * 匹配数据源中的某列值
      */
-    @Column(name = "`matched_column`")
-    private String matchedColumn;
+    @Column(name = "`match_column`")
+    private String matchColumn;
 
     /**
      * 来源数据显示方法
@@ -117,11 +125,9 @@ public class ConditionDefinition extends BaseDomain {
     private LocalDateTime modifyTime;
 
 
-    /**
-     * 是否是计算指标 
-     */
-    @Column(name = "`is_variable`")
-    private Integer isVariable;
+    public Long getId() {
+        return id;
+    }
 
     /**
      * @param id the id to set
@@ -173,20 +179,18 @@ public class ConditionDefinition extends BaseDomain {
     }
 
     /**
-     * @return String return the matchedKey
+     * @return String return the matchKey
      */
-    public String getMatchedKey() {
-        return matchedKey;
+    public String getMatchKey() {
+        return matchKey;
     }
 
     /**
-     * @param matchedKey the matchedKey to set
+     * @param matchKey the matchKey to set
      */
-    public void setMatchedKey(String matchedKey) {
-        this.matchedKey = matchedKey;
+    public void setMatchKey(String matchKey) {
+        this.matchKey = matchKey;
     }
-
-
 
     public Integer getMatchType() {
 		return matchType;
@@ -224,6 +228,14 @@ public class ConditionDefinition extends BaseDomain {
         this.dataType = dataType;
     }
 
+    public Integer getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(Integer targetType) {
+        this.targetType = targetType;
+    }
+
     /**
      * @return Long return the dataSourceId
      */
@@ -239,17 +251,17 @@ public class ConditionDefinition extends BaseDomain {
     }
 
     /**
-     * @return String return the matchedColumn
+     * @return String return the matchColumn
      */
-    public String getMatchedColumn() {
-        return matchedColumn;
+    public String getMatchColumn() {
+        return matchColumn;
     }
 
     /**
-     * @param matchedColumn the matchedColumn to set
+     * @param matchColumn the matchColumn to set
      */
-    public void setMatchedColumn(String matchedColumn) {
-        this.matchedColumn = matchedColumn;
+    public void setMatchColumn(String matchColumn) {
+        this.matchColumn = matchColumn;
     }
 
     /**
@@ -322,26 +334,26 @@ public class ConditionDefinition extends BaseDomain {
         this.modifyTime = modifyTime;
     }
 
-	public Long getId() {
-		return id;
-	}
 
-	public Integer getIsVariable() {
-		return isVariable;
-	}
-
-	public void setIsVariable(Integer isVariable) {
-		this.isVariable = isVariable;
-	}
-
-	@Override
-	public String toString() {
-		return "ConditionDefinition [id=" + id + ", marketId=" + marketId + ", businessType=" + businessType
-				+ ", label=" + label + ", matchedKey=" + matchedKey + ", matchType=" + matchType + ", defaultValues="
-				+ defaultValues + ", dataType=" + dataType + ", dataSourceId=" + dataSourceId + ", matchedColumn="
-				+ matchedColumn + ", viewMode=" + viewMode + ", dataTargetId=" + dataTargetId + ", ruleCondition="
-				+ ruleCondition + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", isVariable="
-				+ isVariable + "]";
-	}
-
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("marketId", marketId)
+                .add("businessType", businessType)
+                .add("label", label)
+                .add("matchKey", matchKey)
+                .add("matchType", matchType)
+                .add("defaultValues", defaultValues)
+                .add("dataType", dataType)
+                .add("targetType", targetType)
+                .add("dataSourceId", dataSourceId)
+                .add("matchColumn", matchColumn)
+                .add("viewMode", viewMode)
+                .add("dataTargetId", dataTargetId)
+                .add("ruleCondition", ruleCondition)
+                .add("createTime", createTime)
+                .add("modifyTime", modifyTime)
+                .toString();
+    }
 }

@@ -2,18 +2,18 @@
 
     <%if (has(conditionDefinitions) && isNotEmpty(conditionDefinitions) && conditionDefinitions.~size >0 ){
         for(cd in conditionDefinitions){%>
-         <input name="conditions[${cdLP.index-1}][definitionId]" value="${cd.id}" type="hidden">
-         <input name="conditions[${cdLP.index-1}][matchedKey]" value="${cd.matchedKey}" type="hidden">
+         <input name="conditionList[${cdLP.index-1}][definitionId]" value="${cd.id}" type="hidden">
+         <input name="conditionList[${cdLP.index-1}][matchKey]" value="${cd.matchKey}" type="hidden">
         <%if(isNotEmpty(cd.dataSourceId)){%>
         <!--/*  如果数据源不为空，则认为此项为选择框类型  */-->
         <div class="form-group col form-choice">
             <label for="">${cd.label}</label>
             <div class="input-group">
-         		<input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchedValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
-                <input value="${stringListJoin(cd.texts,',')}" type="text" class="form-control dsInput" size="20">
+         		<input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                <input value="${stringListJoin(cd.texts,',')}" type="text" class="form-control dsInput">
                 <div class="input-group-append">
-                    <span class="input-group-text card-btn  text-primary clear"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
-                    <span class="input-group-text card-btn  text-primary choice" data-type="matchType" data-definitionid="${cd.id}" data-label="${cd.label}" data-target="${cdLP.index-1}" data-checkedids="${cd.values}"><a href="javascript:;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a></span>
+                    <span class="input-group-text text-primary clear"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
+                    <span class="input-group-text text-primary choice" data-type="matchType" data-definitionid="${cd.id}" data-label="${cd.label}" data-target="${cdLP.index-1}" data-checkedids="${cd.values}"><a href="javascript:;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a></span>
                 </div>
             </div>
         </div>
@@ -25,22 +25,22 @@
                 <!--/*  输入框的值类型：  小数类型*/-->
                 <div class="form-group col">
                     <label for="" >${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchedValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
-                    <input id="${cd.id}_${cd.matchedKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"class="form-control floatReserve eqInput" size="31"  min="0" max="9999999.99">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cd.id}_${cd.matchKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"class="form-control floatReserve eqInput"  min="0" max="9999999.99">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.INTEGER.getCode()){%>
                 <!--/*  输入框的值类型：  整数类型*/-->
                 <div class="form-group col form-number">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchedValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
-                    <input id="${cd.id}_${cd.matchedKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control isNaturalNum  eqInput" size="31" min="0" max="9999999">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cd.id}_${cd.matchKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control isNaturalNum  eqInput"  min="0" max="9999999">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.TEXT.getCode()){%>
                 <!--/*  输入框的值类型：  文本类型*/-->
                 <div class="form-group col form-text">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchedValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
-                    <input id="${cd.id}_${cd.matchedKey}" data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control  eqInput" size="31" maxlength="22">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cd.id}_${cd.matchKey}" data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control  eqInput" maxlength="22">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()){%>
                 <!--/*  输入框的值类型：  日期类型*/-->
@@ -52,32 +52,34 @@
                 <!--/*  输入框的条件类型：  范围 */-->
             <%if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DECIMAL.getCode()){%>
                 <!--/*  输入框的值类型：  小数类型*/-->
-                <div class="form-group col-3 form-range" data-name="${cd.id}_${cd.matchedKey}">
+                <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
                     <label for="" >${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchedValues]" value="${stringListJoin(cd.values,',')}" type="hidden"data-skip-falsy="true" data-value-type="stringToArray">
-                    <div class="input-group">
-                        <input  data-target="${cdLP.index-1}"  value="${cd.values.~size?cd.values.get(0):''}" type="text" class="form-control cusFloatReserve betweenMinInput" size="12">
-                        <label class="error" ></label>
-                    </div> -
-                    <div class="input-group">
-                        <label style="display: none">-</label>
-                        <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values.get(1):''}" type="text" class="form-control cusFloatReserve betweenMaxInput" size="12">
-                        <label class="error" ></label>
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden"data-skip-falsy="true" data-value-type="stringToArray">
+                    <div class="form-inline">
+                        <div class="input-group">
+                            <input  data-target="${cdLP.index-1}"  value="${cd.values.~size>0?cd.values.get(0):''}" type="text" class="form-control cusFloatReserve betweenMinInput">
+                            <label class="error" ></label>
+                        </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                        <div class="input-group">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values.get(1):''}" type="text" class="form-control cusFloatReserve betweenMaxInput">
+                            <label class="error" ></label>
+                        </div>
                     </div>
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.INTEGER.getCode()){%>
                 <!--/*  输入框的值类型：  整数类型*/-->
-                <div class="form-group col-3 form-range" data-name="${cd.id}_${cd.matchedKey}">
+                <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditions[${cdLP.index-1}][matchedValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
-                    <div class="input-group">
-                        <input data-target="${cdLP.index-1}" value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput"  size="12" >
-                        <label class="error" ></label>
-                    </div> -
-                    <div class="input-group">
-                        <label style="display: none">-</label>
-                        <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" size="12" >
-                        <label class="error" ></label>
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <div class="form-inline">
+                        <div class="input-group">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput">
+                            <label class="error" ></label>
+                        </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                        <div class="input-group">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput">
+                            <label class="error" ></label>
+                        </div>
                     </div>
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.TEXT.getCode()){%>
@@ -89,7 +91,7 @@
         <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.IN.getCode()){%>
             <div class="form-group col form-text">
                 <label for="">${cd.label}</label>
-                <input id="${cd.id}_${cd.matchedKey}" name="${cd.id}_${cd.matchedKey}" matchedKey="${cd.matchedKey}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control" size="31" maxlength="50" placeholder="如有多个值，以英文逗号隔开">
+                <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]"  value="${stringListJoin(cd.values,',')}" type="text"  class="form-control" maxlength="50" placeholder="如有多个值，以英文逗号隔开" data-value-type="stringToArray">
             </div>
         <%}%>
     <%}}}%>

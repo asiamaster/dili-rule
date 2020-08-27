@@ -5,171 +5,60 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="original_id" jdbcType="BIGINT" property="originalId" />
-    <result column="code" jdbcType="VARCHAR" property="code" />
-    <result column="market_id" jdbcType="BIGINT" property="marketId" />
-    <result column="system_code" jdbcType="VARCHAR" property="systemCode" />
-    <result column="business_type" jdbcType="VARCHAR" property="businessType" />
-    <result column="group_id" jdbcType="BIGINT" property="groupId" />
-    <result column="charge_item" jdbcType="VARCHAR" property="chargeItem" />
-    <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
-    <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="priority" jdbcType="INTEGER" property="priority" />
-    <result column="expire_start" jdbcType="TIMESTAMP" property="expireStart" />
-    <result column="expire_end" jdbcType="TIMESTAMP" property="expireEnd" />
-    <result column="target_type" jdbcType="INTEGER" property="targetType" />
-    <result column="min_payment" jdbcType="DECIMAL" property="minPayment" />
-    <result column="max_payment" jdbcType="DECIMAL" property="maxPayment" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="revisable" jdbcType="TINYINT" property="revisable" />
-    <result column="operator_id" jdbcType="BIGINT" property="operatorId" />
-    <result column="operator_name" jdbcType="VARCHAR" property="operatorName" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
-    <result column="approver_id" jdbcType="BIGINT" property="approverId" />
-    <result column="approver_name" jdbcType="VARCHAR" property="approverName" />
-    <result column="approval_time" jdbcType="TIMESTAMP" property="approvalTime" />
+    <id column="id"  property="id" />
+    <result column="original_id"  property="originalId" />
+    <result column="market_id"  property="marketId" />
+    <result column="business_type"  property="businessType" />
+    <result column="group_id"  property="groupId" />
+    <result column="charge_item"  property="chargeItem" />
+    <result column="rule_name"  property="ruleName" />
+    <result column="state"  property="state" />
+    <result column="priority"  property="priority" />
+    <result column="expire_start"  property="expireStart" />
+    <result column="expire_end"  property="expireEnd" />
+    <result column="target_val"  property="targetVal" />
+    <result column="min_payment"  property="minPayment" />
+    <result column="max_payment"  property="maxPayment" />
+    <result column="remark"  property="remark" />
+    <result column="revisable"  property="revisable" />
+    <result column="operator_id"  property="operatorId" />
+    <result column="operator_name"  property="operatorName" />
+    <result column="create_time"  property="createTime" />
+    <result column="modify_time"  property="modifyTime" />
+    <result column="approver_id"  property="approverId" />
+    <result column="approver_name"  property="approverName" />
+    <result column="approval_time"  property="approvalTime" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dili.rule.domain.ChargeRule">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="target_val" jdbcType="LONGVARCHAR" property="targetVal" />
-  </resultMap>
+
   <sql id="Base_Column_List">
     <!--
       WARNING - @mbg.generated
     -->
-    id, original_id, code, market_id, system_code, business_type, group_id, charge_item, 
-    rule_name, state, priority, expire_start, expire_end, target_type, min_payment, max_payment, 
+    id, original_id, market_id, business_type, group_id, charge_item,
+    rule_name, state, priority, expire_start, expire_end, target_val, min_payment, max_payment,
     remark, revisable, operator_id, operator_name, create_time, modify_time, approver_id, 
     approver_name, approval_time
   </sql>
-  <sql id="Blob_Column_List">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    target_val
-  </sql>
-  <select id="selectBy" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from charge_rule
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <update id="updateBy" parameterType="com.dili.rule.domain.ChargeRule">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    update charge_rule
-    <set>
-      <if test="originalId != null">
-        original_id = #{originalId,jdbcType=BIGINT},
-      </if>
-      <if test="code != null">
-        code = #{code,jdbcType=VARCHAR},
-      </if>
-      <if test="marketId != null">
-        market_id = #{marketId,jdbcType=BIGINT},
-      </if>
-      <if test="systemCode != null">
-        system_code = #{systemCode,jdbcType=VARCHAR},
-      </if>
-      <if test="businessType != null">
-        business_type = #{businessType,jdbcType=VARCHAR},
-      </if>
-      <if test="groupId != null">
-        group_id = #{groupId,jdbcType=BIGINT},
-      </if>
-      <if test="chargeItem != null">
-        charge_item = #{chargeItem,jdbcType=VARCHAR},
-      </if>
-      <if test="ruleName != null">
-        rule_name = #{ruleName,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null">
-        state = #{state,jdbcType=INTEGER},
-      </if>
-      <if test="priority != null">
-        priority = #{priority,jdbcType=INTEGER},
-      </if>
-      <if test="expireStart != null">
-        expire_start = #{expireStart,jdbcType=TIMESTAMP},
-      </if>
-      <if test="expireEnd != null">
-        expire_end = #{expireEnd,jdbcType=TIMESTAMP},
-      </if>
-      <if test="targetType != null">
-        target_type = #{targetType,jdbcType=INTEGER},
-      </if>
-      <if test="minPayment != null">
-        min_payment = #{minPayment,jdbcType=DECIMAL},
-      </if>
-      <if test="maxPayment != null">
-        max_payment = #{maxPayment,jdbcType=DECIMAL},
-      </if>
-      <if test="remark != null">
-        remark = #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="revisable != null">
-        revisable = #{revisable,jdbcType=TINYINT},
-      </if>
-      <if test="operatorId != null">
-        operator_id = #{operatorId,jdbcType=BIGINT},
-      </if>
-      <if test="operatorName != null">
-        operator_name = #{operatorName,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifyTime != null">
-        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="approverId != null">
-        approver_id = #{approverId,jdbcType=BIGINT},
-      </if>
-      <if test="approverName != null">
-        approver_name = #{approverName,jdbcType=VARCHAR},
-      </if>
-      <if test="approvalTime != null">
-        approval_time = #{approvalTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="targetVal != null">
-        target_val = #{targetVal,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 
   <select id="listForPage" parameterType="com.dili.rule.domain.ChargeRule" resultType="com.dili.rule.domain.vo.ChargeRuleVo">
     SELECT cr.*,
     CASE
-    WHEN group_concat(rcv.label) IS NOT NULL THEN
-    group_concat( rcv.label ) ELSE '--'
+    WHEN group_concat(ccv.label) IS NOT NULL THEN
+    group_concat( ccv.label ) ELSE '--'
     END AS conditionLabel
     FROM
     charge_rule cr
     LEFT JOIN charge_condition_val ccv ON cr.id = ccv.rule_id
     <include refid="QUERY_WHERE_CLAUSE" />
-    GROUP BY  r.id
+    GROUP BY  cr.id
     order by ${sort} ${order}
   </select>
 
-  <!-- 全部条件(更多功能可以通过queryData扩展实现)  -->
+  <!-- 联合查询计费规则列表  -->
   <sql id="QUERY_WHERE_CLAUSE">
     <where>
       <if test="marketId != null">
         and cr.market_id = #{marketId}
-      </if>
-      <if test="systemCode != null and systemCode !=''">
-        and cr.system_code = #{systemCode}
       </if>
       <if test="businessType != null and businessType !=''">
         and cr.business_type = #{businessType}
@@ -188,5 +77,55 @@
       </if>
     </where>
   </sql>
+
+  <insert id="insertBy" parameterType="com.dili.rule.domain.ChargeRule" useGeneratedKeys="true" keyProperty="id">
+    <selectKey keyProperty="id" resultType="long" order="AFTER">
+      SELECT LAST_INSERT_ID();
+    </selectKey>
+    INSERT INTO charge_rule (
+        original_id,
+        market_id,
+        business_type,
+        group_id,
+        charge_item,
+        rule_name,
+        state,
+        priority,
+        expire_start,
+        expire_end,
+        target_val,
+        min_payment,
+        max_payment,
+        remark,
+        revisable,
+        operator_id,
+        operator_name,
+        approver_id,
+        approver_name,
+        approval_time
+    )
+    SELECT
+		#{originalId},
+        #{marketId},
+        #{businessType},
+        #{groupId},
+        #{chargeItem},
+        #{ruleName},
+        #{state},
+        IFNULL( MAX( priority ), 0 )+ 1,
+        #{expireStart},
+        #{expireEnd},
+        #{targetVal},
+        #{minPayment},
+        #{maxPayment},
+        #{remark},
+        #{revisable},
+        #{operatorId},
+        #{operatorName},
+        #{approverId},
+        #{approverName},
+        #{approvalTime}
+	    FROM charge_rule where market_id=#{marketId} and business_type=#{businessType} AND charge_item =#{chargeItem}
+  </insert>
 
 </mapper>

@@ -1,0 +1,84 @@
+<#bs4Body>
+<link rel="stylesheet" type="text/css" href="${contextPath}/resources/css/main.css" />
+<div class="container-fluid">
+    <form id="addForm" role="form" novalidate>
+        <input type="hidden" name="ruleCondition" value="1">
+        <input type="hidden" id="id" name="id" value="${conditionDefinition.id!}">
+        <div class="row row-cols-2">
+            <div class="form-group col">
+                <label for="marketId">所属市场<i class="red">*</i></label>
+                <select class="form-control" id="marketId" name="marketId" required></select>
+                <#bcomboProvider _id="marketId" _provider="marketProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.marketId!}" _queryParams='{required:true}' />
+            </div>
+            <div class="form-group col">
+                <label for="businessType">业务类型<i class="red">*</i></label>
+                <select class="form-control" id="businessType" name="businessType"></select>
+                <#bcomboProvider  _id="businessType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"base_business_type",required:true}'  _valueField="value" _textField="text" _value="${conditionDefinition.businessType!}" />
+            </div>
+            <div class="form-group col">
+                <label for="label" class="">标签<i class="red">*</i></label>
+                <input type="text" class="form-control" id="label" name="label" maxlength="20" value="${conditionDefinition.label!}" required placeholder="用于显示的label" />
+            </div>
+            <div class="form-group col">
+                <label for="matchKey" class="">匹配Key<i class="red">*</i></label>
+                <input type="text" class="form-control" id="matchKey" name="matchKey" maxlength="20" value="${conditionDefinition.matchKey!}" required />
+            </div>
+            <div class="form-group col">
+                <label for="targetType" class="">指标类型<i class="red">*</i></label>
+                <select id="targetType" name="targetType" class="form-control" value="${conditionDefinition.targetType!}"  required></select>
+                <#bcomboProvider _id="targetType" _provider="targetTypeProvider" _queryParams='{emptyText:"-- 请选择 --"}'  _valueField="value" _textField="text" _value="${conditionDefinition.targetType!}" />
+            </div>
+            <div class="form-group col">
+                <label for="matchType" class="">条件类型<i class="red">*</i></label>
+                <select id="matchType" name="matchType" class="form-control" required></select>
+                <#bcomboProvider _id="matchType" _provider="matchTypeProvider" _queryParams='{emptyText:""}' _valueField="value" _textField="text" _value="${conditionDefinition.matchType!}" />
+            </div>
+            <div class="form-group col">
+                <label for="dataType" class="">值类型<i class="red">*</i></label>
+                <select id="dataType" name="dataType" class="form-control" required></select>
+                <#bcomboProvider _id="dataType" _provider="valueDataTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDefinition.dataType!}" />
+            </div>
+
+            <div class="form-group col">
+                <label for="defaultValues" class="">默认值</label>
+                <input type="text" class="form-control" id="defaultValues" name="defaultValues" maxlength="255" value="${conditionDefinition.defaultValues!}"  placeholder="条件默认值,多个以英文逗号隔开" />
+            </div>
+            <div class="form-group col">
+                <input type="hidden" id="oldDataSourceId" value="${conditionDefinition.dataSourceId!}">
+                <label for="dataSourceId">数据来源</label>
+                <select class="form-control" id="dataSourceId" name="dataSourceId" title="数据来源选项，如果为空，则认为是直接输入的文本框">
+                </select>
+            </div>
+            <div class="form-group col">
+                <input type="hidden" id="oldMatchColumn" value="${conditionDefinition.matchColumn!}">
+                <label for="matchColumn">匹配列</label>
+                <select class="form-control" id="matchColumn" name="matchColumn" title="设置需要保存数据来源中的哪一列的值">
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="viewMode" class="">显示方式</label>
+                <select id="viewMode" name="viewMode" class="form-control"></select>
+                <#bcomboProvider _id="viewMode" _provider="viewModeProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.viewMode!}" />
+            </div>
+        </div>
+        <div class="text-right mt-2">
+            <button type="button" class="btn btn-secondary px-5" id="formCancel" onclick="javascript:parent.dia.hide()">关闭</button>
+        </div>
+    </form>
+</div>
+</#bs4Body>
+<#conditionDefinition_commonJs />
+
+<script>
+
+
+    $(function () {
+        let dataSourceId = $('#oldDataSourceId').val();
+        getDataSourceInfo(dataSourceId,'dataSourceId','');
+        let matchColumn = $('#oldMatchColumn').val();
+        getMatchColumn(matchColumn,'matchColumn','');
+        $(".form-control").attr("disabled", true);
+        $("select").addClass("select-no-down");
+    });
+
+</script>

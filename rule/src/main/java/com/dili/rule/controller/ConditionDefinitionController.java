@@ -118,15 +118,7 @@ public class ConditionDefinitionController {
     @RequestMapping(value = "/save.action", method = {RequestMethod.POST})
     @ResponseBody
     public BaseOutput save(ConditionDefinition conditionDefinition) {
-        if (Objects.nonNull(conditionDefinition)) {
-            conditionDefinition.setModifyTime(LocalDateTime.now());
-            if (Objects.isNull(conditionDefinition.getId())) {
-                conditionDefinition.setCreateTime(conditionDefinition.getModifyTime());
-            }
-            conditionDefinitionService.saveOrUpdate(conditionDefinition);
-            return BaseOutput.success();
-        }
-        return BaseOutput.failure("参数丢失");
+        return conditionDefinitionService.save(conditionDefinition);
     }
 
     /**
@@ -147,6 +139,23 @@ public class ConditionDefinitionController {
             log.error(String.format("删除数据定义[%d]异常:[%s]", id, e.getMessage()), e);
             return BaseOutput.failure();
         }
+    }
+
+
+    /**
+     * 跳转到编辑页面
+     * @param id 数据ID
+     * @return
+     */
+    @RequestMapping(value = "/view.action", method = RequestMethod.GET)
+    public String view(Long id, ModelMap modelMap) {
+        if (Objects.nonNull(id)) {
+            ConditionDefinition conditionDefinition = conditionDefinitionService.get(id);
+            if (Objects.nonNull(conditionDefinition)) {
+                modelMap.put("conditionDefinition", conditionDefinition);
+            }
+        }
+        return "conditionDefinition/view";
     }
 
     /**
@@ -171,23 +180,19 @@ public class ConditionDefinitionController {
         Long definitionId = Long.parseLong(params.remove("definitionId").toString());
         ConditionDefinition conditionDefinition = this.conditionDefinitionService.get(definitionId);
         Long dataSourceId = conditionDefinition.getDataSourceId();
-
         ConditionDataSource conditionDataSource = conditionDataSourceService.get(dataSourceId);
-
         DataSourceColumn columnCondition = new DataSourceColumn();
         columnCondition.setDataSourceId(dataSourceId);
         columnCondition.setVisible(YesOrNoEnum.YES.getCode());
         columnCondition.setOrder("ASC");
         columnCondition.setSort("column_index");
         List<DataSourceColumn> dataSourceColumns = dataSourceColumnService.listByExample(columnCondition);
-
         Page<Map<String, Object>> page = this.remoteDataQueryService.queryData(conditionDataSource, params);
         modelMap.put("page", page);
         ConditionDefinition condition = new ConditionDefinition();
         condition.setDataTargetId(dataSourceId);
         condition.setRuleCondition(YesOrNoEnum.NO.getCode());
         List<ConditionDefinition> inputConditionDefinitions = this.conditionDefinitionService.list(condition);
-
         modelMap.put("inputConditionDefinitions", inputConditionDefinitions);
         modelMap.put("conditionDefinition", conditionDefinition);
         modelMap.put("conditionDataSource", conditionDataSource);

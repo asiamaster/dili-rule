@@ -1,19 +1,13 @@
 package com.dili.rule.domain;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.ss.domain.BaseDomain;
 import com.dili.ss.domain.annotation.Like;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 /**
  * 由MyBatis Generator工具自动生成
@@ -43,6 +37,12 @@ public class ConditionDataSource extends BaseDomain {
      */
     @Column(name = "`query_url`")
     private String queryUrl;
+
+	/**
+	 * 查询数据时的固定查询条件
+	 */
+	@Column(name = "`query_condition`")
+	private String queryCondition;
 
     /**
      * 通过ids/keys输入查询url
@@ -90,91 +90,72 @@ public class ConditionDataSource extends BaseDomain {
     @Column(name = "`data_json`")
     private String dataJson;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getQueryUrl() {
-		return queryUrl;
-	}
-
-	public void setQueryUrl(String queryUrl) {
-		this.queryUrl = queryUrl;
-	}
-
-	public String getKeysUrl() {
-		return keysUrl;
-	}
-
-	public void setKeysUrl(String keysUrl) {
-		this.keysUrl = keysUrl;
-	}
-
-	public String getKeysField() {
-		return keysField;
-	}
-
-	public void setKeysField(String keysField) {
-		this.keysField = keysField;
-	}
-
-	public String getDataSourceType() {
-		return dataSourceType;
-	}
-
-	public void setDataSourceType(String dataSourceType) {
-		this.dataSourceType = dataSourceType;
-	}
-
-	public Integer getPaged() {
-		return paged;
-	}
-
-	public void setPaged(Integer paged) {
-		this.paged = paged;
-	}
-
-	public LocalDateTime getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(LocalDateTime createTime) {
-		this.createTime = createTime;
-	}
-
-	public LocalDateTime getModifyTime() {
-		return modifyTime;
-	}
-
-	public void setModifyTime(LocalDateTime modifyTime) {
-		this.modifyTime = modifyTime;
-	}
-
-	public String getDataJson() {
-		return dataJson;
-	}
-
-	public void setDataJson(String dataJson) {
-		this.dataJson = dataJson;
-	}
-
-	@Override
-	public String toString() {
-		return "ConditionDataSource [id=" + id + ", name=" + name + ", queryUrl=" + queryUrl + ", keysUrl=" + keysUrl
-				+ ", keysField=" + keysField + ", dataSourceType=" + dataSourceType + ", paged=" + paged
-				+ ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", dataJson=" + dataJson + "]";
-	}
-
+    @Override
+    public Long getId() {
+        return id;
+    }
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getQueryUrl() {
+        return queryUrl;
+    }
+    public void setQueryUrl(String queryUrl) {
+        this.queryUrl = queryUrl;
+    }
+    public String getQueryCondition() {
+        return queryCondition;
+    }
+    public void setQueryCondition(String queryCondition) {
+        this.queryCondition = queryCondition;
+    }
+    public String getKeysUrl() {
+        return keysUrl;
+    }
+    public void setKeysUrl(String keysUrl) {
+        this.keysUrl = keysUrl;
+    }
+    public String getKeysField() {
+        return keysField;
+    }
+    public void setKeysField(String keysField) {
+        this.keysField = keysField;
+    }
+    public String getDataSourceType() {
+        return dataSourceType;
+    }
+    public void setDataSourceType(String dataSourceType) {
+        this.dataSourceType = dataSourceType;
+    }
+    public Integer getPaged() {
+        return paged;
+    }
+    public void setPaged(Integer paged) {
+        this.paged = paged;
+    }
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+    public LocalDateTime getModifyTime() {
+        return modifyTime;
+    }
+    public void setModifyTime(LocalDateTime modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+    public String getDataJson() {
+        return dataJson;
+    }
+    public void setDataJson(String dataJson) {
+        this.dataJson = dataJson;
+    }
 }

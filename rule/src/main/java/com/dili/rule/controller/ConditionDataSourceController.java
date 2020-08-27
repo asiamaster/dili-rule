@@ -1,25 +1,24 @@
 package com.dili.rule.controller;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.service.ConditionDataSourceService;
+import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.dili.rule.domain.ConditionDataSource;
-import com.dili.rule.service.ConditionDataSourceService;
-import com.dili.ss.domain.BaseOutput;
-import com.dili.ss.domain.EasyuiPageOutput;
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 数据源管理控制层
@@ -85,13 +84,16 @@ public class ConditionDataSourceController {
      */
     @RequestMapping(value = "/save.action", method = {RequestMethod.POST})
     @ResponseBody
-    public BaseOutput save(ConditionDataSource dataSource) {
+    public BaseOutput save(@RequestBody ConditionDataSource dataSource) {
         if (Objects.isNull(dataSource)) {
             return BaseOutput.failure("参数丢失");
         }
         //数据库json 要么是json格式，要么null对象，，空字符串json解析会失败
         if ("".equals(dataSource.getDataJson())) {
             dataSource.setDataJson(null);
+        }
+        if ("".equals(dataSource.getQueryCondition())) {
+            dataSource.setQueryCondition(null);
         }
         try {
             dataSource.setModifyTime(LocalDateTime.now());
