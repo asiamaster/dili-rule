@@ -18,7 +18,7 @@ public enum ViewModeEnum {
 
     TABLE_MULTI(10, "表格多选"),
     TREE_MULTI(20, "树多选"),
-    SELECT_MULTI(30, "下拉多选"),
+    // SELECT_MULTI(30, "下拉多选"),
     /*** 以下格式暂未支持 ***/
 //    TABLE_SINGLE(20, "表格单选"),
 //    SELECT(25, "选择列表"),

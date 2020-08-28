@@ -21,7 +21,7 @@
 </#bs4Body>
 <script>
     function addSelectedItem(key,text){
-        alert('addSelectedItem')
+        $('.checkedShow .table').append('<tr data-id="' + key + '"><td>' + text + '<i class="fa fa-times remove-btn float-right" aria-hidden="true"></i></td></tr>');
     }
     function removeSelectedItemByKey(key){
         alert('removeSelectedItem')

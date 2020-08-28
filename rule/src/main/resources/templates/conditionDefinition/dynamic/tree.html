@@ -33,6 +33,7 @@
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.ztree.all.min.js"></script>
 <script>
+    var displayCcolumnCode=JSON.parse('${displayColumn}').columnCode;
     var matchColumn='${conditionDefinition.matchColumn}';
     var nodeArray=JSON.parse('${nodes}');
     function findNodeDataByMatchColumn(val){
@@ -65,9 +66,9 @@
 
                     var matchValue=treeNode[matchColumn];
                     if(treeNode.checked==true){
-
+                        addSelectedItem(treeNode[matchColumn],treeNode[displayCcolumnCode])
                     }else{
-                        
+                        removeSelectedItemByKey(1)
                     }
 
                 }

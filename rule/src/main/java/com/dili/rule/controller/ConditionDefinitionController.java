@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import one.util.streamex.StreamEx;
+
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ConditionDataSource;
 import com.dili.rule.domain.ConditionDefinition;
@@ -222,9 +224,14 @@ public class ConditionDefinitionController {
                 ObjectMapper mapper = new ObjectMapper();
                 try {
                     modelMap.put("nodes", mapper.writeValueAsString(page.getContent()));
+                    DataSourceColumn displayColumn= StreamEx.of(dataSourceColumns).filter(item->YesOrNoEnum.YES.getCode().equals(item.getDisplay())).findFirst().orElse(new DataSourceColumn());
+                    modelMap.put("displayColumn", mapper.writeValueAsString(displayColumn));
+
                 } catch (JsonProcessingException e) {
                     modelMap.put("nodes", "[]");
+                    modelMap.put("displayColumn", "{}");
                 }
+           
                 return "conditionDefinition/dynamic/tree";
 
             default:
