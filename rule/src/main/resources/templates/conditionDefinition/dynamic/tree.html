@@ -1,88 +1,47 @@
+<!-- 引入Vue -->
+<script src="${contextPath}/resources/design/vue@2.6.11.js"></script>
+<!-- 引入element -->
+<link rel="stylesheet" href="${contextPath}/resources/design/index.css">
+<script src="${contextPath}/resources/design/index.js"></script>
+<script src="/resources/bui/js/global.js"></script>
 
+<div id="app">
     <form id="queryForm" role="form">
         <input type="hidden" id="page" name="page" value="1">
         <input type="hidden" id="rows" name="rows" value="10">
         <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
         <div class="row row-cols-4">
             <%if (has(inputConditionDefinitions) && isNotEmpty(inputConditionDefinitions) && inputConditionDefinitions.~size >0 ){
-                for(input in inputConditionDefinitions){
+            for(input in inputConditionDefinitions){
             %>
-                <div class="form-group col-auto">
-                    <label for="">${input.label}</label>
-                    <input type="text" class="form-control"  name="${input.matchKey}" value="${params[input.matchKey]}">
-                </div>
+            <div class="form-group col-auto">
+                <label for="">${input.label}</label>
+                <input type="text" class="form-control"  name="${input.matchKey}" value="${params[input.matchKey]}">
+            </div>
             <%}%>
-                <div class="col align-self-center mt-3">
-                    <button type="button" class="btn btn-outline-primary mr-2"
-                            onclick="javascript:$('#queryForm .form-control').val('');"><i
-                            class="fa fa-refresh"></i> 清空
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="queryData();"><i
-                            class="fa fa-search"></i> 查询
-                    </button>
-                </div>
+            <div class="col align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2"
+                        onclick="javascript:$('#queryForm .form-control').val('');"><i
+                        class="fa fa-refresh"></i> 清空
+                </button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryData();"><i
+                        class="fa fa-search"></i> 查询
+                </button>
+            </div>
             <%}%>
 
         </div>
     </form>
     <hr>
     <div class="row">
-        <ul id="ztree-div" class="ztree"></ul>
+        <el-tree :data="data" ref="tree" :props="defaultProps" show-checkbox @check-change="handleCheckChange"></el-tree>
     </div>
-<link rel="stylesheet" href="${contextPath}/resources/css/zTreeStyle/zTreeStyle.css" type="text/css">
-<script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
-<script type="text/javascript" src="${contextPath}/resources/js/jquery.ztree.all.min.js"></script>
+</div>
+
 <script>
-    var displayCcolumnCode=JSON.parse('${displayColumn}').columnCode;
+    var displayColumnCode=JSON.parse('${displayColumn}').columnCode;
     var matchColumn='${conditionDefinition.matchColumn}';
     var nodeArray=JSON.parse('${nodes}');
-    function findNodeDataByMatchColumn(val){
-       return nodeArray.filter(function(v,i){
-            var matchValue=v[matchColumn];
-            return $.inArray(matchValue,$.makeArray(val))>=0;
-        })
-    }
-    var arr=findNodeDataByMatchColumn(47);
-    console.info(arr)
-    var zTreeObj;
-   // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
-
-    var setting = {
-        data: {
-            simpleData: {
-                enable: true,
-                idKey: "id",
-                pIdKey: "parent",
-                rootPId: 0
-            }
-        },
-        callback: {
-            onCheck: function(event, treeId, treeNode){
-
-                    console.log(treeNode);
-                    console.log(treeNode.id);
-                    console.log(treeNode.code);
-                    console.log(treeNode.tId + ", " + treeNode.name + "," + treeNode.checked);
-
-                    var matchValue=treeNode[matchColumn];
-                    if(treeNode.checked==true){
-                        addSelectedItem(treeNode[matchColumn],treeNode[displayCcolumnCode])
-                    }else{
-                        removeSelectedItemByKey(1)
-                    }
-
-                }
-        },
-        check: {
-                enable: true
-            
-            }
-    };
-
-   $(document).ready(function(){
-      zTreeObj = $.fn.zTree.init($("#ztree-div"), setting, nodeArray);
-   });
-
 
     /**
      * 条件查询操作
@@ -95,66 +54,31 @@
         })
     }
 
-    /* 数组删除指定元素 */
-    Array.prototype.remove = function(ele){
-        let index = this.indexOf(ele);
-        if( index > -1 ) {
-            this.splice(index, 1);
-        }
-    };
+    var app = new Vue({
+        el: '#app',
+        created: function (){
+            this.data = toEleTree(nodeArray, {label: displayColumnCode, pid: "parent"});
+        },
+        data() {
+            return {
+                data: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                }
+            };
+        },
+        methods: {
+            handleCheckChange(data, checked, indeterminate) {
+                let checkedNodes = this.$refs.tree.getCheckedNodes();
+                checkedids = checkedNodes.map(item => {
+                    return item[matchColumn];
+                });
+                checkedtexts = checkedNodes.map(item => {
+                    return item[displayColumnCode];
+                });
 
-    // 行选中
-    $('.checkboxWrap').on('click', 'tr',  function(e){
-        let ele = $(this).find('td :checkbox');
-        if (e.target.type !== 'checkbox') {
-            if(ele.prop("checked")) {
-                ele.prop("checked", false);
-            } else {
-                ele.prop("checked", true);
             }
-            ele.trigger('change');
         }
-
     })
-    // 全选
-    $(".checkAll").click(function () {
-        $('.checkboxWrap :checkbox').not(this).prop('checked', this.checked);
-        $('.checkboxWrap td :checkbox').trigger('change');
-    });
-
-    // 选择项
-    $('.checkboxWrap td :checkbox').on('change', function () {
-        let id = $(this).parents('tr').data('id');
-        let text = $(this).parents('tr').find('.text').text();
-        if ($(this).is(':checked')) {
-            if(checkedids.indexOf(id) < 0  ) {
-                $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
-                checkedids.push(id);
-                checkedtexts.push(text);
-            } else if (!$('.checkedShow .table [data-id="' + id + '"]').length) {
-                $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
-            }
-
-        } else {
-            $(".checkAll").prop('checked', '');
-            $('.checkedShow tr[data-id="' + id + '"]').remove();
-            checkedids.remove(id);
-            checkedtexts.remove(text);
-        }
-    });
-
-
-    // 移除已选项
-    $(document).on('click', '.checkedShow .remove-btn', function () {
-        let id = $(this).data('id');
-        let text = $(this).text();
-        $('.checkboxWrap tr[data-id="' + id + '"]').find(':checkbox').prop('checked', false);
-        $(".checkAll").prop('checked', '');
-        $('.checkedShow tr[data-id="' + id + '"]').remove();
-        checkedids.remove(id);
-        checkedtexts.remove(text);
-    });
-
-
-
 </script>
