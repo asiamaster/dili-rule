@@ -1,8 +1,11 @@
 package com.dili.rule.domain.enums;
 
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.Maps;
+
+import one.util.streamex.StreamEx;
 
 /**
  * <B></B> <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其研发团队所有,未经许可不得任意复制与传播.</B>
@@ -14,6 +17,8 @@ import com.google.common.collect.Maps;
 public enum ViewModeEnum {
 
     TABLE_MULTI(10, "表格多选"),
+    TREE_MULTI(20, "树多选"),
+    SELECT_MULTI(30, "下拉多选"),
     /*** 以下格式暂未支持 ***/
 //    TABLE_SINGLE(20, "表格单选"),
 //    SELECT(25, "选择列表"),
@@ -35,6 +40,12 @@ public enum ViewModeEnum {
         for (ViewModeEnum an : ViewModeEnum.values()) {
             initMaps.put(an.getCode(), an);
         }
+    }
+    public   boolean equalsToCode(Integer code){
+        return this.getCode().equals(code);
+    }
+    public   static Optional<ViewModeEnum> fromCode(Integer code){
+        return StreamEx.of(ViewModeEnum.values()).filterBy(ViewModeEnum::getCode, code).findFirst();
     }
 
     /**

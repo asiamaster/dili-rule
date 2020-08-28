@@ -23,6 +23,7 @@ import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ConditionDataSource;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.DataSourceColumn;
+import com.dili.rule.domain.enums.ViewModeEnum;
 import com.dili.rule.service.ConditionDataSourceService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.DataSourceColumnService;
@@ -30,15 +31,17 @@ import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 /**
- * 由MyBatis Generator工具自动生成
- * This file was generated on 2020-05-13 11:23:41.
+ * 由MyBatis Generator工具自动生成 This file was generated on 2020-05-13 11:23:41.
  */
 @Controller
 @RequestMapping("/conditionDefinition")
 public class ConditionDefinitionController {
-	private static final Logger log=LoggerFactory.getLogger(ConditionDefinitionController.class);
+    private static final Logger log = LoggerFactory.getLogger(ConditionDefinitionController.class);
     @Autowired
     private ConditionDefinitionService conditionDefinitionService;
     @Autowired
@@ -50,22 +53,24 @@ public class ConditionDefinitionController {
 
     /**
      * 跳转到规则预定义首页面
+     * 
      * @param modelMap
      * @return String
      */
-    @RequestMapping(value="/index.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/index.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
         return "conditionDefinition/list";
     }
 
     /**
      * 分页查询规则预定义列表信息
+     * 
      * @param conditionDefinition
      * @param request
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/listPage.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/listPage.action", method = { RequestMethod.GET, RequestMethod.POST })
     @ResponseBody
     public String listPage(ConditionDefinition conditionDefinition, HttpServletRequest request) {
         try {
@@ -78,6 +83,7 @@ public class ConditionDefinitionController {
 
     /**
      * 跳转到编辑页面
+     * 
      * @param id 数据ID
      * @return
      */
@@ -94,7 +100,8 @@ public class ConditionDefinitionController {
 
     /**
      * 跳转到数据源-查询框编辑页面
-     * @param id 数据ID
+     * 
+     * @param id           数据ID
      * @param dataTargetId 目标数据源
      * @return
      */
@@ -112,10 +119,11 @@ public class ConditionDefinitionController {
 
     /**
      * 保存预定义数据
+     * 
      * @param conditionDefinition
      * @return
      */
-    @RequestMapping(value = "/save.action", method = {RequestMethod.POST})
+    @RequestMapping(value = "/save.action", method = { RequestMethod.POST })
     @ResponseBody
     public BaseOutput save(ConditionDefinition conditionDefinition) {
         return conditionDefinitionService.save(conditionDefinition);
@@ -123,10 +131,11 @@ public class ConditionDefinitionController {
 
     /**
      * 删除数据列
+     * 
      * @param id 数据列ID
      * @return
      */
-    @RequestMapping(value = "/delete.action", method = {RequestMethod.POST})
+    @RequestMapping(value = "/delete.action", method = { RequestMethod.POST })
     @ResponseBody
     public BaseOutput<Object> delete(Long id) {
         if (Objects.isNull(id)) {
@@ -141,9 +150,9 @@ public class ConditionDefinitionController {
         }
     }
 
-
     /**
      * 跳转到编辑页面
+     * 
      * @param id 数据ID
      * @return
      */
@@ -160,10 +169,11 @@ public class ConditionDefinitionController {
 
     /**
      * 根据数据定义获取条件信息并返回条件数据页
+     * 
      * @param definitionId 条件预定义ID
      * @return
      */
-    @RequestMapping(value = "/getConditionData.action", method = {RequestMethod.GET})
+    @RequestMapping(value = "/getConditionData.action", method = { RequestMethod.GET })
     public String getConditionData(Long definitionId, ModelMap modelMap) {
         ConditionDefinition conditionDefinition = this.conditionDefinitionService.get(definitionId);
         modelMap.put("conditionDefinition", conditionDefinition);
@@ -172,15 +182,19 @@ public class ConditionDefinitionController {
 
     /**
      * 获取动态条件数据
+     * 
      * @param params
      * @return
      */
-    @RequestMapping(value = "/ajaxTable.action", method = {RequestMethod.POST})
-    public String ajaxTable(@RequestBody Map<String, Object> params, ModelMap modelMap) {
+    @RequestMapping(value = "/popupPage.action", method = { RequestMethod.POST })
+    public String popupPage(@RequestBody Map<String, Object> params, ModelMap modelMap) {
         Long definitionId = Long.parseLong(params.remove("definitionId").toString());
         ConditionDefinition conditionDefinition = this.conditionDefinitionService.get(definitionId);
         Long dataSourceId = conditionDefinition.getDataSourceId();
         ConditionDataSource conditionDataSource = conditionDataSourceService.get(dataSourceId);
+
+        ViewModeEnum viewMode = ViewModeEnum.fromCode(conditionDefinition.getViewMode()).orElse(null);
+
         DataSourceColumn columnCondition = new DataSourceColumn();
         columnCondition.setDataSourceId(dataSourceId);
         columnCondition.setVisible(YesOrNoEnum.YES.getCode());
@@ -188,7 +202,8 @@ public class ConditionDefinitionController {
         columnCondition.setSort("column_index");
         List<DataSourceColumn> dataSourceColumns = dataSourceColumnService.listByExample(columnCondition);
         Page<Map<String, Object>> page = this.remoteDataQueryService.queryData(conditionDataSource, params);
-        modelMap.put("page", page);
+
+
         ConditionDefinition condition = new ConditionDefinition();
         condition.setDataTargetId(dataSourceId);
         condition.setRuleCondition(YesOrNoEnum.NO.getCode());
@@ -198,6 +213,27 @@ public class ConditionDefinitionController {
         modelMap.put("conditionDataSource", conditionDataSource);
         modelMap.put("dataSourceColumns", dataSourceColumns);
         modelMap.put("params", params);
-        return "conditionDefinition/ajaxTable";
+
+        switch (viewMode) {
+            case TABLE_MULTI:
+                modelMap.put("page", page);
+                return "conditionDefinition/dynamic/table";
+            case TREE_MULTI:
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    modelMap.put("nodes", mapper.writeValueAsString(page.getContent()));
+                } catch (JsonProcessingException e) {
+                    modelMap.put("nodes", "[]");
+                }
+                return "conditionDefinition/dynamic/tree";
+
+            default:
+            return "conditionDefinition/dynamic/empty";
+        }
+
+
+
+        // return "conditionDefinition/ajaxTable";
+        //return "conditionDefinition/dynamic/tree";
     }
 }

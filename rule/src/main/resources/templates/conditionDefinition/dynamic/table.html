@@ -1,5 +1,7 @@
 
     <form id="queryForm" role="form">
+        <input type="hidden" id="page" name="page" value="1">
+        <input type="hidden" id="rows" name="rows" value="10">
         <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
         <div class="row row-cols-4">
             <%if (has(inputConditionDefinitions) && isNotEmpty(inputConditionDefinitions) && inputConditionDefinitions.~size >0 ){
