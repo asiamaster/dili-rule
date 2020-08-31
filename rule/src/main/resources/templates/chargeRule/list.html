@@ -27,7 +27,7 @@
                 </div>
                 <div class="form-group col">
                     <label for="ruleName">规则名称</label>
-                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="">
+                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="25">
                 </div>
                 <div class="col align-self-center mt-3">
                     <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#chargeRuleQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空
@@ -111,7 +111,7 @@
                         <th data-width-unit="%" data-width="10" data-field="conditionLabel" data-align="center" data-formatter="dataFormatterTip">
                             条件指标
                         </th>
-                        <th data-width-unit="%" data-width="10" data-field="targetVal" data-align="center"  data-provider="targetValProvider">
+                        <th data-width-unit="%" data-width="10" data-field="actionExpression" data-align="center"  data-provider="actionExpressionProvider">
                             计算参数
                         </th>
                         <th data-width-unit="%" data-width="10" data-field="state" data-align="center" data-sortable="true" data-sort-name="State" data-provider="ruleStateProvider">

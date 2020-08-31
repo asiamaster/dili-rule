@@ -1,12 +1,14 @@
 package com.dili.rule.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.ss.base.BaseService;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * <B></B> <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其研发团队所有,未经许可不得任意复制与传播.</B>
@@ -29,7 +31,7 @@ public interface ChargeConditionValService extends BaseService<ChargeConditionVa
 	 * 
 	 * @param chargeRule 规则对象
 	 */
-	List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule);
+	List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule,Optional<ValueDataTypeEnum> dataType);
 
 	/**
 	 * 根据规则ID删除规则条件信息

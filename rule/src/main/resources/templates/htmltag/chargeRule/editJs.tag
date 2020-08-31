@@ -259,7 +259,7 @@
     $(document).on('click', '#formSubmit', function () {
         if ($('#addForm').validate().form() === true) {
             let expressionInput = $('#expressionInput').expressionBuilder();
-            if (!expressionInput.isValid()){
+            if ($('select[name="actionExpressionType"]').val()=='1'&&!expressionInput.isValid()){
                 bs4pop.alert("计算表达式输入不正确", {type: 'error', position: 'center'});
                 return;
             }

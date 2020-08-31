@@ -1,11 +1,24 @@
 package com.dili.rule.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.dili.commons.glossary.YesOrNoEnum;
-import com.dili.rule.domain.*;
+import com.dili.rule.domain.ChargeConditionVal;
+import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.DataSourceColumn;
 import com.dili.rule.domain.enums.MatchTypeEnum;
 import com.dili.rule.domain.enums.TargetTypeEnum;
+import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.rule.domain.vo.ConditionDefinitionVo;
 import com.dili.rule.mapper.ChargeConditionValMapper;
 import com.dili.rule.service.ChargeConditionValService;
@@ -15,12 +28,10 @@ import com.dili.rule.service.DataSourceColumnService;
 import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.ss.base.BaseServiceImpl;
 import com.google.common.collect.Lists;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * <B></B>
@@ -142,13 +153,17 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
     }
 
 	@Override
-	public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule) {
+	public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule,Optional<ValueDataTypeEnum> dataType) {
         Map<String, Object> resultMap = new HashMap<>();
         //根据规则所在的市场、系统、业务，查询预定义的规则条件
         ConditionDefinition conditionDefinition = new ConditionDefinition();
         conditionDefinition.setMarketId(chargeRule.getMarketId());
         conditionDefinition.setBusinessType(chargeRule.getBusinessType());
         conditionDefinition.setTargetType(TargetTypeEnum.VARIABLE.getCode());
+        dataType.ifPresent(dt->{
+            conditionDefinition.setDataType(dt.getCode());
+        });
+
         List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.list(conditionDefinition);
         return conditionDefinitionList;
 	}

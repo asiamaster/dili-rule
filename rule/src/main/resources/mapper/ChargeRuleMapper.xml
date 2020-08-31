@@ -16,7 +16,7 @@
     <result column="priority"  property="priority" />
     <result column="expire_start"  property="expireStart" />
     <result column="expire_end"  property="expireEnd" />
-    <result column="target_val"  property="targetVal" />
+    <result column="target_val"  property="actionExpression" />
     <result column="min_payment"  property="minPayment" />
     <result column="max_payment"  property="maxPayment" />
     <result column="remark"  property="remark" />
@@ -115,7 +115,7 @@
         IFNULL( MAX( priority ), 0 )+ 1,
         #{expireStart},
         #{expireEnd},
-        #{targetVal},
+        #{actionExpression},
         #{minPayment},
         #{maxPayment},
         #{remark},

@@ -411,7 +411,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             	throw new IllegalArgumentException("已存在规则名称相同的记录");
             }*/
             inputRuleInfo.setModifyTime(old.getModifyTime());
-            this.updateSelective(inputRuleInfo);
+            this.update(inputRuleInfo);
         //}
         return inputRuleInfo;
     }
@@ -479,15 +479,24 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @return 计算后的结果值
      */
     private BigDecimal calcFeeByRule(ChargeRule ruleInfo, Map<String, Object> calcParams) {
-        String targetVal = conditionDefinitionService.convertTargetValDefinition(ruleInfo.getTargetVal(),false);
-        Expression expression = new Expression(targetVal);
+        String actionExpression = conditionDefinitionService.convertTargetValDefinition(ruleInfo.getActionExpression(),false);
+        Expression expression = new Expression(actionExpression);
         try {
             for (String var : expression.getUsedVariables()) {
                 if (calcParams.containsKey(var)){
                     expression.setVariable(var, String.valueOf(calcParams.get(var)));
                 }
             }
-            return new BigDecimal(expression.eval().toPlainString());
+            BigDecimal fee=new BigDecimal(expression.eval().toPlainString());
+            BigDecimal min= ruleInfo.getMinPayment();
+            BigDecimal max=ruleInfo.getMaxPayment();
+            if(min!=null&&fee.compareTo(min)<0){
+                return min;
+            }
+            if(max!=null&&max.compareTo(fee)<0){
+                return max;
+            }
+            return fee;
         } catch (Exception e) {
             logger.error(String.format("根据规则[%s]及参数[%s]生成的表达式[%s]计算金额异常[%s]",ruleInfo,calcParams,expression.toString(),e.getMessage() ),e);
             throw new BusinessException("1","根据规则及参数计算费用异常");

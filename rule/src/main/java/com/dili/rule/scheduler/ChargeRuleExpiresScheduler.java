@@ -78,12 +78,14 @@ public class ChargeRuleExpiresScheduler {
         ChargeRule updateItem = new ChargeRule();
         updateItem.setId(item.getId());
         updateItem.setModifyTime(item.getModifyTime());
-
-        if (item.getExpireEnd().isBefore(now) || item.getExpireEnd().isEqual(now)) {
-            updateItem.setState(RuleStateEnum.EXPIRED.getCode());
-            return Optional.of(updateItem);
+        if(item.getExpireEnd()!=null){
+            if (item.getExpireEnd().isBefore(now) || item.getExpireEnd().isEqual(now)) {
+                updateItem.setState(RuleStateEnum.EXPIRED.getCode());
+                return Optional.of(updateItem);
+            }
+    
         }
-
+        
         if (item.getExpireStart().isAfter(now)) {
             updateItem.setState(RuleStateEnum.UN_STARTED.getCode());
             return Optional.of(updateItem);

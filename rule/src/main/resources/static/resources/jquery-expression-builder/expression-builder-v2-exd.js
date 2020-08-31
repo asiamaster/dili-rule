@@ -767,7 +767,7 @@ jQuery.fn.extend({
             }
             expressionInput.val(text);
             /**
-             * 此处手动触发一下input事件，是为了当验证通过后，给隐藏的targetValue赋值(input事件定义在chargeRule/editJs.tag) by yuehongbo 2020.07.04
+             * 此处手动触发一下input事件，是为了当验证通过后，给隐藏的actionExpression赋值(input事件定义在chargeRule/editJs.tag) by yuehongbo 2020.07.04
              */
             expressionInput.trigger('input');
             lastText = text;

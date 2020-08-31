@@ -30,11 +30,11 @@ public class ConditionDefinitionServiceImpl extends BaseServiceImpl<ConditionDef
     }
 
     @Override
-    public String convertTargetValDefinition(String targetVal, Boolean label) {
-        if (StringUtils.isBlank(targetVal) || targetVal.indexOf("[") < 0) {
-            return targetVal;
+    public String convertTargetValDefinition(String actionExpression, Boolean label) {
+        if (StringUtils.isBlank(actionExpression) || actionExpression.indexOf("[") < 0) {
+            return actionExpression;
         }
-        List<Long> idList = parseVariableId(targetVal);
+        List<Long> idList = parseVariableId(actionExpression);
         Map<Long, String> idLableMap = StreamEx.of(idList).map(id -> {
             return this.get(id);
         }).nonNull().toMap(ConditionDefinition::getId, t -> {
@@ -46,9 +46,9 @@ public class ConditionDefinitionServiceImpl extends BaseServiceImpl<ConditionDef
                 }
         );
         for (Long id : idList) {
-            targetVal = targetVal.replaceAll("\\[" + id + "\\]", idLableMap.getOrDefault(id, ""));
+            actionExpression = actionExpression.replaceAll("\\[" + id + "\\]", idLableMap.getOrDefault(id, ""));
         }
-        return targetVal;
+        return actionExpression;
     }
 
     @Override

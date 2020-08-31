@@ -13,11 +13,11 @@ public interface ConditionDefinitionService extends BaseService<ConditionDefinit
     /**
      * 转换规则计算条件值为需要的期望值
      * 数据库里计算条件为 ([4]+6)*6  此种表达式，其中[4]表示的是规则定义ID，根据对应的需要转换成想要的label或matchKey
-     * @param targetVal 规则中存储的值
+     * @param actionExpression 规则中存储的值
      * @param label 是否转换为显示label，如果为false，则转换显示为 matchKey
      * @return
      */
-    String convertTargetValDefinition(String targetVal,Boolean label);
+    String convertTargetValDefinition(String actionExpression,Boolean label);
 
     /**
      * 保存规则条件预定义信息

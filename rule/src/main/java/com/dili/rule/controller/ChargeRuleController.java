@@ -1,9 +1,11 @@
 package com.dili.rule.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.BusinessChargeItemDto;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.dto.OperatorUser;
+import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
@@ -14,6 +16,8 @@ import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.dili.uap.sdk.session.SessionContext;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,8 +99,8 @@ public class ChargeRuleController {
                 chargeRule = chargeRuleService.get(chargeRule.getId());
                 if (Objects.nonNull(chargeRule)) {
                     //转换获取计算参数
-                    String targetVal = conditionDefinitionService.convertTargetValDefinition(chargeRule.getTargetVal(), false);
-                    chargeRule.setTargetVal(targetVal);
+                    String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), false);
+                    chargeRule.setActionExpression(actionExpression);
                     modelMap.addAttribute("action", "update");
                 } else {
                     chargeRule.setExpireStart(LocalDateTime.now());
@@ -113,6 +117,9 @@ public class ChargeRuleController {
             Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
             if (businessChargeItemDto.isPresent()) {
                 modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
+            }
+            if(StringUtils.isNotBlank(chargeRule.getActionExpressionParams())){
+                modelMap.addAttribute("actionExpressionParams", JSON.parse(chargeRule.getActionExpressionParams()));
             }
             modelMap.addAttribute("chargeRule", chargeRule);
         } else {
@@ -143,8 +150,8 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/getRuleVariable.action", method = { RequestMethod.GET, RequestMethod.POST })
     @ResponseBody
-    public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule, ModelMap modelMap) {
-    	List<ConditionDefinition> list = chargeConditionValService.getRuleVariable(chargeRule);
+    public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule,Integer dataType, ModelMap modelMap) {
+    	List<ConditionDefinition> list = chargeConditionValService.getRuleVariable(chargeRule,ValueDataTypeEnum.fromCode(dataType));
         return list;
     }
 
@@ -204,8 +211,8 @@ public class ChargeRuleController {
             ChargeRule chargeRule = chargeRuleService.get(id);
             if (Objects.nonNull(chargeRule)) {
                 //转换获取计算参数
-                String targetVal = conditionDefinitionService.convertTargetValDefinition(chargeRule.getTargetVal(), true);
-                chargeRule.setTargetVal(targetVal);
+                String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), true);
+                chargeRule.setActionExpression(actionExpression);
                 modelMap.put("businessTypeList", getBusinessType());
                 modelMap.addAttribute("chargeRule", chargeRule);
             }

@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Component
 @Scope("prototype")
-public class TargetValProvider  implements ValueProvider{
+public class ActionExpressionProvider  implements ValueProvider{
 	@Autowired
 	private ConditionDefinitionService conditionDefinitionService;
 

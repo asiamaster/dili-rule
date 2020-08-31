@@ -97,11 +97,27 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expireEnd;
 
+    
+    /**
+     * 计算指标参数
+     */
+    @Column(name = "`action_expression_params`")
+    private String actionExpressionParams;
+
+
+        /**
+     * 计算指标类型
+     */
+    @Column(name = "`action_expression_type`")
+    private Integer actionExpressionType;
+
     /**
      * 计算指标
      */
-    @Column(name = "`target_val`")
-    private String targetVal;
+    @Column(name = "`action_expression`")
+    private String actionExpression;
+
+
 
     /**
      * 匹配到此规则时最低应支付的金额
@@ -489,19 +505,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
         this.approvalTime = approvalTime;
     }
 
-    /**
-     * @return String return the targetVal
-     */
-    public String getTargetVal() {
-        return targetVal;
-    }
 
-    /**
-     * @param targetVal the targetVal to set
-     */
-    public void setTargetVal(String targetVal) {
-        this.targetVal = targetVal;
-    }
 
     /**
      * @param expireValue the expireValue to set
@@ -539,7 +543,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
                 .add("priority", priority)
                 .add("expireStart", expireStart)
                 .add("expireEnd", expireEnd)
-                .add("targetVal", targetVal)
+                .add("actionExpression", actionExpression)
                 .add("minPayment", minPayment)
                 .add("maxPayment", maxPayment)
                 .add("remark", remark)
@@ -554,4 +558,49 @@ public class ChargeRule extends BaseDomain implements Serializable {
                 .add("expireValue", expireValue)
                 .toString();
     }
+
+    /**
+     * @return String return the actionExpression
+     */
+    public String getActionExpression() {
+        return actionExpression;
+    }
+
+    /**
+     * @param actionExpression the actionExpression to set
+     */
+    public void setActionExpression(String actionExpression) {
+        this.actionExpression = actionExpression;
+    }
+
+
+
+    /**
+     * @return String return the actionExpressionParams
+     */
+    public String getActionExpressionParams() {
+        return actionExpressionParams;
+    }
+
+    /**
+     * @param actionExpressionParams the actionExpressionParams to set
+     */
+    public void setActionExpressionParams(String actionExpressionParams) {
+        this.actionExpressionParams = actionExpressionParams;
+    }
+
+    /**
+     * @return Integer return the actionExpressionType
+     */
+    public Integer getActionExpressionType() {
+        return actionExpressionType;
+    }
+
+    /**
+     * @param actionExpressionType the actionExpressionType to set
+     */
+    public void setActionExpressionType(Integer actionExpressionType) {
+        this.actionExpressionType = actionExpressionType;
+    }
+
 }

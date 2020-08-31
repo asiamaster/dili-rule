@@ -1,8 +1,11 @@
 package com.dili.rule.domain.enums;
 
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.Maps;
+
+import one.util.streamex.StreamEx;
 
 /**
  * <B></B>
@@ -68,6 +71,15 @@ public enum ValueDataTypeEnum {
      */
     public static ValueDataTypeEnum getInstance(Integer code) {
         return initMaps.get(code);
+    }
+
+        /**
+     * 获取某个枚举值实例信息
+     * @param code
+     * @return
+     */
+    public static Optional<ValueDataTypeEnum> fromCode(Integer code) {
+        return StreamEx.of(ValueDataTypeEnum.values()).filterBy(ValueDataTypeEnum::getCode, code).findFirst();
     }
     
 
