@@ -45,7 +45,7 @@
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()){%>
                 <!--/*  输入框的值类型：  日期类型*/-->
                 <div class="form-group col form-date">
-
+                    date2
                 </div>
             <%}%>
         <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.BETWEEN.getCode()){%>
@@ -82,10 +82,21 @@
                         </div>
                     </div>
                 </div>
-            <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.TEXT.getCode()){%>
+            <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()){%>
                 <!--/*  输入框的值类型：  日期类型*/-->
-                <div class="form-group col-3 form-date">
-
+                <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
+                    <label for="">${cd.label}</label>
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <div class="form-inline">
+                        <div class="input-group">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart">
+                            <label class="error" ></label>
+                        </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                        <div class="input-group">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime laystart">
+                            <label class="error" ></label>
+                        </div>
+                    </div>
                 </div>
             <%}%>
         <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.IN.getCode()){%>
@@ -96,3 +107,15 @@
         <%}%>
     <%}}}%>
 </div>
+<script>
+
+        /**
+     时间范围
+     */
+     lay('.laydatetime').each(function () {
+        laydate.render({
+            elem: this
+            , trigger: 'click'
+        });
+    });
+</script>

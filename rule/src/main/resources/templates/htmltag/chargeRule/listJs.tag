@@ -368,5 +368,13 @@
         defaultGetChargeItem();
     }
 
-
+    /**
+    *清空查询条件
+    */
+    function clearForm(){
+        $("#businessType option:first").prop("selected", 'selected');  
+        $("#state option:first").prop("selected", 'selected');  
+        $("#ruleName").val('')
+        defaultGetChargeItem();
+    }
 </script>
