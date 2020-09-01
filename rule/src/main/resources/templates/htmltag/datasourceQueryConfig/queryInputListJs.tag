@@ -11,12 +11,13 @@
 
     /******************************驱动执行区 begin***************************/
     $(function () {
+
         $(window).resize(function () {
             _dataGrid.bootstrapTable('resetView')
         });
         let size = ($(window).height() - $('#conditionQueryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
-        _dataGrid.bootstrapTable('refreshOptions', {url: '/conditionDefinition/listPage.action', pageSize: parseInt(size)});
+        _dataGrid.bootstrapTable('refreshOptions', {dataSourceId:'${query.dataSourceId}',url: '/datasourceQueryConfig/listPage.action', pageSize: parseInt(size)});
 
         _dataGrid.on('load-success.bs.table', function () {
             $('[data-toggle="tooltip"]').tooltip()
@@ -40,12 +41,12 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        let dataTargetId = $('#dataTargetId').val();
-        if (!dataTargetId) {
+        let dataSourceId = $('#dataSourceId').val();
+        if (!dataSourceId) {
             bs4pop.alert('目标数据源丢失，请重新进入页面');
             return;
         }
-        let url = "/conditionDefinition/queryInputPreSave.html?dataTargetId="+dataTargetId;
+        let url = "${contextPath}/datasourceQueryConfig/preSave.html?dataSourceId="+dataSourceId;
         dia = bs4pop.dialog({
             title: '新增查询框',
             content: url,
@@ -70,7 +71,7 @@
         }
         //table选择模式是单选时可用
         let selectedRow = rows[0];
-        let url = "/conditionDefinition/queryInputPreSave.html?id=" + selectedRow.id;
+        let url = "${contextPath}/datasourceQueryConfig/preSave.html?id=" + selectedRow.id;
         dia = bs4pop.dialog({
             title: '更新查询框',
             content: url,
@@ -100,8 +101,9 @@
                 bui.loading.show('努力提交中，请稍候。。。');
                 $.ajax({
                     type: "POST",
-                    url: "${contextPath}/conditionDefinition/delete.action",
-                    data: {id: selectedRow.id},
+                    url: "${contextPath}/datasourceQueryConfig/delete.action",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({id: selectedRow.id}),
                     processData:true,
                     dataType: "json",
                     async : true,
@@ -127,8 +129,8 @@
      * 查询处理
      */
     function queryDataHandler() {
-        let dataTargetId = $('#dataTargetId').val();
-        if (dataTargetId){
+        let dataSourceId = $('#dataSourceId').val();
+        if (dataSourceId){
             currentSelectRowIndex = undefined;
             $('#toolbar button').attr('disabled', false);
             _dataGrid.bootstrapTable('refresh');

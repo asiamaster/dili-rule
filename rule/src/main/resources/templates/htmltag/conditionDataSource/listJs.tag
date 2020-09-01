@@ -117,7 +117,7 @@
         }
         //table选择模式是单选时可用
         let selectedRow = rows[0];
-        let url = "/conditionDataSource/queryInput.html?dataTargetId=" + selectedRow.id;
+        let url = "${contextPath}/datasourceQueryConfig/list.html?dataSourceId=" + selectedRow.id;
         let title = '数据源【' + selectedRow.name + '】查询框设置';
         dia = bs4pop.dialog({
             title: title,

@@ -52,48 +52,48 @@
                 <!--/*  输入框的条件类型：  范围 */-->
             <%if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DECIMAL.getCode()){%>
                 <!--/*  输入框的值类型：  小数类型*/-->
-                <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
+                <div class="form-group col-auto between" data-name="${cd.id}_${cd.matchKey}">
                     <label for="" >${cd.label}</label>
                     <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden"data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input  data-target="${cdLP.index-1}"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput">
+                            <input  data-target="${cdLP.index-1}"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput"  data-type="skip">
                             <label class="error" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusFloatReserve betweenMaxInput">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusFloatReserve betweenMaxInput"  data-type="skip">
                             <label class="error" ></label>
                         </div>
                     </div>
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.INTEGER.getCode()){%>
                 <!--/*  输入框的值类型：  整数类型*/-->
-                <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
+                <div class="form-group col-auto between" data-name="${cd.id}_${cd.matchKey}">
                     <label for="">${cd.label}</label>
                     <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="skip">
                             <label class="error" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="skip">
                             <label class="error" ></label>
                         </div>
                     </div>
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()){%>
                 <!--/*  输入框的值类型：  日期类型*/-->
-                <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
+                <div class="form-group col-auto between" data-name="${cd.id}_${cd.matchKey}">
                     <label for="">${cd.label}</label>
                     <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
                             <label class="error" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime laystart">
+                            <input data-target="${cdLP.index-1}" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
                             <label class="error" ></label>
                         </div>
                     </div>
@@ -109,13 +109,22 @@
 </div>
 <script>
 
-        /**
+     /**
      时间范围
      */
      lay('.laydatetime').each(function () {
         laydate.render({
             elem: this
             , trigger: 'click'
+        });
+    });
+    $('.between input').on('input',function(){
+        var betweenInputList=$(this).parents('.between').find('input[data-type="skip"]');
+        betweenInputList.index(this);
+        console.info($(this).val())
+        betweenInputList.filter(function(i,v){
+
+            debugger;
         });
     });
 </script>

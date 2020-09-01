@@ -1,7 +1,7 @@
 <#bs4Body>
 <div class="container-fluid">
     <form id="conditionQueryForm" role="form" >
-        <input type="hidden" id="dataTargetId" name="dataTargetId" value="${dataTargetId!}">
+        <input type="hidden" id="dataSourceId" name="dataSourceId" value="${query.dataSourceId!}">
         <input type="hidden" id="ruleCondition" name="ruleCondition" value="0">
     </form>
     <hr>
@@ -35,18 +35,12 @@
                         <th data-width-unit="%" data-width="2" data-radio="true"></th>
                         <th data-width-unit="%" data-width="10" data-field="label" data-sortable="true"
                             data-sort-name="convert(label using gbk)" data-align="center">
-                            查询框名称
+                            查询框Label
                         </th>
-                        <th data-width-unit="%" data-width="15" data-field="matchKey" data-sortable="true" data-align="center">
-                            匹配Key
+                        <th data-width-unit="%" data-width="15" data-field="queryKey" data-sortable="true" data-align="center">
+                            查询匹配Key
                         </th>
-                        <th data-width-unit="%" data-width="5" data-field="matchType" data-sortable="true" data-sort-name="condition_type" data-align="center" data-provider="matchTypeProvider">
-                            条件类型
-                        </th>
-                        <th data-width-unit="%" data-width="15" data-field="dataType" data-align="center" data-sort-name="data_type" data-provider="valueDataTypeProvider">
-                            值类型
-                        </th>
-                        <th data-width-unit="%" data-width="15" data-field="defaultValues" data-align="center" >
+                        <th data-width-unit="%" data-width="15" data-field="defaultVal" data-align="center" >
                             默认值
                         </th>
                     </tr>
@@ -57,4 +51,4 @@
     </div>
 </div>
 </#bs4Body>
-<#conditionDataSource_queryInputListJs />
+<#datasourceQueryConfig_queryInputListJs />
