@@ -27,6 +27,7 @@
         alert('removeSelectedItem')
     }
     var choice = parent.window.choiceTarget;
+    debugger
     var checkedids = choice.data('checkedids');
     var checkedtexts = choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : [];
 
@@ -35,7 +36,6 @@
         let definitionId = $('#definitionId').val();
         loadAjaxTable(definitionId);
         $.each(checkedids, function(k,ele) {
-            
             $('body').find('.checkboxWrap [data-id="' + parseInt(ele) + '"]').find(':checkbox').click();
             if (!$('.checkedShow .table [data-id="' + ele + '"]').length) {
                 $('.checkedShow .table').append('<tr data-id="' + parseInt(ele) + '"><td>' + checkedtexts[k] + '<i class="fa fa-times remove-btn float-right" aria-hidden="true"></i></td></tr>');

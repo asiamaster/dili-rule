@@ -34,7 +34,7 @@
     </form>
     <hr>
     <div class="row">
-        <el-tree :data="data" ref="tree" :props="defaultProps" show-checkbox @check-change="handleCheckChange"></el-tree>
+        <el-tree :data="data" ref="tree" :props="defaultProps" node-key="id" show-checkbox @check-change="handleCheckChange"></el-tree>
     </div>
 </div>
 
@@ -43,6 +43,7 @@
     var parentColumnCode=JSON.parse('${parentColumn}').columnCode;
     var matchColumn='${conditionDefinition.matchColumn}';
     var nodeArray=JSON.parse('${nodes}');
+    $('#selectedItem').hide()
 
     /**
      * 条件查询操作
@@ -59,6 +60,9 @@
         el: '#app',
         created: function () {
             this.data = toEleTree(nodeArray, {label: displayColumnCode, pid: parentColumnCode});
+        },
+        mounted: function () {
+            this.$refs.tree.setCheckedKeys(checkedids);
         },
         data() {
             return {
@@ -82,4 +86,5 @@
             }
         }
     })
+
 </script>

@@ -188,7 +188,7 @@
                     }, {label: '确定',className: 'btn btn-primary px-5',onClick(e,$iframe){
                         let diaWindow = $iframe[0].contentWindow;
                         $('#'+targetId).val(diaWindow.checkedids)
-                        choice.attr('checkedids', diaWindow.checkedids);
+                        choice.data('checkedids', diaWindow.checkedids);
                         choice.parents('.input-group').find('.form-control').val(diaWindow.checkedtexts);
                         dia.hide()
 
