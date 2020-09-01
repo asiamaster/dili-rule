@@ -160,6 +160,10 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
         conditionDefinition.setMarketId(chargeRule.getMarketId());
         conditionDefinition.setBusinessType(chargeRule.getBusinessType());
         conditionDefinition.setTargetType(TargetTypeEnum.VARIABLE.getCode());
+       
+        conditionDefinition.setSort("id");
+        conditionDefinition.setOrder("asc");
+        
         dataType.ifPresent(dt->{
             conditionDefinition.setDataType(dt.getCode());
         });

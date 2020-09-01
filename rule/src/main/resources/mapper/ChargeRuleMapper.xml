@@ -42,10 +42,9 @@
 
   <select id="listForPage" parameterType="com.dili.rule.domain.ChargeRule" resultType="com.dili.rule.domain.vo.ChargeRuleVo">
     SELECT cr.*,
-    CASE
-    WHEN group_concat(ccv.label) IS NOT NULL THEN
-    group_concat( ccv.label ) ELSE '--'
-    END AS conditionLabel
+    IFNULL(group_concat(
+            CASE  when  json_length(ccv.val)>0 THEN  ccv.label ELSE null END 
+            ), '--') AS conditionLabel
     FROM
     charge_rule cr
     LEFT JOIN charge_condition_val ccv ON cr.id = ccv.rule_id
