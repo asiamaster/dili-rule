@@ -187,9 +187,12 @@
                         }
                     }, {label: '确定',className: 'btn btn-primary px-5',onClick(e,$iframe){
                         let diaWindow = $iframe[0].contentWindow;
+                        var ctxList=diaWindow.checkedtexts.filter(function(v,i){
+                            return $.trim(v)!='';
+                        })
                         $('#'+targetId).val(diaWindow.checkedids)
                         choice.data('checkedids', diaWindow.checkedids);
-                        choice.parents('.input-group').find('.form-control').val(diaWindow.checkedtexts);
+                        choice.parents('.input-group').find('.form-control').val(ctxList);
                         dia.hide()
 
                     }
