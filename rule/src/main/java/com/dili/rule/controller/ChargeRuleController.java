@@ -16,6 +16,7 @@ import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.dili.uap.sdk.session.SessionContext;
+import com.google.common.collect.Maps;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <B></B>
@@ -128,7 +130,17 @@ public class ChargeRuleController {
         }
         return "chargeRule/edit";
     }
-
+    /**
+     * 返回当前登录用户sessionid
+     *
+     * @param request
+     * @return
+     */
+    private Map<String, String> getSessionIdHead(HttpServletRequest request) {
+        Map<String, String> map = Maps.newHashMap();
+        map.put("sessionId", request.getSession().getId());
+        return map;
+    }
     /**
      * 获取对应的规则条件值
      * @param chargeRule
@@ -136,8 +148,8 @@ public class ChargeRuleController {
      * @return
      */
     @RequestMapping(value = "/getRuleCondition.action", method = { RequestMethod.GET, RequestMethod.POST })
-    public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap) {
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule);
+    public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap,HttpServletRequest request) {
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule,this.getSessionIdHead(request));
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
     }
@@ -198,18 +210,6 @@ public class ChargeRuleController {
     public BaseOutput<Object> enable(Long id, Boolean enable) {
         return chargeRuleService.enable(id, enable);
     }
-/**
-     * 规则禁启用
-     *
-     * @param id       需要禁启用的规则ID
-     * @param enable 是否启用 true-是
-     * @return
-     */
-    @RequestMapping(value = "/enable.action", method = { RequestMethod.GET, RequestMethod.POST })
-    @ResponseBody
-    public BaseOutput<Object> enable(Long id, Boolean enable) {
-        return chargeRuleService.enable(id, enable);
-    }
     /**
      * 计费规则详情查看
      * @param id 规则ID
@@ -236,8 +236,8 @@ public class ChargeRuleController {
      * @return
      */
     @RequestMapping(value = "/viewRuleCondition.action", method = { RequestMethod.GET, RequestMethod.POST })
-    public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap) {
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule);
+    public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap,HttpServletRequest request) {
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule,this.getSessionIdHead(request));
         modelMap.addAllAttributes(map);
         return "chargeRule/viewCondition";
     }

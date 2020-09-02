@@ -58,7 +58,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
     private RemoteDataQueryService remoteDataQueryService;
 
     @Override
-    public Map<String, Object> getRuleCondition(ChargeRule chargeRule) {
+    public Map<String, Object> getRuleCondition(ChargeRule chargeRule,Map<String,String>headerMap) {
         Map<String,Object>resultMap = new HashMap<>();
         List<ChargeConditionVal> chargeConditionValList = Lists.newArrayList();
         if (Objects.nonNull(chargeRule.getId())) {
@@ -80,7 +80,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
         
         List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.listByExample(conditionDefinition);
         //组装已选条件与预定义的条件值
-        List<ConditionDefinitionVo> conditionDefinitions = generate(chargeConditionValList,conditionDefinitionList);
+        List<ConditionDefinitionVo> conditionDefinitions = generate(chargeConditionValList,conditionDefinitionList,headerMap);
         resultMap.put("conditionDefinitions",conditionDefinitions);
 
         return resultMap;
@@ -104,7 +104,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
      * @param chargeConditionValList 已设置的规则条件
      * @param conditionDefinitionList 已设置的预定义条件
      */
-    private List<ConditionDefinitionVo> generate(List<ChargeConditionVal> chargeConditionValList,List<ConditionDefinition> conditionDefinitionList){
+    private List<ConditionDefinitionVo> generate(List<ChargeConditionVal> chargeConditionValList,List<ConditionDefinition> conditionDefinitionList,Map<String,String>headerMap){
         Map<Long, ChargeConditionVal> conditionValMap = chargeConditionValList.stream().collect(Collectors.toMap(ChargeConditionVal::getDefinitionId, RuleConditionVal -> RuleConditionVal));
         List<ConditionDefinitionVo> voList = Lists.newArrayList();
         conditionDefinitionList.stream().unordered().forEach(conditionDefinition -> {
@@ -123,7 +123,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                     ConditionDataSource conditionDataSource = conditionDataSourceService.get(conditionDefinition.getDataSourceId());
                     if (Objects.nonNull(conditionDataSource)){
                         String matchColumn = conditionDefinition.getMatchColumn();
-                        List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects);
+                        List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects,headerMap);
                         DataSourceColumn condition = new DataSourceColumn();
                         condition.setDataSourceId(conditionDefinition.getDataSourceId());
                         List<DataSourceColumn> columns = dataSourceColumnService.list(condition);

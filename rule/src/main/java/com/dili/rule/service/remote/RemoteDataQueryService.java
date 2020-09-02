@@ -42,7 +42,7 @@ public class RemoteDataQueryService {
      * @return
      */
     public Page<Map<String, Object>> queryData(String url) {
-        return this.queryData(url, Collections.emptyMap());
+        return this.queryData(url, Collections.emptyMap(), Collections.emptyMap());
     }
 
     /**
@@ -52,8 +52,8 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    public Page<Map<String, Object>> queryData(String url, Map<String, Object> params) {
-        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params));
+    public Page<Map<String, Object>> queryData(String url, Map<String, Object> params,Map<String, String> header) {
+        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params),header);
         Page<Map<String, Object>> page = this.parseJson(jsonDataOpt, false);
         return page;
     }
@@ -65,23 +65,33 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    public Page<Map<String, Object>> queryData(ConditionDataSource conditionDataSource, Map<String, Object> params) {
-        Optional<String> jsonDataOpt = Optional.empty();
+    public Page<Map<String, Object>> queryData(ConditionDataSource conditionDataSource, Map<String, Object> params, Map<String, String> header) {
+        Optional<String> jsonDataOpt = this.queryJsonData(conditionDataSource, params,header);
+        Page<Map<String, Object>> page = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(conditionDataSource.getPaged()));
+        return page;
+    }
+
+
+    /**
+     * 远程请求或者本地返回数据转换为json数据结构
+     * @param conditionDataSource
+     * @param params
+     * @return 
+     */
+    private Optional<String> queryJsonData(ConditionDataSource conditionDataSource, Map<String, Object> params, Map<String, String> header) {
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
         if (StrUtil.isNotBlank(conditionDataSource.getQueryCondition())) {
             params.putAll(JSONObject.parseObject(conditionDataSource.getQueryCondition()));
         }
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = conditionDataSource.getDataJson();
-            jsonDataOpt = Optional.ofNullable(localJsonData);
+            return Optional.ofNullable(localJsonData);
         } else {
-            jsonDataOpt = this.remoteQuery(conditionDataSource.getQueryUrl(), params);
+            return this.remoteQuery(conditionDataSource.getQueryUrl(), params,header);
         }
-        Page<Map<String, Object>> page = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(conditionDataSource.getPaged()));
-        return page;
     }
-
-
+    
+    
     /**
      * 通过ConditionDataSource.queeryUrl对应的的url和keys列表参数请求远程接口(http+json)
      *
@@ -89,7 +99,7 @@ public class RemoteDataQueryService {
      * @param keys
      * @return
      */
-    public List<Map<String, Object>> queryKeys(ConditionDataSource conditionDataSource, List<Object> keys) {
+    public List<Map<String, Object>> queryKeys(ConditionDataSource conditionDataSource, List<Object> keys, Map<String, String> header) {
         if (CollectionUtil.isEmpty(keys)) {
             return Collections.emptyList();
         }
@@ -113,7 +123,7 @@ public class RemoteDataQueryService {
             String keyUrl=conditionDataSource.getKeysUrl();
             String jsonBody=JSONObject.toJSONString(params);
             logger.info("keyUrl={},data={}",keyUrl,jsonBody);
-            try(HttpResponse response = HttpUtil.createPost(keyUrl).body(jsonBody).execute();){
+            try(HttpResponse response = HttpUtil.createPost(keyUrl).addHeaders(header).body(jsonBody).execute();){
                 if (response.isOk()) {
                     return   this.parseJson(Optional.ofNullable(response.body()), false).getContent();
                 }
@@ -151,7 +161,7 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    private Optional<String> remoteQuery(String url, Map<String, Object> params) {
+    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap) {
         Integer pageNumber = 0;
         Integer pageSize = 10;
         if (!CollectionUtils.isEmpty(params)) {
@@ -174,8 +184,10 @@ public class RemoteDataQueryService {
         params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
         params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-
-        try( HttpResponse response = HttpUtil.createPost(url).body(JSONObject.toJSONString(params)).execute();){
+        
+        String jsonBody=JSONObject.toJSONString(params);
+        logger.info("url={},  data={},  headerMap={}",url,jsonBody,headerMap);
+        try( HttpResponse response = HttpUtil.createPost(url).addHeaders(headerMap).body(jsonBody).execute();){
            if (response.isOk()) {
                 return  Optional.ofNullable(response.body());
             }
