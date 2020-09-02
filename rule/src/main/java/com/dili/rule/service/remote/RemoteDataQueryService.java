@@ -41,8 +41,8 @@ public class RemoteDataQueryService {
      * @param url
      * @return
      */
-    public Page<Map<String, Object>> queryData(String url) {
-        return this.queryData(url, Collections.emptyMap(), Collections.emptyMap());
+    public PageOutput<List> queryData(String url,Integer page,Integer rows) {
+        return this.queryData(url, Collections.emptyMap(), Collections.emptyMap(),page,rows);
     }
 
     /**
@@ -52,10 +52,10 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    public Page<Map<String, Object>> queryData(String url, Map<String, Object> params,Map<String, String> header) {
-        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params),header);
-        Page<Map<String, Object>> page = this.parseJson(jsonDataOpt, false);
-        return page;
+    public PageOutput<List> queryData(String url, Map<String, Object> params,Map<String, String> header,Integer page,Integer rows) {
+        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params),header,page,rows);
+        PageOutput<List> pageout = this.parseJson(jsonDataOpt, false);
+        return pageout;
     }
 
     /**
@@ -65,10 +65,10 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    public Page<Map<String, Object>> queryData(ConditionDataSource conditionDataSource, Map<String, Object> params, Map<String, String> header) {
-        Optional<String> jsonDataOpt = this.queryJsonData(conditionDataSource, params,header);
-        Page<Map<String, Object>> page = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(conditionDataSource.getPaged()));
-        return page;
+    public PageOutput<List> queryData(ConditionDataSource conditionDataSource, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
+        Optional<String> jsonDataOpt = this.queryJsonData(conditionDataSource, params,header,page,rows);
+        PageOutput<List> pageout = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(conditionDataSource.getPaged()));
+        return pageout;
     }
 
 
@@ -78,7 +78,7 @@ public class RemoteDataQueryService {
      * @param params
      * @return 
      */
-    private Optional<String> queryJsonData(ConditionDataSource conditionDataSource, Map<String, Object> params, Map<String, String> header) {
+    private Optional<String> queryJsonData(ConditionDataSource conditionDataSource, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
         if (StrUtil.isNotBlank(conditionDataSource.getQueryCondition())) {
             params.putAll(JSONObject.parseObject(conditionDataSource.getQueryCondition()));
@@ -87,7 +87,7 @@ public class RemoteDataQueryService {
             String localJsonData = conditionDataSource.getDataJson();
             return Optional.ofNullable(localJsonData);
         } else {
-            return this.remoteQuery(conditionDataSource.getQueryUrl(), params,header);
+            return this.remoteQuery(conditionDataSource.getQueryUrl(), params,header,page,rows);
         }
     }
     
@@ -106,7 +106,7 @@ public class RemoteDataQueryService {
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = conditionDataSource.getDataJson();
-            return this.parseJson( Optional.ofNullable(localJsonData), false).getContent();
+            return this.parseJson( Optional.ofNullable(localJsonData), false).getData();
         } else {
             //构建查询参数
             Map<String, Object> params = Maps.newHashMap();
@@ -125,7 +125,7 @@ public class RemoteDataQueryService {
             logger.info("keyUrl={},data={}",keyUrl,jsonBody);
             try(HttpResponse response = HttpUtil.createPost(keyUrl).addHeaders(header).body(jsonBody).execute();){
                 if (response.isOk()) {
-                    return   this.parseJson(Optional.ofNullable(response.body()), false).getContent();
+                    return   this.parseJson(Optional.ofNullable(response.body()), false).getData();
                 }
             }
         }
@@ -161,25 +161,10 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap) {
-        Integer pageNumber = 0;
-        Integer pageSize = 10;
-        if (!CollectionUtils.isEmpty(params)) {
-            try {
-                pageNumber = Integer.parseInt(params.get("page").toString());
-            } catch (Exception e) {
-                pageNumber = 0;
-            }
-            try {
-                pageSize = Integer.parseInt(params.get("size").toString());
-            } catch (Exception e) {
-                pageSize = 10;
-            }
-        } else {
-            params = Maps.newHashMap();
-        }
-        params.put("index", pageNumber + 1);
-        params.put("pageSize", pageSize);
+    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap,Integer page,Integer rows) {
+       
+        params.put("page", page);
+        params.put("rows", rows);
         //强制内置两个参数，根据当前用户的市场隔离
         params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
         params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
@@ -201,7 +186,7 @@ public class RemoteDataQueryService {
      * @param paged
      * @return
      */
-    private Page<Map<String, Object>> parseJson(Optional<String> jsonDataOpt, Boolean paged) {
+    private PageOutput<List> parseJson(Optional<String> jsonDataOpt, Boolean paged) {
         PageOutput<List> output = PageOutput.failure();
         if (jsonDataOpt.isPresent()) {
             String json = jsonDataOpt.get();
@@ -211,17 +196,6 @@ public class RemoteDataQueryService {
                 logger.error("解析json {} 出错 ", json, e);
             }
         }
-        if (output.isSuccess()) {
-            Pageable pageRequest = Pageable.unpaged();;
-            if (Objects.nonNull(output.getPageNum()) && Objects.nonNull(output.getPageSize()) && Boolean.TRUE.equals(paged)){
-                pageRequest = PageRequest.of(output.getPageNum() - 1, output.getPageSize());
-            }
-            Page<Map<String, Object>> pageResult = new PageImpl<Map<String, Object>>(output.getData(), pageRequest,
-                    output.getTotal() == null ? output.getData().size() : output.getTotal());
-            return pageResult;
-        }
-        Pageable pageRequest = PageRequest.of(0, 10);
-        Page<Map<String, Object>> pageResult = new PageImpl<>(Collections.emptyList(), pageRequest, 0);
-        return pageResult;
+        return output;
     }
 }

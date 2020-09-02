@@ -1,171 +1,198 @@
 
-    <form id="queryForm" role="form">
-        <input type="hidden" id="page" name="page" value="1">
-        <input type="hidden" id="rows" name="rows" value="10">
-        <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
-        <div class="row row-cols-4">
-            <%if (has(queryConfigList) && isNotEmpty(queryConfigList) && queryConfigList.~size >0 ){
-                for(input in queryConfigList){
-            %>
-                <div class="form-group col-auto">
-                    <label for="">${input.label}</label>
-                    <input type="text" class="form-control"  name="${input.queryKey}" value="${params[input.queryKey]}">
-                </div>
-            <%}%>
-                <div class="col align-self-center mt-3">
-                    <button type="button" class="btn btn-outline-primary mr-2"
-                            onclick="javascript:$('#queryForm .form-control').val('');"><i
-                            class="fa fa-refresh"></i> 清空
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="queryData();"><i
-                            class="fa fa-search"></i> 查询
-                    </button>
-                </div>
-            <%}%>
-
+<form id="queryForm" role="form">
+    <input type="hidden" id="page" name="page" value="1">
+    <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
+    <div class="row row-cols-4">
+        <%if (has(queryConfigList) && isNotEmpty(queryConfigList) && queryConfigList.~size >0 ){
+        for(input in queryConfigList){
+        %>
+        <div class="form-group col-auto">
+            <label for="">${input.label}</label>
+            <input type="text" class="form-control"  name="${input.queryKey}" value="${params[input.queryKey]}">
         </div>
-    </form>
+        <%}%>
+        <div class="col align-self-center mt-3">
+            <button type="button" class="btn btn-outline-primary mr-2"
+                    onclick="javascript:$('#queryForm .form-control').val('');"><i
+                    class="fa fa-refresh"></i> 清空
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="queryData();"><i
+                    class="fa fa-search"></i> 查询
+            </button>
+        </div>
+        <%}%>
+
+    </div>
     <hr>
     <div class="row">
         <div class="col-12 checkboxWrap">
             <table  class="table table-bordered table-hover table-striped text-center" >
                 <thead>
-                <tr>
-                    <th><input class="checkAll" type="checkbox" /></th>
-                    <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
+                    <tr>
+                        <th><input class="checkAll" type="checkbox" /></th>
+                        <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
                         for(column in dataSourceColumns){
-                    %>
+                        %>
                         <th>${column.columnName}</th>
-                    <%}}%>
-                </tr>
+                        <%}}%>
+                    </tr>
                 </thead>
                 <tbody>
-                    <%if (has(page) && isNotEmpty(page) ){
-                        for(row in page){
+                    <%if (has(pagedData) && isNotEmpty(pagedData.data) ){
+                    for(row in pagedData.data){
                     %>
                     <tr  bind-id="" data-id="${row[conditionDefinition.matchColumn]}">
                         <td><input type="checkbox" /></td>
                         <%if (has(dataSourceColumns) && isNotEmpty(dataSourceColumns) && dataSourceColumns.~size >0 ){
-                            for(column in dataSourceColumns){
+                        for(column in dataSourceColumns){
                         %>
-                            <td class="<%if(column.display==1){%> text <%}%>"  >${row[column.columnCode]}</td>
+                        <td class="<%if(column.display==1){%> text <%}%>"  >${row[column.columnCode]}</td>
                         <%}}%>
 
                     </tr>
                     <%}}%>
                 </tbody>
             </table>
-            <!-- 分页功能、、暂未实现 -->
-<!--            <div class="turnpage row align-items-start">
+
+            <%if(pagedData.pages>0){%>
+            <div class="turnpage row align-items-start">
                 <div class="d-flex form-group col-2">
                     <label for="">每页显示<i class="red">*</i></label>
-                    <select class="form-control w-50" id="" name="" >
-                        <option value="">20</option>
-                        <option value="">50</option>
+                    <select class="form-control w-50"   name="rows" onchange="queryData()" >
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
                     </select>
                 </div>
                 <nav aria-label="Page navigation col-10">
                     <ul class="pagination">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <i class="fa fa-angle-double-left" aria-hidden="true"></i>
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <i class="fa fa-angle-left" aria-hidden="true"></i>
-                            </a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <i class="fa fa-angle-right" aria-hidden="true"></i>
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
+                        <%if(pagedData.pageNum>1){%>
+                            <li class="page-item">
+                               <a class="page-link" href="javascript:void(0);" aria-label="Previous"  onclick="pagination(1)">
+                                   <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                               </a>
+                           </li>
+                        <%}%>
+                        <%if(pagedData.pageNum>1){%>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);" aria-label="Previous" onclick="pagination(${pagedData.pageNum-1})">
+                                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        <%}%>
+
+                         <%if(pagedData.pageNum>1){%>
+                            <li class="page-item"><a class="page-link" href="javascript:void(0);"  onclick="pagination(${pagedData.pageNum-1})">${pagedData.pageNum-1}</a></li>
+                        <%}%>
+                        <li class="page-item"><a class="page-link" href="javascript:void(0);"  onclick="pagination(${pagedData.pageNum})">${pagedData.pageNum}</a></li>
+                        <%if(pagedData.pageNum<pagedData.pages){%>
+                            <li class="page-item"><a class="page-link" href="javascript:void(0);"  onclick="pagination(${pagedData.pageNum+1})">${pagedData.pageNum+1}</a></li>
+                        <%}%>
+                        <%if(pagedData.pageNum<pagedData.pages){%>
+                            <li class="page-item"  >
+                                <a class="page-link" href="javascript:void(0);" aria-label="Next" onclick="pagination(${pagedData.pageNum+1})">
+                                    <i class="fa fa-angle-right" aria-hidden="true" ></i>
+                                </a>
+                            </li>
+                        <%}%>
+                         <%if(pagedData.pageNum<pagedData.pages){%>
+                             <li class="page-item">
+                             <a class="page-link" href="#" aria-label="Next"  onclick="pagination(${pagedData.pages})">
                                 <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                            </a>
+                             </a>
                         </li>
+                         <%}%>
+                        
                     </ul>
                 </nav>
-            </div>-->
+            </div>
+
+            <%}%>
+            <!-- 分页功能、、暂未实现 -->
+
         </div>
     </div>
+</form>
+
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <script>
 
 
+                var rows = "${params['rows']!}";
+                if (rows !== '') {
+                    $('select[name="rows"] option[value=' + rows + ']').attr("selected", "selected");
+                }
+                function pagination(page){
+                    $('input[name="page"]').val(page);
+                    queryData();
+                }
+                /**
+                 * 条件查询操作
+                 */
+                function queryData() {
+                    let formData = $('#queryForm').serializeJSON();
+                    loadAjaxTable($("#definitionId").val(), formData);
+                    $('.checkedShow tr').each(function (i, ele) {
+                        $('.checkboxWrap tr[data-id="' + $(ele).data('id') + '"]').find(':checkbox').prop('checked', true);
+                    })
+                }
 
-    /**
-     * 条件查询操作
-     */
-    function queryData() {
-        let formData = $('#queryForm').serializeJSON();
-        loadAjaxTable($("#definitionId").val(), formData);
-        $('.checkedShow tr').each(function (i, ele) {
-            $('.checkboxWrap tr[data-id="' + $(ele).data('id') + '"]').find(':checkbox').prop('checked', true);
-        })
-    }
+                /* 数组删除指定元素 */
+                Array.prototype.remove = function (ele) {
+                    let index = this.indexOf(ele);
+                    if (index > -1) {
+                        this.splice(index, 1);
+                    }
+                };
 
-    /* 数组删除指定元素 */
-    Array.prototype.remove = function(ele){
-        let index = this.indexOf(ele);
-        if( index > -1 ) {
-            this.splice(index, 1);
-        }
-    };
+                // 行选中
+                $('.checkboxWrap').on('click', 'tr', function (e) {
+                    let ele = $(this).find('td :checkbox');
+                    if (e.target.type !== 'checkbox') {
+                        if (ele.prop("checked")) {
+                            ele.prop("checked", false);
+                        } else {
+                            ele.prop("checked", true);
+                        }
+                        ele.trigger('change');
+                    }
 
-    // 行选中
-    $('.checkboxWrap').on('click', 'tr',  function(e){
-        let ele = $(this).find('td :checkbox');
-        if (e.target.type !== 'checkbox') {
-            if(ele.prop("checked")) {
-                ele.prop("checked", false);
-            } else {
-                ele.prop("checked", true);
-            }
-            ele.trigger('change');
-        }
+                })
+                // 全选
+                $(".checkAll").click(function () {
+                    $('.checkboxWrap :checkbox').not(this).prop('checked', this.checked);
+                    $('.checkboxWrap td :checkbox').trigger('change');
+                });
 
-    })
-    // 全选
-    $(".checkAll").click(function () {
-        $('.checkboxWrap :checkbox').not(this).prop('checked', this.checked);
-        $('.checkboxWrap td :checkbox').trigger('change');
-    });
+                // 选择项
+                $('.checkboxWrap td :checkbox').on('change', function () {
+                    let id = $(this).parents('tr').data('id');
+                    let text = $(this).parents('tr').find('.text').text();
+                    if ($(this).is(':checked')) {
+                        if (conditionData.checkedData.idList.indexOf(id) < 0) {
+                            $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
+                            addUnconfirmedData(id, text);
+                        } else if (!$('.checkedShow .table [data-id="' + id + '"]').length) {
+                            $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
+                        }
 
-    // 选择项
-    $('.checkboxWrap td :checkbox').on('change', function () {
-        let id = $(this).parents('tr').data('id');
-        let text = $(this).parents('tr').find('.text').text();
-        if ($(this).is(':checked')) {
-            if(conditionData.checkedData.idList.indexOf(id) < 0  ) {
-                $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
-                addUnconfirmedData(id,text);
-            } else if (!$('.checkedShow .table [data-id="' + id + '"]').length) {
-                $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
-            }
-
-        } else {
-            $(".checkAll").prop('checked', '');
-            $('.checkedShow tr[data-id="' + id + '"]').remove();
-            addRemovableData(id,text);
-        }
-    });
+                    } else {
+                        $(".checkAll").prop('checked', '');
+                        $('.checkedShow tr[data-id="' + id + '"]').remove();
+                        addRemovableData(id, text);
+                    }
+                });
 
 
-    // 移除已选项
-    $(document).on('click', '.checkedShow .remove-btn', function () {
-        let id = $(this).data('id');
-        let text = $(this).text();
-        $('.checkboxWrap tr[data-id="' + id + '"]').find(':checkbox').prop('checked', false);
-        $(".checkAll").prop('checked', '');
-        $('.checkedShow tr[data-id="' + id + '"]').remove();
-         addRemovableData(id,text);
-    });
+                // 移除已选项
+                $(document).on('click', '.checkedShow .remove-btn', function () {
+                    let id = $(this).data('id');
+                    let text = $(this).text();
+                    $('.checkboxWrap tr[data-id="' + id + '"]').find(':checkbox').prop('checked', false);
+                    $(".checkAll").prop('checked', '');
+                    $('.checkedShow tr[data-id="' + id + '"]').remove();
+                    addRemovableData(id, text);
+                });
 
 
 

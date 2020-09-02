@@ -35,10 +35,12 @@ import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.ss.domain.PageOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * 由MyBatis Generator工具自动生成 This file was generated on 2020-05-13 11:23:41.
@@ -203,6 +205,48 @@ public class ConditionDefinitionController {
     }
 
     /**
+     * 返回当前分页参数
+     * @param params
+     * @return 
+     */
+    private Integer getPageNumber(Map<String, Object> params) {
+        Object pageObj = params.get("page");
+        if (pageObj == null) {
+            return 1;
+        }
+        if(!NumberUtils.isCreatable(String.valueOf(pageObj))){
+         return 1;
+        }
+        Integer page=NumberUtils.createBigInteger(String.valueOf(pageObj)).intValue();
+        if(page<=0){
+            return 1;
+        }
+        return page;
+    }
+    /**
+     * 返回当前分页参数
+     * @param params
+     * @return 
+     */
+    private Integer getRows(Map<String, Object> params) {
+        Object rowsObj = params.get("rows");
+        if (rowsObj == null) {
+            return 10;
+        }
+        if(!NumberUtils.isCreatable(String.valueOf(rowsObj))){
+            return 10;
+        }
+        Integer rows=NumberUtils.createBigInteger(String.valueOf(rowsObj)).intValue();
+        if(rows<=0){
+            return 10;
+        }
+        if(rows>=100){
+            return 100;
+        }
+        return rows;
+    }
+
+    /**
      * 获取动态条件数据
      *
      * @param params
@@ -223,7 +267,7 @@ public class ConditionDefinitionController {
         columnCondition.setOrder("ASC");
         columnCondition.setSort("column_index");
         List<DataSourceColumn> dataSourceColumns = dataSourceColumnService.listByExample(columnCondition);
-        Page<Map<String, Object>> page = this.remoteDataQueryService.queryData(conditionDataSource, params,this.getSessionIdHead(request));
+       
 
         ConditionDefinition condition = new ConditionDefinition();
         condition.setDataTargetId(dataSourceId);
@@ -239,13 +283,19 @@ public class ConditionDefinitionController {
             case TABLE_MULTI:
 
                 List<DatasourceQueryConfig> queryConfigList = datasourceQueryConfigService.findByDataSourceId(dataSourceId);
-                modelMap.put("page", page);
+                Integer page=this.getPageNumber(params);
+                Integer rows=this.getRows(params);
+                params.put("page", page);
+                params.put("rows", rows);
+                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(conditionDataSource, params, this.getSessionIdHead(request), page, rows);
+                modelMap.put("pagedData", pagedData);
                 modelMap.put("queryConfigList", queryConfigList);
                 return "conditionDefinition/dynamic/table";
             case TREE_MULTI:
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    modelMap.put("nodes", mapper.writeValueAsString(page.getContent()));
+                     PageOutput<List> treeData = this.remoteDataQueryService.queryData(conditionDataSource, params, this.getSessionIdHead(request), 1, Integer.MAX_VALUE);
+                    modelMap.put("nodes", mapper.writeValueAsString(treeData.getData()));
                     DataSourceColumn displayColumn = StreamEx.of(dataSourceColumns).filter(item -> YesOrNoEnum.YES.getCode().equals(item.getDisplay())).findFirst().orElse(new DataSourceColumn());
                     modelMap.put("displayColumn", mapper.writeValueAsString(displayColumn));
                     DataSourceColumn parentColumn = StreamEx.of(dataSourceColumns).filter(item -> parent.equals(item.getColumnName())).findFirst().orElse(new DataSourceColumn());
