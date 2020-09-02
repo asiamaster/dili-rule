@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RemoteDataQueryService {
-	private static final Logger log=LoggerFactory.getLogger(RemoteDataQueryService.class);
+	private static final Logger logger=LoggerFactory.getLogger(RemoteDataQueryService.class);
     /**
      * 通过url请求远程接口(http+json)
      * @param url
@@ -93,11 +93,10 @@ public class RemoteDataQueryService {
         if (CollectionUtil.isEmpty(keys)) {
             return Collections.emptyList();
         }
-        Optional<String> jsonDataOpt = Optional.empty();
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = conditionDataSource.getDataJson();
-            jsonDataOpt = Optional.ofNullable(localJsonData);
+            return this.parseJson( Optional.ofNullable(localJsonData), false).getContent();
         } else {
             //构建查询参数
             Map<String, Object> params = Maps.newHashMap();
@@ -111,14 +110,16 @@ public class RemoteDataQueryService {
             params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
             params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
             params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-            HttpResponse response = HttpUtil.createPost(conditionDataSource.getKeysUrl()).body(JSONObject.toJSONString(params)).execute();
-            if (response.isOk()) {
-                jsonDataOpt = Optional.ofNullable(response.body());
+            String keyUrl=conditionDataSource.getKeysUrl();
+            String jsonBody=JSONObject.toJSONString(params);
+            logger.info("keyUrl={},data={}",keyUrl,jsonBody);
+            try(HttpResponse response = HttpUtil.createPost(keyUrl).body(jsonBody).execute();){
+                if (response.isOk()) {
+                    return   this.parseJson(Optional.ofNullable(response.body()), false).getContent();
+                }
             }
-            response.close();
         }
-        List<Map<String, Object>> list = this.parseJson(jsonDataOpt, false).getContent();
-        return list;
+        return Collections.emptyList();
     }
 
     /**
@@ -195,7 +196,7 @@ public class RemoteDataQueryService {
             try {
                 output = JSONObject.parseObject(json, PageOutput.class);
             } catch (Exception e) {
-                log.error("解析json {} 出错 ", json, e);
+                logger.error("解析json {} 出错 ", json, e);
             }
         }
         if (output.isSuccess()) {
