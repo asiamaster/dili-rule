@@ -16,7 +16,7 @@
     <result column="priority"  property="priority" />
     <result column="expire_start"  property="expireStart" />
     <result column="expire_end"  property="expireEnd" />
-    <result column="target_val"  property="actionExpression" />
+    <result column="action_expression"  property="actionExpression" />
     <result column="min_payment"  property="minPayment" />
     <result column="max_payment"  property="maxPayment" />
     <result column="remark"  property="remark" />
@@ -35,7 +35,7 @@
       WARNING - @mbg.generated
     -->
     id, original_id, market_id, business_type, group_id, charge_item,
-    rule_name, state, priority, expire_start, expire_end, target_val, min_payment, max_payment,
+    rule_name, state, priority, expire_start, expire_end, action_expression, min_payment, max_payment,
     remark, revisable, operator_id, operator_name, create_time, modify_time, approver_id, 
     approver_name, approval_time
   </sql>

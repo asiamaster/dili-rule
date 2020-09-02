@@ -193,7 +193,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
             case DECIMAL:
                 return (Comparable<T>) new BigDecimal(str);
             case INTEGER:
-                return (Comparable<T>) new BigInteger(str);
+                return (Comparable<T>) new BigInteger(String.valueOf(new BigDecimal(str).intValue()));
             default:
                 break;
         }
@@ -234,4 +234,5 @@ public class RuleEngineServiceImpl implements RuleEngineService {
         return givenValue.compareTo(conditionValues.get(0)) >= 0 && givenValue.compareTo(conditionValues.get(1)) <= 0;
 
     }
+
 }
