@@ -13,4 +13,5 @@
 **/logs
 **/.factorypath
 **/.vscode
-spy.log
+**/spy.log
+*/spy.log
