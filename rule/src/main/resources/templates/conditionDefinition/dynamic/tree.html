@@ -62,7 +62,7 @@
             this.data = toEleTree(nodeArray, {label: displayColumnCode, pid: parentColumnCode});
         },
         mounted: function () {
-            this.$refs.tree.setCheckedKeys(checkedids);
+            this.$refs.tree.setCheckedKeys(conditionData.checkedData.idList);
         },
         data() {
             return {
@@ -76,13 +76,13 @@
         methods: {
             handleCheckChange(data, checked, indeterminate) {
                 let checkedNodes = this.$refs.tree.getCheckedNodes();
-                checkedids = checkedNodes.map(item => {
+                var idList = checkedNodes.map(item => {
                     return item[matchColumn];
                 });
-                checkedtexts = checkedNodes.map(item => {
+                var textList = checkedNodes.map(item => {
                     return item[displayColumnCode];
                 });
-
+                addUnconfirmedListData(idList,textList)
             }
         }
     })

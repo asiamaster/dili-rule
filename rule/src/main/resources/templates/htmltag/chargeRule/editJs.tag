@@ -190,9 +190,12 @@
                         var ctxList=diaWindow.checkedtexts.filter(function(v,i){
                             return $.trim(v)!='';
                         })
-                        $('#'+targetId).val(diaWindow.checkedids)
-                        choice.data('checkedids', diaWindow.checkedids);
-                        choice.parents('.input-group').find('.form-control').val(ctxList);
+                       
+                        var conditionData=diaWindow.confirmConditionData();
+                        console.info("conditionData="+ JSON.stringify(conditionData));
+                        $('#'+targetId).val(conditionData.idList)
+                        choice.data('checkedids', conditionData.idList);
+                        choice.parents('.input-group').find('.form-control').val(conditionData.textList);
                         dia.hide()
 
                     }

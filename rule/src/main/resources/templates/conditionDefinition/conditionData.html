@@ -3,7 +3,6 @@
 <div class="container-fluid">
     <input type="hidden" id="definitionId" value="${conditionDefinition.id}">
     <input type="hidden" id="selectedids" value="[]"/>
-    <input type="hidden" id="" value="[]"/>
     <div class="table-wrap row justify-content-between">
         <div id="popupDiv" class="col-8">
 
@@ -29,16 +28,82 @@
     var choice = parent.window.choiceTarget;
     //debugger
     var checkedids = choice.data('checkedids');
-    var checkedtexts = choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : [];
+    var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : []).filter(function(v,i){
+        return $.trim(v)!='';
+    });
 
+    var conditionData={
+        checkedData:{
+            idList:checkedids,
+            textList:checkedtexts
+        },
+        unconfirmedData:{
+            idList:[],
+            textList:[],
+        },
+        removableData:{
+            idList:[],
+            textList:[],
+        }
+    }
+    /**
+     * 批量增加未确认选择数据
+     * @param {type} idList
+     * @param {type} textList
+     * @returns {undefined}
+     */
+    function addUnconfirmedListData(idList,textList){
+        conditionData.unconfirmedData.idList=idList;
+        conditionData.unconfirmedData.textList=textList;
+    }
+    /**
+     * 增加未确认数据到列表
+     * @param {type} id
+     * @param {type} text
+     * @returns {undefined}
+     */
+    function addUnconfirmedData(id,text){
+        conditionData.unconfirmedData.idList.push(id)
+        conditionData.unconfirmedData.textList.push(text)
+    }
+    /**
+     * 增加要被删除数据到列表
+     * @param {type} id
+     * @param {type} text
+     * @returns {undefined}
+     */
+    function addRemovableData(id,text){
+        conditionData.removableData.idList.push(id)
+        conditionData.removableData.textList.push(text)
+    }
+    /**
+     * 合并并返回最终数据
+     * @returns {conditionData.checkedData}
+     */
+    function confirmConditionData(){
+        $.each(conditionData.unconfirmedData.idList,function(i,id){
+            if($.inArray(id,conditionData.checkedData.idList)<0){
+                conditionData.checkedData.idList.push(id);
+                conditionData.checkedData.textList.push(conditionData.unconfirmedData.textList[i]);
+            }
+        });
+        $.each(conditionData.removableData.idList,function(i,id){
+            var index=$.inArray(id,conditionData.checkedData.idList);
+            if(index>=0){
+                conditionData.checkedData.idList.splice(index,1);
+                conditionData.checkedData.textList.splice(index,1);
+            }
+        })
+        return conditionData.checkedData;
+    }
     /* 选择项 子父页面的存储 处理  */
     $(document).ready(function () {
         let definitionId = $('#definitionId').val();
         loadAjaxTable(definitionId);
-        $.each(checkedids, function(k,ele) {
+        $.each(conditionData.checkedData.idList, function(k,ele) {
             $('body').find('.checkboxWrap [data-id="' + parseInt(ele) + '"]').find(':checkbox').click();
             if (!$('.checkedShow .table [data-id="' + ele + '"]').length) {
-                $('.checkedShow .table').append('<tr data-id="' + parseInt(ele) + '"><td>' + checkedtexts[k] + '<i class="fa fa-times remove-btn float-right" aria-hidden="true"></i></td></tr>');
+                $('.checkedShow .table').append('<tr data-id="' + parseInt(ele) + '"><td>' + conditionData.checkedData.textList[k] + '<i class="fa fa-times remove-btn float-right" aria-hidden="true"></i></td></tr>');
             }
         });
     });

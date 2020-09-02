@@ -197,7 +197,7 @@ public class ConditionDefinitionController {
         Long dataSourceId = conditionDefinition.getDataSourceId();
         ConditionDataSource conditionDataSource = conditionDataSourceService.get(dataSourceId);
 
-        ViewModeEnum viewMode = ViewModeEnum.fromCode(conditionDefinition.getViewMode()).orElse(null);
+        ViewModeEnum viewMode = ViewModeEnum.fromCode(conditionDefinition.getViewMode()).orElse(ViewModeEnum.TABLE_MULTI);
 
         DataSourceColumn columnCondition = new DataSourceColumn();
         columnCondition.setDataSourceId(dataSourceId);

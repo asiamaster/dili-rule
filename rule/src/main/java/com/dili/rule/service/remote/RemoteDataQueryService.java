@@ -173,13 +173,13 @@ public class RemoteDataQueryService {
         params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
         params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-        Optional<String> result = null;
-        HttpResponse response = HttpUtil.createPost(url).body(JSONObject.toJSONString(params)).execute();
-        if (response.isOk()) {
-            result = Optional.ofNullable(response.body());
+
+        try( HttpResponse response = HttpUtil.createPost(url).body(JSONObject.toJSONString(params)).execute();){
+           if (response.isOk()) {
+                return  Optional.ofNullable(response.body());
+            }
         }
-        response.close();
-        return result;
+        return Optional.empty();
     }
 
     /**

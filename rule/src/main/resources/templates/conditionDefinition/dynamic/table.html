@@ -142,10 +142,9 @@
         let id = $(this).parents('tr').data('id');
         let text = $(this).parents('tr').find('.text').text();
         if ($(this).is(':checked')) {
-            if(checkedids.indexOf(id) < 0  ) {
+            if(conditionData.checkedData.idList.indexOf(id) < 0  ) {
                 $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
-                checkedids.push(id);
-                checkedtexts.push(text);
+                addUnconfirmedData(id,text);
             } else if (!$('.checkedShow .table [data-id="' + id + '"]').length) {
                 $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
             }
@@ -153,8 +152,7 @@
         } else {
             $(".checkAll").prop('checked', '');
             $('.checkedShow tr[data-id="' + id + '"]').remove();
-            checkedids.remove(id);
-            checkedtexts.remove(text);
+            addRemovableData(id,text);
         }
     });
 
@@ -166,8 +164,7 @@
         $('.checkboxWrap tr[data-id="' + id + '"]').find(':checkbox').prop('checked', false);
         $(".checkAll").prop('checked', '');
         $('.checkedShow tr[data-id="' + id + '"]').remove();
-        checkedids.remove(id);
-        checkedtexts.remove(text);
+         addRemovableData(id,text);
     });
 
 

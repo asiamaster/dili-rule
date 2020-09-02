@@ -2,117 +2,117 @@
 
 <div class="container-fluid">
     <%if (has(chargeRule)){%>
-        <form id="addForm" role="form" novalidate>
-            <input type="hidden" id="id" name="id" value="${chargeRule.id!}">
-            <div class="breadcrumb" >
-                基础信息
-                <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true"
-                   aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+    <form id="addForm" role="form" novalidate>
+        <input type="hidden" id="id" name="id" value="${chargeRule.id!}">
+        <div class="breadcrumb" >
+            基础信息
+            <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true"
+               aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="row row-cols-6 collapse show form-baseParam-box" id="baseInfo">
+            <input type="hidden" id="marketId" name="marketId" value="${chargeRule.marketId!}">
+            <div class="form-group col">
+                <input type="hidden" id="businessType" name="businessType" value="${chargeRule.businessType!}">
+                <label for="businessTypeName">业务类型<i class="red">*</i></label>
+                <input type="" class="form-control" id="businessTypeName" readonly value="${businessTypeName!}" required>
             </div>
-            <div class="row row-cols-6 collapse show form-baseParam-box" id="baseInfo">
-                <input type="hidden" id="marketId" name="marketId" value="${chargeRule.marketId!}">
-                <div class="form-group col">
-                    <input type="hidden" id="businessType" name="businessType" value="${chargeRule.businessType!}">
-                    <label for="businessTypeName">业务类型<i class="red">*</i></label>
-                    <input type="" class="form-control" id="businessTypeName" readonly value="${businessTypeName!}" required>
-                </div>
-                <div class="form-group col">
-                    <input type="hidden" id="chargeItem" name="chargeItem" value="${chargeRule.chargeItem!}">
-                    <label for="chargeItemName">费用科目<i class="red">*</i></label>
-                    <input type="" class="form-control" id="chargeItemName" readonly value="${chargeItemName!}" required>
-                </div>
-                <div class="form-group col">
-                    <label for="ruleName">规则名称<i class="red">*</i></label>
-                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="20" value="${chargeRule.ruleName!}" required>
-                </div>
-                <div class="form-group col">
-                    <label for="groupId">分组<i class="red">*</i></label>
-                    <input type="" class="form-control isInt" id="groupId" name="groupId" placeholder="" value="${chargeRule.groupId!}" min="0" max="999" required>
-                </div>
-                <div class="form-group col">
-                    <label for="minPayment">最低支付金额</label>
-                    <input type="" class="form-control floatReserve" id="minPayment" name="minPayment" placeholder="" value="${chargeRule.minPayment!}" range="0 999999.99">
-                </div>
-                <div class="form-group col">
-                    <label for="maxPayment">最高支付金额</label>
-                    <input type="" class="form-control floatReserve" id="maxPayment" name="maxPayment" placeholder="" value="${chargeRule.maxPayment!}" range="0 999999.99">
-                </div>
-                <div class="form-group col-auto">
-                    <label for="expireStart">有效期<i class="red">*</i></label>
-                    <div class="form-inline">
-                        <div class="input-group">
-                            <input type="text" name="expireStart" id="expireStart"  autocomplete="off"  class="form-control laydatetime laystart" value="${chargeRule.expireStart!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
-                            <div class="input-group-append">
-                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
-                            </div>
-                        </div>&nbsp;&nbsp;至&nbsp;&nbsp;
-                        <div class="input-group">
-                            <input type="text" name="expireEnd" id="expireEnd"  autocomplete="off"  class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}"/>
-                            <div class="input-group-append">
-                                <label for="expireEnd" class="input-group-text fa fa-calendar"></label>
-                            </div>
+            <div class="form-group col">
+                <input type="hidden" id="chargeItem" name="chargeItem" value="${chargeRule.chargeItem!}">
+                <label for="chargeItemName">费用科目<i class="red">*</i></label>
+                <input type="" class="form-control" id="chargeItemName" readonly value="${chargeItemName!}" required>
+            </div>
+            <div class="form-group col">
+                <label for="ruleName">规则名称<i class="red">*</i></label>
+                <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="20" value="${chargeRule.ruleName!}" required>
+            </div>
+            <div class="form-group col">
+                <label for="groupId">分组<i class="red">*</i></label>
+                <input type="" class="form-control isInt" id="groupId" name="groupId" placeholder="" value="${chargeRule.groupId!}" min="0" max="999" required>
+            </div>
+            <div class="form-group col">
+                <label for="minPayment">最低支付金额</label>
+                <input type="" class="form-control floatReserve" id="minPayment" name="minPayment" placeholder="" value="${chargeRule.minPayment!}" range="0 999999.99">
+            </div>
+            <div class="form-group col">
+                <label for="maxPayment">最高支付金额</label>
+                <input type="" class="form-control floatReserve" id="maxPayment" name="maxPayment" placeholder="" value="${chargeRule.maxPayment!}" range="0 999999.99">
+            </div>
+            <div class="form-group col-auto">
+                <label for="expireStart">有效期<i class="red">*</i></label>
+                <div class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="expireStart" id="expireStart"  autocomplete="off"  class="form-control laydatetime laystart" value="${chargeRule.expireStart!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
+                        <div class="input-group-append">
+                            <label for="expireStart" class="input-group-text fa fa-calendar"></label>
+                        </div>
+                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                    <div class="input-group">
+                        <input type="text" name="expireEnd" id="expireEnd"  autocomplete="off"  class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}"/>
+                        <div class="input-group-append">
+                            <label for="expireEnd" class="input-group-text fa fa-calendar"></label>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="breadcrumb">
-                条件指标
-                <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#conditionInfo" aria-expanded="true" aria-controls="conditionInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="breadcrumb">
+            条件指标
+            <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#conditionInfo" aria-expanded="true" aria-controls="conditionInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div id="conditionInfo" class="collapse show">
+            <div id="ruleConditionDiv"></div>
+        </div>
+        <div class="breadcrumb">
+            计算指标<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParamInfo">
+            <div class="col-auto mt-2 mb-2" id="calcVariable">
+                <label class="d-block" for="">计算参数</label>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="1">1</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="2">2</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="3">3</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="4">4</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="5">5</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="6">6</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="7">7</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="8">8</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="9">9</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="0">0</button>
+                <br>
+                <br>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="+">+</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="-">-</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="*">*</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="/">/</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="(">(</button>
+                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable=")">)</button>
+                <br>
+                <br>
+                <div class="d-inline-block" id="variableListDiv"></div>
             </div>
-            <div id="conditionInfo" class="collapse show">
-                <div id="ruleConditionDiv"></div>
-            </div>
-            <div class="breadcrumb">
-                	计算指标<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
-            </div>
-            <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParamInfo">
-            	<div class="col-auto mt-2 mb-2" id="calcVariable">
-                    <label class="d-block" for="">计算参数</label>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="1">1</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="2">2</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="3">3</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="4">4</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="5">5</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="6">6</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="7">7</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="8">8</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="9">9</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="0">0</button>
-                    <br>
-                    <br>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="+">+</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="-">-</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="*">*</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="/">/</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="(">(</button>
-                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable=")">)</button>
-                    <br>
-                    <br>
-                    <div class="d-inline-block" id="variableListDiv"></div>
+            <input type="hidden" id="actionExpression" name="actionExpression"  autocomplete="off" value="${chargeRule.actionExpression!}" />
+            <div class="form-group col-12">
+                <label for="">数学表达式<i class="red">*</i></label>
+                <select name="actionExpressionType">
+                    <option value="1" >简单计算</option>
+                    <option value="2" >按时间分段计算</option>
+                </select>
+                <div class="row" style="display: block;" id="simpleExpressionDiv">
+                    <div class="input-group col-6">
+                        <div class="w-75 pr-0" id="expressionDiv">
+                            <input type="text" id="expressionInput" name="expressionInput" data-target="#actionExpression" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.actionExpression!}"  value="${chargeRule.actionExpression!}" autocomplete="off" data-value-type="skip" required="required"/>
+                        </div>
+                        <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
+                    </div>
                 </div>
-                <input type="hidden" id="actionExpression" name="actionExpression"  autocomplete="off" value="${chargeRule.actionExpression!}" />
-            	<div class="form-group col-12">
-                    <label for="">数学表达式<i class="red">*</i></label>
-                    <select name="actionExpressionType">
-                        <option value="1" >简单计算</option>
-                        <option value="2" >按时间分段计算</option>
-                    </select>
-                   <div class="row" style="display: block;" id="simpleExpressionDiv">
-                       <div class="input-group col-6">
-                           <div class="w-75 pr-0" id="expressionDiv">
-                               <input type="text" id="expressionInput" name="expressionInput" data-target="#actionExpression" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.actionExpression!}"  value="${chargeRule.actionExpression!}" autocomplete="off" data-value-type="skip" required="required"/>
-                           </div>
-                           <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
-                       </div>
-                   </div>
 
-                   <div class="row"  style="display: block;"  id="simpleExpressionDiv2">
+                <div class="row"  style="display: block;"  id="simpleExpressionDiv2">
                     <div class="input-group col-6">
                         <div class="w-75 pr-0" id="tieredExpressionDiv">
                             <select name="actionExpressionParams[_start]">
                             </select>
-                             前<input name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
-                             分钟收费<input name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" placeholder="元"/>
+                            前<input name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
+                            分钟收费<input name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" placeholder="元"/>
                             ，  后每<input name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}" />
                             分钟收费<input name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}"  placeholder="元"/>
                         </div>
@@ -121,110 +121,113 @@
                 </div>
 
 
-                </div>
             </div>
-            <div class="breadcrumb">
-                	其它信息<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="breadcrumb">
+            其它信息<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="row  row-cols-4 collapse show" id="otherInfo">
+            <div class="form-group col-8">
+                <label for="remark">备注</label>
+                <textarea id="remark" class="form-control" name="remark" rows="1" maxlength="50">${chargeRule.remark!}</textarea>
             </div>
-            <div class="row  row-cols-4 collapse show" id="otherInfo">
-                <div class="form-group col-8">
-                    <label for="remark">备注</label>
-                    <textarea id="remark" class="form-control" name="remark" rows="1" maxlength="50">${chargeRule.remark!}</textarea>
-                </div>
-            </div>
-            <div class="text-right btn-r-b">
-                <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()">取消</button>
-                <button type="button" class="btn btn-primary px-5" id="formSubmit">保存</button>
-            </div>
-        </form>
+        </div>
+        <div class="text-right btn-r-b">
+            <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()">取消</button>
+            <button type="button" class="btn btn-primary px-5" id="formSubmit">保存</button>
+        </div>
+    </form>
     <%}else{%>
-        <h4 class="red"><span class="px-3">参数丢失</span></h4>
+    <h4 class="red"><span class="px-3">参数丢失</span></h4>
     <%}%>
 </div>
 </#bs4Body>
-  <link rel="stylesheet" href="${contextPath}/resources/jquery-expression-builder/expression-builder.css" />
+<link rel="stylesheet" href="${contextPath}/resources/jquery-expression-builder/expression-builder.css" />
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2-exd.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <#chargeRule_editJs />
 <script>
-$.prototype.tooltip = (function (tooltip) {
-	  return function (config) {
-	    try {
-	      return tooltip.call(this, config);
-	    } catch (ex) {
-	      if (ex instanceof TypeError && config === "destroy") {
-	        return tooltip.call(this, "dispose");
-	      }else if (ex instanceof TypeError && config === "fixTitle") {
-	    	  var $e = this
-	    	   if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
-	    		      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
-	    		    }
-	    	  return this;
-	      }
-	    }
-	  };
-	})($.prototype.tooltip);
-	/*
-Tooltip.prototype.fixTitle = function () {
-    var $e = this.$element
-    if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
-      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
-    }
-  }*/
+                $.prototype.tooltip = (function (tooltip) {
+                    return function (config) {
+                        try {
+                            return tooltip.call(this, config);
+                        } catch (ex) {
+                            if (ex instanceof TypeError && config === "destroy") {
+                                return tooltip.call(this, "dispose");
+                            } else if (ex instanceof TypeError && config === "fixTitle") {
+                                var $e = this
+                                if ($e.attr('title') || typeof ($e.attr('data-original-title')) != 'string') {
+                                    $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+                                }
+                                return this;
+                            }
+                        }
+                    };
+                })($.prototype.tooltip);
+                /*
+                 Tooltip.prototype.fixTitle = function () {
+                 var $e = this.$element
+                 if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
+                 $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+                 }
+                 }*/
 
-$('select[name="actionExpressionType"]').change(function() {
-    $('input[name="actionExpression"]').val('');
-    $('input[name="expressionInput"]').val('');
-    if($(this).val()=='1'){
-        $('#simpleExpressionDiv').show();
-        $('#simpleExpressionDiv2').hide();
-    }else if($(this).val()=='2'){
-        $('#simpleExpressionDiv').hide();
-        $('#simpleExpressionDiv2').show();
-    }
-})
-$('#tieredExpressionDiv input').on('input',function(){
-    var _first_tiered_period_val=$('input[name="actionExpressionParams[_first_tiered_period]"]').val();
-    var _first_tiered_fee_val=$('input[name="actionExpressionParams[_first_tiered_fee]"]').val();
+                $('select[name="actionExpressionType"]').change(function () {
+                    $('input[name="actionExpression"]').val('');
+                    $('input[name="expressionInput"]').val('');
+                    if ($(this).val() == '1') {
+                        $('#simpleExpressionDiv').show();
+                        $('#simpleExpressionDiv2').hide();
+                    } else if ($(this).val() == '2') {
+                        $('#simpleExpressionDiv').hide();
+                        $('#simpleExpressionDiv2').show();
+                    }
+                })
+                $('#tieredExpressionDiv input').on('input', function () {
+                    var _first_tiered_period_val = $('input[name="actionExpressionParams[_first_tiered_period]"]').val();
+                    var _first_tiered_fee_val = $('input[name="actionExpressionParams[_first_tiered_fee]"]').val();
 
-    var _second_tiered_period_val=$('input[name="actionExpressionParams[_second_tiered_period]"]').val();
-    var _second_tiered_fee_val=$('input[name="actionExpressionParams[_second_tiered_fee]"]').val();
-    var diffMinuteEx='diffMinute(_start,now())-'+_first_tiered_period_val;
+                    var _second_tiered_period_val = $('input[name="actionExpressionParams[_second_tiered_period]"]').val();
+                    var _second_tiered_fee_val = $('input[name="actionExpressionParams[_second_tiered_fee]"]').val();
+                    var diffMinuteEx = 'diffMinute(_start,now())-' + _first_tiered_period_val;
 
-    var _condExp='(diffMinute(_start,now())-_first_tiered_period_val)<=0';
-    var _firstExp='diffMinute(_start,now())*_first_tiered_fee_val';
-    var _secondExp='((diffMinute(_start,now())-_first_tiered_period_val)-_first_tiered_period_val-1+_second_tiered_period_val)/_second_tiered_period_val)*_second_tiered_fee_val+diffMinute(_start,now())*_first_tiered_fee_val';
+                    var _condExp = '(diffMinute(_start,now())-_first_tiered_period_val)<=0';
+                    var _firstExp = 'diffMinute(_start,now())*_first_tiered_fee_val';
+                    var _secondExp = '((diffMinute(_start,now())-_first_tiered_period_val)-_first_tiered_period_val-1+_second_tiered_period_val)/_second_tiered_period_val)*_second_tiered_fee_val+diffMinute(_start,now())*_first_tiered_fee_val';
 
-    var expression='IF('+_condExp+','+_firstExp+','+_secondExp+')';
-    $('input[name="actionExpression"]').val(expression);
-    console.info(expression)
-});
-    var actionExpressionType="${chargeRule.actionExpressionType!}";
-    $('select[name="actionExpressionType"] option[value='+actionExpressionType+']').attr("selected", "selected");
-    $('select[name="actionExpressionType"]').trigger('change');
+                    var expression = 'IF(' + _condExp + ',' + _firstExp + ',' + _secondExp + ')';
+                    $('input[name="actionExpression"]').val(expression);
+                    console.info(expression)
+                });
+                var actionExpressionType = "${chargeRule.actionExpressionType!}";
+                if (actionExpressionType != '') {
+                    $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
+                    $('select[name="actionExpressionType"]').trigger('change');
 
-    var _start='${actionExpressionParams._start!}';
-  
-    $('select[name="actionExpressionParams[_start]"]').empty();
-    $('select[name="actionExpressionParams[_start]"]').append('<option>请选择</option>')
-    $.ajax({
-        type: "POST",
-        url: "${contextPath}/chargeRule/getRuleVariable.action",
-        async: true,
-        data: {id: '${chargeRule.id!}', marketId: '${chargeRule.marketId!}', businessType: '${chargeRule.businessType!}',dataType:'${@com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()}'},
-        success: function (ret) {
-            $.each(ret,function(i,v){
-                if(_start==v.matchKey){
-                    $('select[name="actionExpressionParams[_start]"]').append('<option selected value="'+v.matchKey+'">'+v.label+'</option>')
-                }else{
-                    $('select[name="actionExpressionParams[_start]"]').append('<option value="'+v.matchKey+'">'+v.label+'</option>')
                 }
-            });
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            bs4pop.alert('获取计算指标失败', {type: 0});
-        }
-    })
+
+                var _start = '${actionExpressionParams._start!}';
+
+                $('select[name="actionExpressionParams[_start]"]').empty();
+                $('select[name="actionExpressionParams[_start]"]').append('<option>请选择</option>')
+                $.ajax({
+                    type: "POST",
+                    url: "${contextPath}/chargeRule/getRuleVariable.action",
+                    async: true,
+                    data: {id: '${chargeRule.id!}', marketId: '${chargeRule.marketId!}', businessType: '${chargeRule.businessType!}', dataType: '${@com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()}'},
+                    success: function (ret) {
+                        $.each(ret, function (i, v) {
+                            if (_start == v.matchKey) {
+                                $('select[name="actionExpressionParams[_start]"]').append('<option selected value="' + v.matchKey + '">' + v.label + '</option>')
+                            } else {
+                                $('select[name="actionExpressionParams[_start]"]').append('<option value="' + v.matchKey + '">' + v.label + '</option>')
+                            }
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        bs4pop.alert('获取计算指标失败', {type: 0});
+                    }
+                })
 
 </script>
