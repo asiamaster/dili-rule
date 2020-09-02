@@ -198,26 +198,35 @@ public class ChargeRuleController {
     public BaseOutput<Object> enable(Long id, Boolean enable) {
         return chargeRuleService.enable(id, enable);
     }
-
+/**
+     * 规则禁启用
+     *
+     * @param id       需要禁启用的规则ID
+     * @param enable 是否启用 true-是
+     * @return
+     */
+    @RequestMapping(value = "/enable.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public BaseOutput<Object> enable(Long id, Boolean enable) {
+        return chargeRuleService.enable(id, enable);
+    }
     /**
      * 计费规则详情查看
      * @param id 规则ID
      * @param modelMap
      * @return
      */
-    @RequestMapping(value = "/view.action", method = {RequestMethod.GET, RequestMethod.POST})
-    public String view(Long id, ModelMap modelMap) {
+    @RequestMapping(value = "/delete.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput delete(Long id, ModelMap modelMap) {
         if (Objects.nonNull(id)) {
-            ChargeRule chargeRule = chargeRuleService.get(id);
-            if (Objects.nonNull(chargeRule)) {
-                //转换获取计算参数
-                String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), true);
-                chargeRule.setActionExpression(actionExpression);
-                modelMap.put("businessTypeList", getBusinessType());
-                modelMap.addAttribute("chargeRule", chargeRule);
+            ChargeRule item = chargeRuleService.get(id);
+            if(item!=null){
+                this.chargeRuleService.delete(item.getId());
             }
+           
         }
-        return "chargeRule/view";
+        return BaseOutput.success();
     }
 
     /**
