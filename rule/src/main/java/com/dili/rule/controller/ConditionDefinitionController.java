@@ -25,10 +25,12 @@ import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ConditionDataSource;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.DataSourceColumn;
+import com.dili.rule.domain.DatasourceQueryConfig;
 import com.dili.rule.domain.enums.ViewModeEnum;
 import com.dili.rule.service.ConditionDataSourceService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.DataSourceColumnService;
+import com.dili.rule.service.DatasourceQueryConfigService;
 import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
@@ -52,7 +54,9 @@ public class ConditionDefinitionController {
     private DataSourceColumnService dataSourceColumnService;
     @Autowired
     private RemoteDataQueryService remoteDataQueryService;
-
+    @Autowired
+    DatasourceQueryConfigService datasourceQueryConfigService;
+  
     private final String parent = "parent";
 
     /**
@@ -220,7 +224,10 @@ public class ConditionDefinitionController {
 
         switch (viewMode) {
             case TABLE_MULTI:
+                 
+                List<DatasourceQueryConfig>queryConfigList=  datasourceQueryConfigService.findByDataSourceId(dataSourceId);
                 modelMap.put("page", page);
+                modelMap.put("queryConfigList", queryConfigList);
                 return "conditionDefinition/dynamic/table";
             case TREE_MULTI:
                 ObjectMapper mapper = new ObjectMapper();

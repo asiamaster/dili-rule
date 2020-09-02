@@ -4,12 +4,12 @@
         <input type="hidden" id="rows" name="rows" value="10">
         <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
         <div class="row row-cols-4">
-            <%if (has(inputConditionDefinitions) && isNotEmpty(inputConditionDefinitions) && inputConditionDefinitions.~size >0 ){
-                for(input in inputConditionDefinitions){
+            <%if (has(queryConfigList) && isNotEmpty(queryConfigList) && queryConfigList.~size >0 ){
+                for(input in queryConfigList){
             %>
                 <div class="form-group col-auto">
                     <label for="">${input.label}</label>
-                    <input type="text" class="form-control"  name="${input.matchKey}" value="${params[input.matchKey]}">
+                    <input type="text" class="form-control"  name="${input.queryKey}" value="${params[input.queryKey]}">
                 </div>
             <%}%>
                 <div class="col align-self-center mt-3">

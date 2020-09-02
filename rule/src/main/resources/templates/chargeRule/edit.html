@@ -106,7 +106,7 @@
                     </div>
                 </div>
 
-                <div class="row"  style="display: block;"  id="simpleExpressionDiv2">
+                <div class="row"  style="display: none;"  id="complexsimpleExpressionDiv">
                     <div class="input-group col-6">
                         <div class="w-75 pr-0" id="tieredExpressionDiv">
                             <select name="actionExpressionParams[_start]">
@@ -176,35 +176,18 @@
                 $('select[name="actionExpressionType"]').change(function () {
                     $('input[name="actionExpression"]').val('');
                     $('input[name="expressionInput"]').val('');
-                    if ($(this).val() == '1') {
+                    if ($(this).val() === '1') {
                         $('#simpleExpressionDiv').show();
-                        $('#simpleExpressionDiv2').hide();
-                    } else if ($(this).val() == '2') {
+                        $('#complexsimpleExpressionDiv').hide();
+                    } else if ($(this).val() === '2') {
                         $('#simpleExpressionDiv').hide();
-                        $('#simpleExpressionDiv2').show();
+                        $('#complexsimpleExpressionDiv').show();
                     }
                 })
-                $('#tieredExpressionDiv input').on('input', function () {
-                    var _first_tiered_period_val = $('input[name="actionExpressionParams[_first_tiered_period]"]').val();
-                    var _first_tiered_fee_val = $('input[name="actionExpressionParams[_first_tiered_fee]"]').val();
-
-                    var _second_tiered_period_val = $('input[name="actionExpressionParams[_second_tiered_period]"]').val();
-                    var _second_tiered_fee_val = $('input[name="actionExpressionParams[_second_tiered_fee]"]').val();
-                    var diffMinuteEx = 'diffMinute(_start,now())-' + _first_tiered_period_val;
-
-                    var _condExp = '(diffMinute(_start,now())-_first_tiered_period_val)<=0';
-                    var _firstExp = 'diffMinute(_start,now())*_first_tiered_fee_val';
-                    var _secondExp = '((diffMinute(_start,now())-_first_tiered_period_val)-_first_tiered_period_val-1+_second_tiered_period_val)/_second_tiered_period_val)*_second_tiered_fee_val+diffMinute(_start,now())*_first_tiered_fee_val';
-
-                    var expression = 'IF(' + _condExp + ',' + _firstExp + ',' + _secondExp + ')';
-                    $('input[name="actionExpression"]').val(expression);
-                    console.info(expression)
-                });
                 var actionExpressionType = "${chargeRule.actionExpressionType!}";
-                if (actionExpressionType != '') {
+                if (actionExpressionType !== ''&&actionExpressionType!== $('select[name="actionExpressionType"]').val()) {
                     $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
                     $('select[name="actionExpressionType"]').trigger('change');
-
                 }
 
                 var _start = '${actionExpressionParams._start!}';
