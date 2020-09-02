@@ -92,7 +92,7 @@
         priority,
         expire_start,
         expire_end,
-        target_val,
+        action_expression,
         min_payment,
         max_payment,
         remark,
