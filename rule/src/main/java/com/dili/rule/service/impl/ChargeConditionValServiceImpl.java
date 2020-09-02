@@ -74,7 +74,11 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
         conditionDefinition.setBusinessType(chargeRule.getBusinessType());
         conditionDefinition.setRuleCondition(YesOrNoEnum.YES.getCode());
         conditionDefinition.setTargetType(TargetTypeEnum.CONDITION.getCode());
-        List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.list(conditionDefinition);
+               
+        conditionDefinition.setSort("dataSourceId,matchType,id");
+        conditionDefinition.setOrder("desc,asc,asc");
+        
+        List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.listByExample(conditionDefinition);
         //组装已选条件与预定义的条件值
         List<ConditionDefinitionVo> conditionDefinitions = generate(chargeConditionValList,conditionDefinitionList);
         resultMap.put("conditionDefinitions",conditionDefinitions);
@@ -103,7 +107,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
     private List<ConditionDefinitionVo> generate(List<ChargeConditionVal> chargeConditionValList,List<ConditionDefinition> conditionDefinitionList){
         Map<Long, ChargeConditionVal> conditionValMap = chargeConditionValList.stream().collect(Collectors.toMap(ChargeConditionVal::getDefinitionId, RuleConditionVal -> RuleConditionVal));
         List<ConditionDefinitionVo> voList = Lists.newArrayList();
-        conditionDefinitionList.stream().forEach(conditionDefinition -> {
+        conditionDefinitionList.stream().unordered().forEach(conditionDefinition -> {
             ConditionDefinitionVo vo = new ConditionDefinitionVo();
             BeanUtils.copyProperties(conditionDefinition, vo);
             if (conditionValMap.containsKey(vo.getId())) {
