@@ -595,4 +595,9 @@ public class ChargeRule extends BaseDomain implements Serializable {
 //        return "ChargeRule{" + "id=" + id + ", originalId=" + originalId + ", marketId=" + marketId + ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem + ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart=" + expireStart + ", expireEnd=" + expireEnd + ", actionExpressionParams=" + actionExpressionParams + ", actionExpressionType=" + actionExpressionType + ", actionExpression=" + actionExpression + ", minPayment=" + minPayment + ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId=" + operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime=" + approvalTime + ", activateDatetime=" + activateDatetime + ", targetActivateRuleId=" + targetActivateRuleId + ", expireValue=" + expireValue + '}';
 //    }
 
+    @Override
+    public String toString() {
+        return "ChargeRule{" + "id=" + id + ", originalId=" + originalId + ", marketId=" + marketId + ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem + ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart=" + expireStart + ", expireEnd=" + expireEnd + ", actionExpressionParams=" + actionExpressionParams + ", actionExpressionType=" + actionExpressionType + ", actionExpression=" + actionExpression + ", minPayment=" + minPayment + ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId=" + operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime=" + approvalTime + ", expireValue=" + expireValue + '}';
+    }
+
 }

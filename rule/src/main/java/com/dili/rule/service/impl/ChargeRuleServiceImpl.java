@@ -159,10 +159,10 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 rule.setState(RuleStateEnum.EXPIRED.getCode());
                 flag = true;
                 if (null != rule.getOriginalId()) {
-                    ChargeRule old = new ChargeRule();
-                    old.setId(rule.getOriginalId());
-                    old.setRevisable(YesOrNoEnum.YES.getCode());
-                    this.updateSelective(old);
+//                    ChargeRule old = new ChargeRule();
+//                    old.setId(rule.getOriginalId());
+//                    old.setRevisable(YesOrNoEnum.YES.getCode());
+//                    this.updateSelective(old);
                     rule.setOriginalId(null);
                 }
             }

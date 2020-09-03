@@ -76,10 +76,23 @@
 <#conditionDefinition_commonJs />
 
 <script>
+   var  viewModeVal='${conditionDefinition.viewMode!}';
+   function afterChangeViewModel(v){
+       var tree='${@com.dili.rule.domain.enums.ViewModeEnum.TREE_MULTI.getCode()}';
+       var parentColumn=$('input[name="parentColumn"]');
+       if($.trim(v)==tree){
+           parentColumn.attr("required","required")
+           parentColumn.removeAttr("readonly")
+       }else{
+          parentColumn.removeAttr("required","required")
+          parentColumn.attr("readonly","readonly")
+          parentColumn.val('');
+          parentColumn.valid();
+       }
+   }
+   afterChangeViewModel('${conditionDefinition.viewMode!}');
     $('#viewMode').on("change",function(){
-        
-        console.info($(this).val())
-        
+        afterChangeViewModel($(this).val())
     })
 
     /**
