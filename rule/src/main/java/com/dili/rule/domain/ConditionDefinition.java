@@ -95,6 +95,12 @@ public class ConditionDefinition extends BaseDomain {
      */
     @Column(name = "`view_mode`")
     private Integer viewMode;
+    
+        /**
+     * 选择了树结构时，设置parent对应的列名
+     */
+    @Column(name = "`parent_column`")
+    private String parentColumn;
 
     /**
      * 数据归于某个来源(用于设置查询条件等时的数据)
@@ -334,26 +340,19 @@ public class ConditionDefinition extends BaseDomain {
         this.modifyTime = modifyTime;
     }
 
+    public String getParentColumn() {
+        return parentColumn;
+    }
+
+    public void setParentColumn(String parentColumn) {
+        this.parentColumn = parentColumn;
+    }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("marketId", marketId)
-                .add("businessType", businessType)
-                .add("label", label)
-                .add("matchKey", matchKey)
-                .add("matchType", matchType)
-                .add("defaultValues", defaultValues)
-                .add("dataType", dataType)
-                .add("targetType", targetType)
-                .add("dataSourceId", dataSourceId)
-                .add("matchColumn", matchColumn)
-                .add("viewMode", viewMode)
-                .add("dataTargetId", dataTargetId)
-                .add("ruleCondition", ruleCondition)
-                .add("createTime", createTime)
-                .add("modifyTime", modifyTime)
-                .toString();
+        return "ConditionDefinition{" + "id=" + id + ", marketId=" + marketId + ", businessType=" + businessType + ", label=" + label + ", matchKey=" + matchKey + ", matchType=" + matchType + ", defaultValues=" + defaultValues + ", dataType=" + dataType + ", targetType=" + targetType + ", dataSourceId=" + dataSourceId + ", matchColumn=" + matchColumn + ", viewMode=" + viewMode + ", parentColumn=" + parentColumn + ", dataTargetId=" + dataTargetId + ", ruleCondition=" + ruleCondition + ", createTime=" + createTime + ", modifyTime=" + modifyTime + '}';
     }
+
+
+  
 }

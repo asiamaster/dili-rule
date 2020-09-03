@@ -54,7 +54,8 @@
                 </tbody>
             </table>
 
-            <%if(pagedData.pages>0){%>
+
+            <%if(has(pagedData)&&pagedData.pages!=null&&pagedData.pages>0){%>
             <div class="turnpage row align-items-start">
                 <div class="d-flex form-group col-2">
                     <label for="">每页显示<i class="red">*</i></label>
@@ -166,6 +167,7 @@
 
                 // 选择项
                 $('.checkboxWrap td :checkbox').on('change', function () {
+                    debugger
                     let id = $(this).parents('tr').data('id');
                     let text = $(this).parents('tr').find('.text').text();
                     if ($(this).is(':checked')) {

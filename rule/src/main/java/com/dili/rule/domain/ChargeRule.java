@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dili.ss.dao.sql.DateNextVersion;
 import com.dili.ss.domain.BaseDomain;
-import com.google.common.base.MoreObjects;
 import org.springframework.format.annotation.DateTimeFormat;
 import tk.mybatis.mapper.annotation.Version;
 
@@ -15,9 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * 由MyBatis Generator工具自动生成
- * 规则
- * This file was generated on 2020-05-16 17:51:56.
+ * 由MyBatis Generator工具自动生成 规则 This file was generated on 2020-05-16 17:51:56.
  */
 @Table(name = "`charge_rule`")
 public class ChargeRule extends BaseDomain implements Serializable {
@@ -97,15 +94,13 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expireEnd;
 
-    
     /**
      * 计算指标参数
      */
     @Column(name = "`action_expression_params`")
     private String actionExpressionParams;
 
-
-        /**
+    /**
      * 计算指标类型
      */
     @Column(name = "`action_expression_type`")
@@ -116,8 +111,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
      */
     @Column(name = "`action_expression`")
     private String actionExpression;
-
-
 
     /**
      * 匹配到此规则时最低应支付的金额
@@ -192,6 +185,20 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvalTime;
 
+//    /**
+//     * 生效时间
+//     */
+//    @Column(name = "`activate_datetime`")
+//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    private LocalDateTime activateDatetime;
+//
+//    /**
+//     * 生效规则ID
+//     */
+//    @Column(name = "`target_activate_rule_id`")
+//    private Long targetActivateRuleId;
+
     /**
      * 有效期文本
      */
@@ -209,7 +216,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
         }
         return str.toString();
     }
-
 
     /**
      * @return Long return the id
@@ -505,8 +511,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
         this.approvalTime = approvalTime;
     }
 
-
-
     /**
      * @param expireValue the expireValue to set
      */
@@ -528,37 +532,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
         return expireEnd;
     }
 
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("originalId", originalId)
-                .add("marketId", marketId)
-                .add("businessType", businessType)
-                .add("groupId", groupId)
-                .add("chargeItem", chargeItem)
-                .add("ruleName", ruleName)
-                .add("state", state)
-                .add("priority", priority)
-                .add("expireStart", expireStart)
-                .add("expireEnd", expireEnd)
-                .add("actionExpression", actionExpression)
-                .add("minPayment", minPayment)
-                .add("maxPayment", maxPayment)
-                .add("remark", remark)
-                .add("revisable", revisable)
-                .add("operatorId", operatorId)
-                .add("operatorName", operatorName)
-                .add("createTime", createTime)
-                .add("modifyTime", modifyTime)
-                .add("approverId", approverId)
-                .add("approverName", approverName)
-                .add("approvalTime", approvalTime)
-                .add("expireValue", expireValue)
-                .toString();
-    }
-
     /**
      * @return String return the actionExpression
      */
@@ -572,8 +545,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
     public void setActionExpression(String actionExpression) {
         this.actionExpression = actionExpression;
     }
-
-
 
     /**
      * @return String return the actionExpressionParams
@@ -602,5 +573,26 @@ public class ChargeRule extends BaseDomain implements Serializable {
     public void setActionExpressionType(Integer actionExpressionType) {
         this.actionExpressionType = actionExpressionType;
     }
+//
+//    public LocalDateTime getActivateDatetime() {
+//        return activateDatetime;
+//    }
+//
+//    public void setActivateDatetime(LocalDateTime activateDatetime) {
+//        this.activateDatetime = activateDatetime;
+//    }
+//
+//    public Long getTargetActivateRuleId() {
+//        return targetActivateRuleId;
+//    }
+//
+//    public void setTargetActivateRuleId(Long targetActivateRuleId) {
+//        this.targetActivateRuleId = targetActivateRuleId;
+//    }
+
+//    @Override
+//    public String toString() {
+//        return "ChargeRule{" + "id=" + id + ", originalId=" + originalId + ", marketId=" + marketId + ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem + ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart=" + expireStart + ", expireEnd=" + expireEnd + ", actionExpressionParams=" + actionExpressionParams + ", actionExpressionType=" + actionExpressionType + ", actionExpression=" + actionExpression + ", minPayment=" + minPayment + ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId=" + operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime=" + approvalTime + ", activateDatetime=" + activateDatetime + ", targetActivateRuleId=" + targetActivateRuleId + ", expireValue=" + expireValue + '}';
+//    }
 
 }

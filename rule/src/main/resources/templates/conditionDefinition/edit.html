@@ -61,6 +61,10 @@
                 <select id="viewMode" name="viewMode" class="form-control"></select>
                 <#bcomboProvider _id="viewMode" _provider="viewModeProvider"  _valueField="value" _textField="text" _value="${conditionDefinition.viewMode!}" />
             </div>
+            <div class="form-group col">
+                <label for="matchKey" class="">ParentID列名<i class="red">*</i></label>
+                <input type="text" class="form-control" id="parentColumn" name="parentColumn" maxlength="20" value="${conditionDefinition.parentColumn!}" required />
+            </div>
         </div>
         <div class="text-right mt-2">
             <button type="button" class="btn btn-secondary px-5" id="formCancel" onclick="javascript:parent.dia.hide()">取消</button>
@@ -72,7 +76,11 @@
 <#conditionDefinition_commonJs />
 
 <script>
-
+    $('#viewMode').on("change",function(){
+        
+        console.info($(this).val())
+        
+    })
 
     /**
      * 数据源改变事件处理

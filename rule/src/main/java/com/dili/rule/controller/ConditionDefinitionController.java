@@ -61,7 +61,7 @@ public class ConditionDefinitionController {
     @Autowired
     DatasourceQueryConfigService datasourceQueryConfigService;
 
-    private final String parent = "parent";
+
 
     /**
      * 跳转到规则预定义首页面
@@ -294,12 +294,11 @@ public class ConditionDefinitionController {
             case TREE_MULTI:
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                     PageOutput<List> treeData = this.remoteDataQueryService.queryData(conditionDataSource, params, this.getSessionIdHead(request), 1, Integer.MAX_VALUE);
+                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(conditionDataSource, params, this.getSessionIdHead(request), 1, Integer.MAX_VALUE);
                     modelMap.put("nodes", mapper.writeValueAsString(treeData.getData()));
                     DataSourceColumn displayColumn = StreamEx.of(dataSourceColumns).filter(item -> YesOrNoEnum.YES.getCode().equals(item.getDisplay())).findFirst().orElse(new DataSourceColumn());
                     modelMap.put("displayColumn", mapper.writeValueAsString(displayColumn));
-                    DataSourceColumn parentColumn = StreamEx.of(dataSourceColumns).filter(item -> parent.equals(item.getColumnName())).findFirst().orElse(new DataSourceColumn());
-                    modelMap.put("parentColumn", mapper.writeValueAsString(parentColumn));
+                    modelMap.put("parentColumn",  conditionDefinition.getParentColumn());
                 } catch (JsonProcessingException e) {
                     modelMap.put("nodes", "[]");
                     modelMap.put("displayColumn", "{}");
