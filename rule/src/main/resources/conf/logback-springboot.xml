@@ -30,16 +30,7 @@
     </springProfile>
     <!-- 测试环境 -->
     <springProfile name="test">
-        <appender name="appender" class="ch.qos.logback.core.ConsoleAppender">
-            <filter class="ch.qos.logback.classic.filter.LevelFilter">
-                <level>INFO</level>
-                <onMatch>DENY</onMatch>
-                <onMismatch>DENY</onMismatch>
-            </filter>
-            <encoder>
-                <pattern>[${LOG_NAME}-dev] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
-            </encoder>
-        </appender>
+       
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_HOME}/${LOG_NAME}.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -58,16 +49,7 @@
     </springProfile>
     <!-- 灰度环境 -->
     <springProfile name="pre">
-        <appender name="appender" class="ch.qos.logback.core.ConsoleAppender">
-            <filter class="ch.qos.logback.classic.filter.LevelFilter">
-                <level>INFO</level>
-                <onMatch>DENY</onMatch>
-                <onMismatch>DENY</onMismatch>
-            </filter>
-            <encoder>
-                <pattern>[${LOG_NAME}-dev] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
-            </encoder>
-        </appender>
+        
         <!-- 按照每天生成日志文件 -->
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_HOME}/${LOG_NAME}.log</file>
@@ -86,16 +68,7 @@
     </springProfile>
     <!-- 生产环境 -->
     <springProfile name="prod">
-        <appender name="appender" class="ch.qos.logback.core.ConsoleAppender">
-            <filter class="ch.qos.logback.classic.filter.LevelFilter">
-                <level>INFO</level>
-                <onMatch>DENY</onMatch>
-                <onMismatch>DENY</onMismatch>
-            </filter>
-            <encoder>
-                <pattern>[${LOG_NAME}-dev] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
-            </encoder>
-        </appender>
+       
         <!-- 按照每天生成日志文件 -->
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_HOME}/${LOG_NAME}.log</file>
@@ -114,7 +87,10 @@
     </springProfile>
     <logger name="tk.mybatis.mapper.autoconfigure.MapperCacheDisabler" level="warn"></logger>
     <root level="info">
-        <appender-ref ref="appender"/>
+        <springProfile name="dev">
+            <appender-ref ref="appender"/>
+        </springProfile>
+        
         <appender-ref ref="FILE"/>
     </root>
 </configuration>
