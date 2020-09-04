@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dili.rule.mapper.ConditionDataSourceMapper">
-  <resultMap id="BaseResultMap" type="com.dili.rule.domain.ConditionDataSource">
+<mapper namespace="com.dili.rule.mapper.DataSourceDefinitionMapper">
+  <resultMap id="BaseResultMap" type="com.dili.rule.domain.DataSourceDefinition">
     <!--
       WARNING - @mbg.generated
     -->
@@ -14,7 +14,7 @@
     <result column="create_time"  property="createTime" />
     <result column="modify_time"  property="modifyTime" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dili.rule.domain.ConditionDataSource">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dili.rule.domain.DataSourceDefinition">
     <!--
       WARNING - @mbg.generated
     -->
@@ -40,14 +40,14 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from condition_data_source
+    from data_source_definition
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <update id="updateBy" parameterType="com.dili.rule.domain.ConditionDataSource">
+  <update id="updateBy" parameterType="com.dili.rule.domain.DataSourceDefinition">
     <!--
       WARNING - @mbg.generated
     -->
-    update condition_data_source
+    update data_source_definition
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},

@@ -13,7 +13,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
-import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.DataSourceColumn;
 import com.dili.rule.domain.enums.MatchTypeEnum;
@@ -22,7 +22,6 @@ import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.rule.domain.vo.ConditionDefinitionVo;
 import com.dili.rule.mapper.ChargeConditionValMapper;
 import com.dili.rule.service.ChargeConditionValService;
-import com.dili.rule.service.ConditionDataSourceService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.DataSourceColumnService;
 import com.dili.rule.service.remote.RemoteDataQueryService;
@@ -32,6 +31,7 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.dili.rule.service.DataSourceDefinitionService;
 
 /**
  * <B></B>
@@ -51,7 +51,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
     @Autowired
     private ConditionDefinitionService conditionDefinitionService;
     @Autowired
-    private ConditionDataSourceService conditionDataSourceService;
+    private DataSourceDefinitionService dataSourceDefinitionService;
     @Autowired
     private DataSourceColumnService dataSourceColumnService;
     @Autowired
@@ -120,10 +120,10 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                     vo.getValues().addAll(objects);
                 } else if (matchType == MatchTypeEnum.IN) {
                     vo.getValues().addAll(objects);
-                    ConditionDataSource conditionDataSource = conditionDataSourceService.get(conditionDefinition.getDataSourceId());
-                    if (Objects.nonNull(conditionDataSource)){
+                    DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(conditionDefinition.getDataSourceId());
+                    if (Objects.nonNull(dataSourceDefinition)){
                         String matchColumn = conditionDefinition.getMatchColumn();
-                        List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(conditionDataSource, objects,headerMap);
+                        List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(dataSourceDefinition, objects,headerMap);
                         DataSourceColumn condition = new DataSourceColumn();
                         condition.setDataSourceId(conditionDefinition.getDataSourceId());
                         List<DataSourceColumn> columns = dataSourceColumnService.list(condition);

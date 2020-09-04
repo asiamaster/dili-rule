@@ -14,7 +14,7 @@ import com.dili.ss.domain.BaseDomain;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-@Table(name = "`datasource_query_config`")
+@Table(name = "`data_source_query_config`")
 public class DatasourceQueryConfig extends BaseDomain {
     /**
      *

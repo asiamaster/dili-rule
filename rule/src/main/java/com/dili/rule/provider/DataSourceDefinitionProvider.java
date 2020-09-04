@@ -1,8 +1,7 @@
 package com.dili.rule.provider;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.dili.rule.domain.dto.ConditionDataSourceDto;
-import com.dili.rule.service.ConditionDataSourceService;
+import com.dili.rule.domain.dto.DataSourceDefinitionDto;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import com.dili.rule.service.DataSourceDefinitionService;
 
 /**
  * <B>条件数据源值provider</B>
@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
  */
 @Component
 @Scope("prototype")
-public class ConditionDataSourceProvider extends BatchDisplayTextProviderSupport {
+public class DataSourceDefinitionProvider extends BatchDisplayTextProviderSupport {
 
     @Autowired
-    private ConditionDataSourceService conditionDataSourceService;
+    private DataSourceDefinitionService dataSourceDefinitionService;
 
     @Override
     protected BatchProviderMeta getBatchProviderMeta(Map metaMap) {
@@ -53,9 +53,9 @@ public class ConditionDataSourceProvider extends BatchDisplayTextProviderSupport
                     .map(t -> Long.valueOf(t))
                     .collect(Collectors.toList());
             if (!idList.isEmpty()) {
-                ConditionDataSourceDto ConditionDataSource = new ConditionDataSourceDto();
-                ConditionDataSource.setIdList(idList);
-                return conditionDataSourceService.listByExample(ConditionDataSource);
+                DataSourceDefinitionDto dataSourceDefinitionDto = new DataSourceDefinitionDto();
+                dataSourceDefinitionDto.setIdList(idList);
+                return dataSourceDefinitionService.listByExample(dataSourceDefinitionDto);
             }
         }
         return null;

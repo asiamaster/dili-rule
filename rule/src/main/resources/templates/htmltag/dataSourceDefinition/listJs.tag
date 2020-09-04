@@ -3,7 +3,7 @@
     /*********************变量定义区 begin*************/
         //行索引计数器
         //如 let itemIndex = 0;
-    let _dataGrid = $('#conditionDataSourceGrid');
+    let _dataGrid = $('#dataSourceDefinitionGrid');
     let currentSelectRowIndex;
     var dia;
 
@@ -14,9 +14,9 @@
         $(window).resize(function () {
             _dataGrid.bootstrapTable('resetView')
         });
-        let size = ($(window).height() - $('#conditionDataSourceQueryForm').height() - 210) / 40;
+        let size = ($(window).height() - $('#dataSourceDefinitionQueryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
-        _dataGrid.bootstrapTable('refreshOptions', {url: '/conditionDataSource/listPage.action', pageSize: parseInt(size)});
+        _dataGrid.bootstrapTable('refreshOptions', {url: '/dataSourceDefinition/listPage.action', pageSize: parseInt(size)});
 
         _dataGrid.on('load-success.bs.table', function () {
             $('[data-toggle="tooltip"]').tooltip()
@@ -40,7 +40,7 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        let url = "/conditionDataSource/preSave.html";
+        let url = "/dataSourceDefinition/preSave.html";
         dia = bs4pop.dialog({
             title: '新增数据源',
             content: url,
@@ -65,7 +65,7 @@
         }
         //table选择模式是单选时可用
         let selectedRow = rows[0];
-        let url = "/conditionDataSource/preSave.html?id=" + selectedRow.id;
+        let url = "/dataSourceDefinition/preSave.html?id=" + selectedRow.id;
         dia = bs4pop.dialog({
             title: '更新数据源',
             content: url,
@@ -148,7 +148,7 @@
                 bui.loading.show('努力提交中，请稍候。。。');
                 $.ajax({
                     type: "POST",
-                    url: "${contextPath}/conditionDataSource/doDelete.action",
+                    url: "${contextPath}/dataSourceDefinition/doDelete.action",
                     data: {id: selectedRow.id},
                     processData:true,
                     dataType: "json",
@@ -192,7 +192,7 @@
             sort: params.sort,
             order: params.order
         };
-        return $.extend(temp, bui.util.bindGridMeta2Form('conditionDataSourceGrid', 'conditionDataSourceQueryForm'));
+        return $.extend(temp, bui.util.bindGridMeta2Form('dataSourceDefinitionGrid', dataSourceDefinitionQueryForm'));
     }
 
     /*****************************************函数区 end**************************************/

@@ -22,12 +22,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import one.util.streamex.StreamEx;
 
 import com.dili.commons.glossary.YesOrNoEnum;
-import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.DataSourceColumn;
 import com.dili.rule.domain.DatasourceQueryConfig;
 import com.dili.rule.domain.enums.ViewModeEnum;
-import com.dili.rule.service.ConditionDataSourceService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.DataSourceColumnService;
 import com.dili.rule.service.DatasourceQueryConfigService;
@@ -41,6 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.math.NumberUtils;
+import com.dili.rule.service.DataSourceDefinitionService;
 
 /**
  * 由MyBatis Generator工具自动生成 This file was generated on 2020-05-13 11:23:41.
@@ -53,7 +53,7 @@ public class ConditionDefinitionController {
     @Autowired
     private ConditionDefinitionService conditionDefinitionService;
     @Autowired
-    private ConditionDataSourceService conditionDataSourceService;
+    private DataSourceDefinitionService dataSourceDefinitionService;
     @Autowired
     private DataSourceColumnService dataSourceColumnService;
     @Autowired
@@ -110,24 +110,6 @@ public class ConditionDefinitionController {
         return "conditionDefinition/edit";
     }
 
-    /**
-     * 跳转到数据源-查询框编辑页面
-     *
-     * @param id 数据ID
-     * @param dataTargetId 目标数据源
-     * @return
-     */
-    @RequestMapping(value = "/queryInputPreSave.html", method = RequestMethod.GET)
-    public String queryInputPreSave(Long id, Long dataTargetId, ModelMap modelMap) {
-        ConditionDefinition conditionDefinition = new ConditionDefinition();
-        conditionDefinition.setDataTargetId(dataTargetId);
-        conditionDefinition.setRuleCondition(YesOrNoEnum.NO.getCode());
-        if (Objects.nonNull(id)) {
-            conditionDefinition = conditionDefinitionService.get(id);
-        }
-        modelMap.put("conditionDefinition", conditionDefinition);
-        return "conditionDataSource/queryInputEdit";
-    }
 
     /**
      * 保存预定义数据
@@ -257,7 +239,7 @@ public class ConditionDefinitionController {
         Long definitionId = Long.parseLong(params.remove("definitionId").toString());
         ConditionDefinition conditionDefinition = this.conditionDefinitionService.get(definitionId);
         Long dataSourceId = conditionDefinition.getDataSourceId();
-        ConditionDataSource conditionDataSource = conditionDataSourceService.get(dataSourceId);
+        DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(dataSourceId);
 
         ViewModeEnum viewMode = ViewModeEnum.fromCode(conditionDefinition.getViewMode()).orElse(ViewModeEnum.TABLE_MULTI);
 
@@ -275,7 +257,7 @@ public class ConditionDefinitionController {
         List<ConditionDefinition> inputConditionDefinitions = this.conditionDefinitionService.list(condition);
         modelMap.put("inputConditionDefinitions", inputConditionDefinitions);
         modelMap.put("conditionDefinition", conditionDefinition);
-        modelMap.put("conditionDataSource", conditionDataSource);
+        modelMap.put("dataSourceDefinition", dataSourceDefinition);
         modelMap.put("dataSourceColumns", dataSourceColumns);
         modelMap.put("params", params);
 
@@ -287,14 +269,14 @@ public class ConditionDefinitionController {
                 Integer rows=this.getRows(params);
                 params.put("page", page);
                 params.put("rows", rows);
-                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(conditionDataSource, params, this.getSessionIdHead(request), page, rows);
+                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, this.getSessionIdHead(request), page, rows);
                 modelMap.put("pagedData", pagedData);
                 modelMap.put("queryConfigList", queryConfigList);
                 return "conditionDefinition/dynamic/table";
             case TREE_MULTI:
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(conditionDataSource, params, this.getSessionIdHead(request), 1, Integer.MAX_VALUE);
+                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, this.getSessionIdHead(request), 1, Integer.MAX_VALUE);
                     modelMap.put("nodes", mapper.writeValueAsString(treeData.getData()));
                     DataSourceColumn displayColumn = StreamEx.of(dataSourceColumns).filter(item -> YesOrNoEnum.YES.getCode().equals(item.getDisplay())).findFirst().orElse(new DataSourceColumn());
                     modelMap.put("displayColumn", mapper.writeValueAsString(displayColumn));

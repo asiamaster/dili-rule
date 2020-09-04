@@ -2,7 +2,7 @@
 <form id="queryForm" role="form">
     <input type="hidden" id="page" name="page" value="1">
     <input type="hidden" id="definitionId" name="definitionId" value="${conditionDefinition.id}">
-    <div class="row row-cols-4">
+    <div class="row row-cols-12">
         <%if (has(queryConfigList) && isNotEmpty(queryConfigList) && queryConfigList.~size >0 ){
         for(input in queryConfigList){
         %>
@@ -60,14 +60,14 @@
                 <div class="d-flex form-group col-2">
                     <label for="">每页显示<i class="red">*</i></label>
                     <select class="form-control w-50"   name="rows" onchange="queryData()" >
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
+                        <%for(p in [10,20,50]){%>
+                        <option value="${p}" <%if(p==params['rows']!){%>selected<%}%>>${p}</option>
+                        <%}%>
                     </select>
                 </div>
                 <nav aria-label="Page navigation col-10">
                     <ul class="pagination">
-                        <%if(pagedData.pageNum>1){%>
+                        <%if(pagedData.pageNum>2){%>
                             <li class="page-item">
                                <a class="page-link" href="javascript:void(0);" aria-label="Previous"  onclick="pagination(1)">
                                    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
@@ -85,7 +85,7 @@
                          <%if(pagedData.pageNum>1){%>
                             <li class="page-item"><a class="page-link" href="javascript:void(0);"  onclick="pagination(${pagedData.pageNum-1})">${pagedData.pageNum-1}</a></li>
                         <%}%>
-                        <li class="page-item"><a class="page-link" href="javascript:void(0);"  onclick="pagination(${pagedData.pageNum})">${pagedData.pageNum}</a></li>
+                        <li class="page-item"><a class="page-link" style="color:black" href="javascript:void(0);">${pagedData.pageNum}</a></li>
                         <%if(pagedData.pageNum<pagedData.pages){%>
                             <li class="page-item"><a class="page-link" href="javascript:void(0);"  onclick="pagination(${pagedData.pageNum+1})">${pagedData.pageNum+1}</a></li>
                         <%}%>
@@ -96,7 +96,7 @@
                                 </a>
                             </li>
                         <%}%>
-                         <%if(pagedData.pageNum<pagedData.pages){%>
+                         <%if(pagedData.pageNum+1<pagedData.pages){%>
                              <li class="page-item">
                              <a class="page-link" href="#" aria-label="Next"  onclick="pagination(${pagedData.pages})">
                                 <i class="fa fa-angle-double-right" aria-hidden="true"></i>
@@ -118,11 +118,6 @@
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
 <script>
 
-
-                var rows = "${params['rows']!}";
-                if (rows !== '') {
-                    $('select[name="rows"] option[value=' + rows + ']').attr("selected", "selected");
-                }
                 function pagination(page){
                     $('input[name="page"]').val(page);
                     queryData();

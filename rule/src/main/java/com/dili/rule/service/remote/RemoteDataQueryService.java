@@ -6,7 +6,7 @@ import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.commons.glossary.YesOrNoEnum;
-import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.rule.domain.enums.DataSourceTypeEnum;
 import com.dili.ss.domain.PageOutput;
 import com.dili.uap.sdk.session.SessionContext;
@@ -59,68 +59,68 @@ public class RemoteDataQueryService {
     }
 
     /**
-     * 通过ConditionDataSource.queeryUrl对应的的url和params请求远程接口(http+json)
+     * 通过DataSourceDefinition.queeryUrl对应的的url和params请求远程接口(http+json)
      *
-     * @param conditionDataSource
+     * @param dataSourceDefinition
      * @param params
      * @return
      */
-    public PageOutput<List> queryData(ConditionDataSource conditionDataSource, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
-        Optional<String> jsonDataOpt = this.queryJsonData(conditionDataSource, params,header,page,rows);
-        PageOutput<List> pageout = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(conditionDataSource.getPaged()));
+    public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
+        Optional<String> jsonDataOpt = this.queryJsonData(dataSourceDefinition, params,header,page,rows);
+        PageOutput<List> pageout = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(dataSourceDefinition.getPaged()));
         return pageout;
     }
 
 
     /**
      * 远程请求或者本地返回数据转换为json数据结构
-     * @param conditionDataSource
+     * @param dataSourceDefinition
      * @param params
      * @return 
      */
-    private Optional<String> queryJsonData(ConditionDataSource conditionDataSource, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
-        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
-        if (StrUtil.isNotBlank(conditionDataSource.getQueryCondition())) {
-            params.putAll(JSONObject.parseObject(conditionDataSource.getQueryCondition()));
+    private Optional<String> queryJsonData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
+        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(dataSourceDefinition.getDataSourceType());
+        if (StrUtil.isNotBlank(dataSourceDefinition.getQueryCondition())) {
+            params.putAll(JSONObject.parseObject(dataSourceDefinition.getQueryCondition()));
         }
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
-            String localJsonData = conditionDataSource.getDataJson();
+            String localJsonData = dataSourceDefinition.getDataJson();
             return Optional.ofNullable(localJsonData);
         } else {
-            return this.remoteQuery(conditionDataSource.getQueryUrl(), params,header,page,rows);
+            return this.remoteQuery(dataSourceDefinition.getQueryUrl(), params,header,page,rows);
         }
     }
     
     
     /**
-     * 通过ConditionDataSource.queeryUrl对应的的url和keys列表参数请求远程接口(http+json)
+     * 通过DataSourceDefinition.queeryUrl对应的的url和keys列表参数请求远程接口(http+json)
      *
-     * @param conditionDataSource
+     * @param dataSourceDefinition
      * @param keys
      * @return
      */
-    public List<Map<String, Object>> queryKeys(ConditionDataSource conditionDataSource, List<Object> keys, Map<String, String> header) {
+    public List<Map<String, Object>> queryKeys(DataSourceDefinition dataSourceDefinition, List<Object> keys, Map<String, String> header) {
         if (CollectionUtil.isEmpty(keys)) {
             return Collections.emptyList();
         }
-        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(conditionDataSource.getDataSourceType());
+        DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(dataSourceDefinition.getDataSourceType());
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
-            String localJsonData = conditionDataSource.getDataJson();
+            String localJsonData = dataSourceDefinition.getDataJson();
             return this.parseJson( Optional.ofNullable(localJsonData), false).getData();
         } else {
             //构建查询参数
             Map<String, Object> params = Maps.newHashMap();
-            if (StrUtil.isNotBlank(conditionDataSource.getQueryCondition())) {
-                params.putAll(JSONObject.parseObject(conditionDataSource.getQueryCondition()));
+            if (StrUtil.isNotBlank(dataSourceDefinition.getQueryCondition())) {
+                params.putAll(JSONObject.parseObject(dataSourceDefinition.getQueryCondition()));
             }
-            if (StrUtil.isNotBlank(conditionDataSource.getKeysField())){
-                params.put(conditionDataSource.getKeysField(), keys);
+            if (StrUtil.isNotBlank(dataSourceDefinition.getKeysField())){
+                params.put(dataSourceDefinition.getKeysField(), keys);
             }
             //强制内置两个参数，根据当前用户的市场隔离
             params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
             params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
             params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-            String keyUrl=conditionDataSource.getKeysUrl();
+            String keyUrl=dataSourceDefinition.getKeysUrl();
             String jsonBody=JSONObject.toJSONString(params);
             logger.info("keyUrl={},data={}",keyUrl,jsonBody);
             try(HttpResponse response = HttpUtil.createPost(keyUrl).addHeaders(header).body(jsonBody).execute();){

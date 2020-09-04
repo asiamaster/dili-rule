@@ -28,3 +28,6 @@ alter table datasource_query_config comment '远程数据源查询输入框配�
 ALTER TABLE `charge_rule` ADD COLUMN  `activate_datetime`  datetime null comment '生效时间';
 ALTER TABLE `charge_rule` ADD COLUMN  `target_activate_rule_id`  bigint(20) null comment '生效规则ID';
 ALTER TABLE `condition_definition` ADD COLUMN  `parent_column`  varchar(20) null comment 'parent对应的列名';
+
+rename table condition_data_source to data_source_definition;
+rename table datasource_query_config to data_source_query_config;

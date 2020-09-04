@@ -1,7 +1,6 @@
 package com.dili.rule.controller;
 
-import com.dili.rule.domain.ConditionDataSource;
-import com.dili.rule.service.ConditionDataSourceService;
+import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import com.dili.rule.service.DataSourceDefinitionService;
 
 /**
  * 数据源管理控制层
@@ -26,11 +26,11 @@ import java.util.Objects;
  * This file was generated on 2020-05-13 11:19:20.
  */
 @Controller
-@RequestMapping("/conditionDataSource")
-public class ConditionDataSourceController {
-	private static final Logger log=LoggerFactory.getLogger(ConditionDataSourceController.class);
+@RequestMapping("/dataSourceDefinition")
+public class DataSourceDefinitionController {
+	private static final Logger log=LoggerFactory.getLogger(DataSourceDefinitionController.class);
     @Autowired
-    private ConditionDataSourceService conditionDataSourceService;
+    private DataSourceDefinitionService dataSourceDefinitionService;
 
     /**
      * 跳转到数据源管理首页面
@@ -39,21 +39,21 @@ public class ConditionDataSourceController {
      */
     @RequestMapping(value="/index.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
-        return "conditionDataSource/list";
+        return "dataSourceDefinition/list";
     }
 
     /**
      * 分页查询数据源列表信息
-     * @param conditionDataSource
+     * @param dataSourceDefinition
      * @param request
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String listPage(ConditionDataSource conditionDataSource, HttpServletRequest request) {
+    public String listPage(DataSourceDefinition dataSourceDefinition, HttpServletRequest request) {
         try {
-            return conditionDataSourceService.listEasyuiPageByExample(conditionDataSource, true).toString();
+            return dataSourceDefinitionService.listEasyuiPageByExample(dataSourceDefinition, true).toString();
         } catch (Exception e) {
             log.error("查询数据源列表异常," + e.getMessage(), e);
             return new EasyuiPageOutput(0, Collections.emptyList()).toString();
@@ -68,13 +68,13 @@ public class ConditionDataSourceController {
     @RequestMapping(value = "/preSave.html", method = RequestMethod.GET)
     public String preSave(Long id, ModelMap modelMap) {
         if (Objects.nonNull(id)) {
-            ConditionDataSource conditionDataSource = conditionDataSourceService.get(id);
-            if (Objects.nonNull(conditionDataSource)) {
-                modelMap.put("conditionDataSource", conditionDataSource);
+            DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(id);
+            if (Objects.nonNull(dataSourceDefinition)) {
+                modelMap.put("dataSourceDefinition", dataSourceDefinition);
             }
-            return "conditionDataSource/edit";
+            return "dataSourceDefinition/edit";
         }
-        return "conditionDataSource/add";
+        return "dataSourceDefinition/add";
     }
 
     /**
@@ -84,7 +84,7 @@ public class ConditionDataSourceController {
      */
     @RequestMapping(value = "/save.action", method = {RequestMethod.POST})
     @ResponseBody
-    public BaseOutput save(@RequestBody ConditionDataSource dataSource) {
+    public BaseOutput save(@RequestBody DataSourceDefinition dataSource) {
         if (Objects.isNull(dataSource)) {
             return BaseOutput.failure("参数丢失");
         }
@@ -100,7 +100,7 @@ public class ConditionDataSourceController {
             if (Objects.isNull(dataSource.getId())) {
                 dataSource.setCreateTime(dataSource.getModifyTime());
             }
-            conditionDataSourceService.saveOrUpdate(dataSource);
+            dataSourceDefinitionService.saveOrUpdate(dataSource);
             return BaseOutput.success();
         } catch (Exception e) {
             log.error(String.format("保存数据源信息[%s]出现异常:[%s]", dataSource.toString(), e.getMessage()), e);
@@ -117,7 +117,7 @@ public class ConditionDataSourceController {
     @ResponseBody
     public BaseOutput<Object> delete(Long id) {
         try {
-            conditionDataSourceService.delete(id);
+            dataSourceDefinitionService.delete(id);
             return BaseOutput.success("删除成功");
         } catch (Exception e) {
             log.error(String.format("删除数据源[%d]异常:[%s]", id, e.getMessage()), e);
@@ -131,8 +131,8 @@ public class ConditionDataSourceController {
      */
     @RequestMapping(value = "/getDataSource.action", method = {RequestMethod.POST})
     @ResponseBody
-    public BaseOutput<List<ConditionDataSource>> getDataSource() {
-        return BaseOutput.success().setData(conditionDataSourceService.list(null));
+    public BaseOutput<List<DataSourceDefinition>> getDataSource() {
+        return BaseOutput.success().setData(dataSourceDefinitionService.list(null));
     }
 
 

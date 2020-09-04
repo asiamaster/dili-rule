@@ -1,7 +1,7 @@
 <#bs4Body>
 <div class="container-fluid">
     <#bs4nav>
-        <form id="conditionDataSourceQueryForm" role="form" >
+        <form id="dataSourceDefinitionQueryForm" role="form" >
             <div class="row  row-cols-6">
                 <div class="form-group col">
                     <label for="dataSourceType">来源类型</label>
@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="col align-self-center mt-3">
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#conditionDataSourceQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
+                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#dataSourceDefinitionQueryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
                     <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 查询</button>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                     </button>
                     </#resource>
                 </div>
-                <table id="conditionDataSourceGrid" data-toggle="table" data-title="数据源列表" class="table" data-toolbar="#toolbar"
+                <table id="dataSourceDefinitionGrid" data-toggle="table" data-title="数据源列表" class="table" data-toolbar="#toolbar"
                        data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
                        data-side-pagination="server" data-method="POST"
                        data-content-type="application/x-www-form-urlencoded" data-single-select="true"
@@ -94,4 +94,4 @@
     </div>
 </div>
 </#bs4Body>
-<#conditionDataSource_listJs />
+<#dataSourceDefinition_listJs />

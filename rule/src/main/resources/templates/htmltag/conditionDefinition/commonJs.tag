@@ -17,7 +17,7 @@
         let dataSource = [msg];
         $.ajax({
             type: 'post',
-            url: "${contextPath}/conditionDataSource/getDataSource.action",
+            url: "${contextPath}/dataSourceDefinition/getDataSource.action",
             async: false,
             success: function (ret) {
                 if (ret.success) {

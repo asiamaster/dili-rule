@@ -25,7 +25,7 @@
             }
             bui.loading.show('努力提交中，请稍候。。。');
             let _formData = $('#addForm').serializeJSON();
-            let url = "${contextPath}/conditionDataSource/save.action";
+            let url = "${contextPath}/dataSourceDefinition/save.action";
             $.ajax({
                 type: "POST",
                 url: url,

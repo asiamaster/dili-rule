@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 
-import com.dili.rule.domain.ConditionDataSource;
+import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.ss.domain.annotation.Operator;
 
 /**
@@ -15,7 +15,7 @@ import com.dili.ss.domain.annotation.Operator;
  * @author yuehongbo
  * @date 2020/5/23 16:58
  */
-public class ConditionDataSourceDto extends ConditionDataSource {
+public class DataSourceDefinitionDto extends DataSourceDefinition {
 
     /**
      * 查询条件中的ID集
@@ -34,7 +34,7 @@ public class ConditionDataSourceDto extends ConditionDataSource {
 
 	@Override
 	public String toString() {
-		return "ConditionDataSourceDto [idList=" + idList + "]";
+		return "DataSourceDefinitionDto [idList=" + idList + "]";
 	}
     
 }

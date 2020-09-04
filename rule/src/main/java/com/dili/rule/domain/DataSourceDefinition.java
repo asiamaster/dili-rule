@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
  * 预定义数据源
  * This file was generated on 2020-05-13 11:19:20.
  */
-@Table(name = "`condition_data_source`")
-public class ConditionDataSource extends BaseDomain {
+@Table(name = "`data_source_definition`")
+public class DataSourceDefinition extends BaseDomain {
     /**
      * 唯一ID
      */
