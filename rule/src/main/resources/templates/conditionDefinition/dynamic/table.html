@@ -59,7 +59,7 @@
             <div class="turnpage row align-items-start">
                 <div class="d-flex form-group col-2">
                     <label for="">每页显示<i class="red">*</i></label>
-                    <select class="form-control w-50"   name="rows" onchange="queryData()" >
+                    <select class="form-control w-50" style="width:50px!important"   name="rows" onchange="queryData()" >
                         <%for(p in [10,20,50]){%>
                         <option value="${p}" <%if(p==params['rows']!){%>selected<%}%>>${p}</option>
                         <%}%>
