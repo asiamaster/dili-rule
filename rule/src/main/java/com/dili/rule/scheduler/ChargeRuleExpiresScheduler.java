@@ -1,5 +1,6 @@
 package com.dili.rule.scheduler;
 
+import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.component.ChargeRuleExpiresTask;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.enums.RuleStateEnum;
@@ -61,6 +62,7 @@ public class ChargeRuleExpiresScheduler {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("id", ruleId);
         criteria.andEqualTo("state", RuleStateEnum.UN_STARTED.getCode());
+        criteria.andEqualTo("isDeleted", YesOrNoEnum.NO.getCode());
         criteria.andLessThanOrEqualTo("expireStart", now.plusMinutes(fixedRate));
 
         return StreamEx.of(this.queryAllWillStartedRule(ruleId)).append(this.queryAllWillEndedRule(ruleId))
@@ -118,7 +120,7 @@ public class ChargeRuleExpiresScheduler {
             criteria.andIn("id", Arrays.asList(ruleIds));
         }
         // 此处只查询已启用、待审核状态下的快要过期的数据，其它状态值不变
-        criteria.andIn("state", Arrays.asList(RuleStateEnum.ENABLED.getCode(), RuleStateEnum.UNAUDITED.getCode()));
+        criteria.andIn("state", Arrays.asList(RuleStateEnum.ENABLED.getCode()));
         criteria.andLessThanOrEqualTo("expireEnd", now.plusMinutes(fixedRate));
         return chargeRuleService.selectByExample(example);
     }
@@ -155,7 +157,7 @@ public class ChargeRuleExpiresScheduler {
      */
     public boolean updateRuleStatus(ChargeRule ruleInfo) {
         Integer state = ruleInfo.getState();
-        if (RuleStateEnum.ENABLED.getCode().equals(state) || RuleStateEnum.UNAUDITED.getCode().equals(state)) {
+        if (RuleStateEnum.ENABLED.getCode().equals(state) ) {
             LocalDateTime expireEnd = LocalDateTime.now().plusMinutes(fixedRate);
             if (ruleInfo.getExpireEnd().isBefore(expireEnd)) {
                 chargeRuleExpiresTask.register(ruleInfo.getId(), ruleInfo.getExpireEnd());

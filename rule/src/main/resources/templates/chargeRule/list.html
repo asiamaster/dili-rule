@@ -56,20 +56,26 @@
                             class="fa fa-pencil-square-o"></i> 修改
                     </button>
                     </#resource>
-                    <#resource code="delChargeRule">
-                    <button id="btn_delete" type="button" class="btn btn-primary" onclick="doDeleteHandler()">
-                        <i class="fa fa-trash-o"></i> 删除
+                    <#resource code="delBackupChargeRule">
+                    <button id="btn_delete_backup" type="button" disabled class="btn btn-primary" onclick="doDeleteHandler()">
+                        <i class="fa fa-trash-o"></i> 删除定时
                     </button>
                     </#resource>
-                    <#resource code="passChargeRule">
-                    <button id="btn_check_pass" type="button" class="btn btn-primary control-btn" onclick="doCheckHandler(true)">
-                        <i class="fa fa-trash-o"></i> 通过
+                    <#resource code="modifyBackupChargeRule">
+                    <button id="btn_edit_backup" type="button" disabled class="btn btn-primary" onclick="doModifyBackupHandler()">
+                        <i class="fa fa-trash-o"></i> 修改定时
                     </button>
+                    </#resource>
+                    
+                    <#resource code="passChargeRule">
+                    <!--button id="btn_check_pass" type="button" class="btn btn-primary control-btn" onclick="doCheckHandler(true)">
+                        <i class="fa fa-trash-o"></i> 通过
+                    </button-->
                     </#resource>
                     <#resource code="notPassChargeRule">
-                    <button id="btn_check_not_pass" type="button" class="btn btn-primary control-btn" onclick="doCheckHandler(false)">
+                    <!--button id="btn_check_not_pass" type="button" class="btn btn-primary control-btn" onclick="doCheckHandler(false)">
                         <i class="fa fa-trash-o"></i> 不通过
-                    </button>
+                    </button-->
                     </#resource>
                     <#resource code="enableChargeRule">
                     <button id="btn_enable" type="button" class="btn btn-primary control-btn" onclick="doEnableHandler(true)">

@@ -13,13 +13,13 @@ import java.util.Map;
  */
 public enum RuleStateEnum {
 
-    UNAUDITED(10, "待审核"),
-    NOT_PASS(20, "未通过"),
+//    UNAUDITED(10, "待审核"),
+//    NOT_PASS(20, "未通过"),
     ENABLED(30, "已启用"),
     UN_STARTED(40, "未开始"),
     DISABLED(50, "已禁用"),
     EXPIRED(60, "已到期"),
-    OBSOLETE(70, "已作废"),
+//    OBSOLETE(70, "已作废"),
     ;
 
     RuleStateEnum(Integer code, String desc) {

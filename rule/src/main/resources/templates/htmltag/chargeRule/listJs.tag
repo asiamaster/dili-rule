@@ -88,7 +88,32 @@
             btns: []
         });
     }
-
+    function doModifyBackupHandler(){
+         //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        //table选择模式是单选时可用
+        let selectedRow = rows[0];
+        let revisable = selectedRow.revisable;
+        if (revisable != ${@com.dili.commons.glossary.YesOrNoEnum.YES.getCode()}) {
+            bs4pop.alert('此规则已存在被修改的记录，暂时不能修改', {type: 'warning'});
+            return;
+        }
+        let url = "/chargeRule/preSave.html?id=" + selectedRow.backupedRuleId;
+        dia = bs4pop.dialog({
+            title: '更新规则',
+            content: url,
+            isIframe: true,
+            closeBtn: true,
+            backdrop: 'static',
+            width: '98%',
+            height: '98%',
+            btns: []
+        });
+}
     /**
      * 删除数据列信息
      */
@@ -106,8 +131,8 @@
                 bui.loading.show('努力提交中，请稍候。。。');
                 $.ajax({
                     type: "POST",
-                    url: "${contextPath}/chargeRule/delete.action",
-                    data: {id: selectedRow.id},
+                    url: "${contextPath}/chargeRule/deleteBackupRule.action",
+                    data: {id: selectedRow.backupedRuleId},
                     processData:true,
                     dataType: "json",
                     async : true,
@@ -282,21 +307,22 @@
          * 其它状态，则不可操作以上按钮
          */
 
-        if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.UNAUDITED.getCode()}) { //待审核
-            $('.control-btn').attr('disabled', true);
-            $('#btn_check_pass').attr('disabled', false);
-            $('#btn_check_not_pass').attr('disabled', false);
-        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}) { //启用
+          if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}) { //启用
             $('.control-btn').attr('disabled', true);
             $('#btn_disable').attr('disabled', false);
         } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.DISABLED.getCode()}) {  //禁用
             $('.control-btn').attr('disabled', true);
             $('#btn_enable').attr('disabled', false);
-        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.NOT_PASS.getCode()}) {  //未通过
+        }  else {
             $('.control-btn').attr('disabled', true);
-            $('#btn_check_pass').attr('disabled', false);
-        } else {
+        }
+        if ($.type(row.backupedRuleId) !='undefined') {  
             $('.control-btn').attr('disabled', true);
+            $('#btn_delete_backup').attr('disabled', false);
+            $('#btn_edit_backup').attr('disabled', false);
+        }else{
+            $('#btn_delete_backup').attr('disabled', true);
+            $('#btn_edit_backup').attr('disabled', true);
         }
     });
 

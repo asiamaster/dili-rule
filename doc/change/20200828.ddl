@@ -31,3 +31,9 @@ ALTER TABLE `condition_definition` ADD COLUMN  `parent_column`  varchar(20) null
 
 rename table condition_data_source to data_source_definition;
 rename table datasource_query_config to data_source_query_config;
+
+
+ALTER TABLE `charge_rule` ADD COLUMN  `is_backup`  integer  default 0 comment '是否是一个后备';
+ALTER TABLE `charge_rule` ADD COLUMN  `backuped_rule_id`  bigint(20) null comment '当前规则的后备规则';
+
+ALTER TABLE `charge_rule` ADD COLUMN  `is_deleted`  integer  default 0 comment '是否删除';

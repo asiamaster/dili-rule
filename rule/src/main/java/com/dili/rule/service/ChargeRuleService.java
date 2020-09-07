@@ -37,7 +37,7 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * 根据有效期时间，变更规则的状态
      * @param rule 需要变更状态的规则
      */
-    void updateStateByExpires(ChargeRule rule,OperatorUser operatorUser);
+//    void updateStateByExpires(ChargeRule rule,OperatorUser operatorUser);
 
     /**
      * 根据有效期时间，变更规则的状态
@@ -58,7 +58,7 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * @param pass 是否通过
      * @return
      */
-    BaseOutput<Object> approve(Long id, Boolean pass);
+//    BaseOutput<Object> approve(Long id, Boolean pass);
 
     /**
      * 规则禁启用
@@ -75,7 +75,7 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * @param operatorUser 操作人信息
      * @return
      */
-    Integer obsolete(Long id, OperatorUser operatorUser);
+//    Integer obsolete(Long id, OperatorUser operatorUser);
 
     /**
      * 根据规则有效期，更改规则信息

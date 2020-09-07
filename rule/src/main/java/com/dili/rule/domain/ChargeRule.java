@@ -162,7 +162,7 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @Column(name = "`modify_time`")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Version(nextVersion = DateNextVersion.class)
+//    @Version(nextVersion = DateNextVersion.class)
     private LocalDateTime modifyTime;
 
     /**
@@ -185,6 +185,25 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime approvalTime;
 
+    /**
+     * 是否是一个后备rule
+     */
+    @Column(name = "`is_backup`")
+    private Integer isBackup;
+
+    /**
+     * 当前规则的后备规则
+     */
+    @Column(name = "`backuped_rule_id`")
+    private Long backupedRuleId;
+    
+    
+    /**
+     * 是否删除
+     */
+    @Column(name = "`is_deleted`")
+    private Integer isDeleted;
+
 //    /**
 //     * 生效时间
 //     */
@@ -198,7 +217,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
 //     */
 //    @Column(name = "`target_activate_rule_id`")
 //    private Long targetActivateRuleId;
-
     /**
      * 有效期文本
      */
@@ -573,31 +591,30 @@ public class ChargeRule extends BaseDomain implements Serializable {
     public void setActionExpressionType(Integer actionExpressionType) {
         this.actionExpressionType = actionExpressionType;
     }
-//
-//    public LocalDateTime getActivateDatetime() {
-//        return activateDatetime;
-//    }
-//
-//    public void setActivateDatetime(LocalDateTime activateDatetime) {
-//        this.activateDatetime = activateDatetime;
-//    }
-//
-//    public Long getTargetActivateRuleId() {
-//        return targetActivateRuleId;
-//    }
-//
-//    public void setTargetActivateRuleId(Long targetActivateRuleId) {
-//        this.targetActivateRuleId = targetActivateRuleId;
-//    }
 
-//    @Override
-//    public String toString() {
-//        return "ChargeRule{" + "id=" + id + ", originalId=" + originalId + ", marketId=" + marketId + ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem + ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart=" + expireStart + ", expireEnd=" + expireEnd + ", actionExpressionParams=" + actionExpressionParams + ", actionExpressionType=" + actionExpressionType + ", actionExpression=" + actionExpression + ", minPayment=" + minPayment + ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId=" + operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime=" + approvalTime + ", activateDatetime=" + activateDatetime + ", targetActivateRuleId=" + targetActivateRuleId + ", expireValue=" + expireValue + '}';
-//    }
-
-    @Override
-    public String toString() {
-        return "ChargeRule{" + "id=" + id + ", originalId=" + originalId + ", marketId=" + marketId + ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem + ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart=" + expireStart + ", expireEnd=" + expireEnd + ", actionExpressionParams=" + actionExpressionParams + ", actionExpressionType=" + actionExpressionType + ", actionExpression=" + actionExpression + ", minPayment=" + minPayment + ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId=" + operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime=" + approvalTime + ", expireValue=" + expireValue + '}';
+    public Integer getIsBackup() {
+        return isBackup;
     }
+
+    public void setIsBackup(Integer isBackup) {
+        this.isBackup = isBackup;
+    }
+
+    public Long getBackupedRuleId() {
+        return backupedRuleId;
+    }
+
+    public void setBackupedRuleId(Long backupedRuleId) {
+        this.backupedRuleId = backupedRuleId;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
 
 }

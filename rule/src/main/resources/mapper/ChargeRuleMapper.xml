@@ -74,6 +74,9 @@
       <if test="operatorId != null and operatorId !=''">
         and cr.operator_id = #{operatorId}
       </if>
+      <if test="isBackup != null">
+        and cr.is_backup = #{isBackup}
+      </if>
     </where>
   </sql>
 

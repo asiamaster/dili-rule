@@ -2,9 +2,11 @@ package com.dili.rule.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.BusinessChargeItemDto;
+import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.dto.OperatorUser;
+import com.dili.rule.domain.enums.RuleStateEnum;
 import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.service.ChargeConditionValService;
@@ -44,7 +46,8 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @RequestMapping("/chargeRule")
 public class ChargeRuleController {
-	private static final Logger log=LoggerFactory.getLogger(ChargeRuleController.class);
+
+    private static final Logger log = LoggerFactory.getLogger(ChargeRuleController.class);
 
     @Autowired
     private ChargeRuleService chargeRuleService;
@@ -59,10 +62,11 @@ public class ChargeRuleController {
 
     /**
      * 跳转到计费规则管理首页面
+     *
      * @param modelMap
      * @return String
      */
-    @RequestMapping(value="/index.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/index.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
         modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         modelMap.put("businessTypeList", getBusinessType());
@@ -71,6 +75,7 @@ public class ChargeRuleController {
 
     /**
      * 分页查询计费规则列表信息
+     *
      * @param chargeRule
      * @return
      * @throws Exception
@@ -88,6 +93,7 @@ public class ChargeRuleController {
 
     /**
      * 计费规则预编辑
+     *
      * @param chargeRule 计费规则信息
      * @param modelMap
      * @return
@@ -120,7 +126,7 @@ public class ChargeRuleController {
             if (businessChargeItemDto.isPresent()) {
                 modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
             }
-            if(StringUtils.isNotBlank(chargeRule.getActionExpressionParams())){
+            if (StringUtils.isNotBlank(chargeRule.getActionExpressionParams())) {
                 modelMap.addAttribute("actionExpressionParams", JSON.parse(chargeRule.getActionExpressionParams()));
             }
             modelMap.addAttribute("chargeRule", chargeRule);
@@ -130,6 +136,7 @@ public class ChargeRuleController {
         }
         return "chargeRule/edit";
     }
+
     /**
      * 返回当前登录用户sessionid
      *
@@ -141,42 +148,46 @@ public class ChargeRuleController {
         map.put("sessionId", request.getSession().getId());
         return map;
     }
+
     /**
      * 获取对应的规则条件值
+     *
      * @param chargeRule
      * @param modelMap
      * @return
      */
-    @RequestMapping(value = "/getRuleCondition.action", method = { RequestMethod.GET, RequestMethod.POST })
-    public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap,HttpServletRequest request) {
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule,this.getSessionIdHead(request));
+    @RequestMapping(value = "/getRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
+    public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, this.getSessionIdHead(request));
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
     }
-    
+
     /**
      * 获取对应的规则条件值
+     *
      * @param chargeRule
      * @param modelMap
      * @return
      */
-    @RequestMapping(value = "/getRuleVariable.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value = "/getRuleVariable.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule,Integer dataType, ModelMap modelMap) {
-    	List<ConditionDefinition> list = chargeConditionValService.getRuleVariable(chargeRule,ValueDataTypeEnum.fromCode(dataType));
+    public List<ConditionDefinition> getRuleVariable(ChargeRule chargeRule, Integer dataType, ModelMap modelMap) {
+        List<ConditionDefinition> list = chargeConditionValService.getRuleVariable(chargeRule, ValueDataTypeEnum.fromCode(dataType));
         return list;
     }
 
     /**
      * 保存计费规则信息
+     *
      * @param chargeRuleVo
      * @return
      */
-    @RequestMapping(value = "/save.action", method = {RequestMethod.POST })
+    @RequestMapping(value = "/save.action", method = {RequestMethod.POST})
     @ResponseBody
     public BaseOutput<ChargeRule> save(@RequestBody ChargeRuleVo chargeRuleVo) {
         try {
-            return chargeRuleService.save(chargeRuleVo,OperatorUser.fromSessionContext());
+            return chargeRuleService.save(chargeRuleVo, OperatorUser.fromSessionContext());
         } catch (IllegalArgumentException ex) {
             return BaseOutput.failure(ex.getMessage());
         } catch (Exception e) {
@@ -188,64 +199,79 @@ public class ChargeRuleController {
     /**
      * 规则审核
      *
-     * @param id   需要审核的规则ID
+     * @param id 需要审核的规则ID
      * @param pass 是否通过 true-是
      * @return
      */
-    @RequestMapping(value = "/approve.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value = "/approve.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput<Object> approve(Long id, Boolean pass) {
-        return chargeRuleService.approve(id, pass);
+//        return chargeRuleService.approve(id, pass);
+        return BaseOutput.success();
     }
 
     /**
      * 规则禁启用
      *
-     * @param id       需要禁启用的规则ID
+     * @param id 需要禁启用的规则ID
      * @param enable 是否启用 true-是
      * @return
      */
-    @RequestMapping(value = "/enable.action", method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value = "/enable.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput<Object> enable(Long id, Boolean enable) {
         return chargeRuleService.enable(id, enable);
     }
+
     /**
      * 计费规则详情查看
+     *
      * @param id 规则ID
      * @param modelMap
      * @return
      */
-    @RequestMapping(value = "/delete.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/deleteBackupRule.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput delete(Long id, ModelMap modelMap) {
+    public BaseOutput deleteBackupRule(Long id, ModelMap modelMap) {
         if (Objects.nonNull(id)) {
             ChargeRule item = chargeRuleService.get(id);
-            if(item!=null){
-                this.chargeRuleService.delete(item.getId());
+            if (item != null && YesOrNoEnum.YES.getCode().equals(item.getIsBackup())) {
+                if (RuleStateEnum.UN_STARTED.getCode().equals(item.getState())) {
+
+                    item.setIsDeleted(YesOrNoEnum.YES.getCode());
+                    this.chargeRuleService.update(item);
+                }
+                ChargeRule query = new ChargeRule();
+                query.setBackupedRuleId(id);
+                this.chargeRuleService.listByExample(query).stream().findFirst().ifPresent(rule -> {
+                    rule.setBackupedRuleId(null);
+                    this.chargeRuleService.update(rule);
+                });
+
             }
-           
+
         }
         return BaseOutput.success();
     }
 
     /**
      * 查看详情-获取对应的规则条件值
+     *
      * @param chargeRule
      * @param modelMap
      * @return
      */
-    @RequestMapping(value = "/viewRuleCondition.action", method = { RequestMethod.GET, RequestMethod.POST })
-    public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap,HttpServletRequest request) {
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule,this.getSessionIdHead(request));
+    @RequestMapping(value = "/viewRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
+    public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, this.getSessionIdHead(request));
         modelMap.addAllAttributes(map);
         return "chargeRule/viewCondition";
     }
 
-
     /**
      * 规则优先级调整
-     * @param id      需要调整的规则ID
+     *
+     * @param id 需要调整的规则ID
      * @param enlarge 是否调升 true-是
      * @return
      */
@@ -264,6 +290,7 @@ public class ChargeRuleController {
 
     /**
      * 获取费用业务类型
+     *
      * @return
      */
     private List<DataDictionaryValue> getBusinessType() {

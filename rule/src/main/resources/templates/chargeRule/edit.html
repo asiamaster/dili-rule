@@ -37,6 +37,10 @@
                 <label for="maxPayment">最高支付金额</label>
                 <input type="" class="form-control floatReserve" id="maxPayment" name="maxPayment" placeholder="" value="${chargeRule.maxPayment!}" range="0 999999.99">
             </div>
+            <div class="form-group col">
+                <label for="maxPayment">定时生效</label>
+                <input type="checkbox" class="form-control" id="isBackup" name="isBackup" placeholder="" value="1" <%if(chargeRule.isBackup==1){%>checked<%}%>  <%if(chargeRule.id==null||chargeRule.isBackup==1){%>disabled<%}%>   >
+            </div>
             <div class="form-group col-auto">
                 <label for="expireStart">有效期<i class="red">*</i></label>
                 <div class="form-inline">
@@ -176,10 +180,10 @@
                 $('select[name="actionExpressionType"]').change(function () {
                     $('input[name="actionExpression"]').val('');
                     $('input[name="expressionInput"]').val('');
-                    if ($(this).val() === '1') {
+                    if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
                         $('#simpleExpressionDiv').show();
                         $('#complexsimpleExpressionDiv').hide();
-                    } else if ($(this).val() === '2') {
+                    } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
                         $('#simpleExpressionDiv').hide();
                         $('#complexsimpleExpressionDiv').show();
                     }

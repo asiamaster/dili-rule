@@ -53,6 +53,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import one.util.streamex.StreamEx;
 
 /**
  * <B></B> <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其研发团队所有,未经许可不得任意复制与传播.</B>
@@ -87,6 +88,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         if (StringUtils.isNotBlank(chargeRule.getSort())) {
             chargeRule.setSort(POJOUtils.humpToLineFast(chargeRule.getSort()));
         }
+        chargeRule.setIsBackup(YesOrNoEnum.NO.getCode());
+        chargeRule.setIsDeleted(YesOrNoEnum.NO.getCode());
         List<ChargeRuleVo> chargeRuleVoList = getActualMapper().listForPage(chargeRule);
         long total = chargeRuleVoList instanceof Page ? ((Page) chargeRuleVoList).getTotal()
                 : (long) chargeRuleVoList.size();
@@ -118,71 +121,60 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
             }
         }
-        this.chargeRuleExpiresScheduler.checkRuleStateEnum(temp.getId()).map(updatableItem -> {
-            int v = this.updateSelective(updatableItem);
-            return temp.getId();
-        }).orElseGet(() -> {
-            return this.chargeRuleExpiresScheduler.queryAndScheduleUpdateRuleStatusById(chargeRuleVo.getId())
-                    .map(ChargeRule::getId).orElse(null);
-        });
+
+        if (YesOrNoEnum.YES.getCode().equals(temp.getIsBackup())) {
+
+            ChargeRule queryMain = new ChargeRule();
+            queryMain.setBackupedRuleId(temp.getId());
+            this.checkAndUpdateRuleStatus(StreamEx.of(super.listByExample(queryMain)).findFirst().orElse(null), temp);
+        } else {
+            this.checkAndUpdateRuleStatus(temp, null);
+        }
 
         return BaseOutput.success().setData(temp);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateStateByExpires(ChargeRule rule, OperatorUser operatorUser) {
-        if (null != rule && rule.getId() != null) {
-            Long id = rule.getId();
-            // 是否需要更改数据
-            Boolean flag = false;
-            /**
-             * 如果规则的开始时间已早于当前时间，而状态还是未开始状态的话，那需要更新状态
-             */
-            if (rule.getExpireStart().isBefore(LocalDateTime.now())
-                    && rule.getState().equals(RuleStateEnum.UN_STARTED.getCode())) {
-                rule.setState(RuleStateEnum.ENABLED.getCode());
-                flag = true;
-                // 此条规则生效，需判断是否有原规则，如果有，需解除关系，并作废原规则
-                if (null != rule.getOriginalId()) {
-                    // 作废原规则
-                    obsolete(rule.getOriginalId(), operatorUser);
-                    rule.setOriginalId(null);
+    private void checkAndUpdateRuleStatus(ChargeRule rule, ChargeRule backupRule) {
+        if (backupRule != null) {
+                this.chargeRuleExpiresScheduler.checkRuleStateEnum(backupRule.getId()).map(updatableItem -> {
+                updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
+                if(RuleStateEnum.ENABLED.getCode().equals(updatableItem.getState())||RuleStateEnum.EXPIRED.getCode().equals(updatableItem.getState())){
+                    rule.setIsDeleted(YesOrNoEnum.YES.getCode());
+                    this.update(rule);
                 }
-            }
-            /**
-             * 如果规则的结束时间已早于当前时间，而状态是已启用、待审核的 话，那需要更新状态
-             */
-            if (rule.getExpireEnd().isBefore(LocalDateTime.now())
-                    && (rule.getState().equals(RuleStateEnum.UNAUDITED.getCode())
-                            || rule.getState().equals(RuleStateEnum.ENABLED.getCode()))) {
-                rule.setState(RuleStateEnum.EXPIRED.getCode());
-                flag = true;
-                if (null != rule.getOriginalId()) {
-//                    ChargeRule old = new ChargeRule();
-//                    old.setId(rule.getOriginalId());
-//                    old.setRevisable(YesOrNoEnum.YES.getCode());
-//                    this.updateSelective(old);
-                    rule.setOriginalId(null);
-                }
-            }
-            if (flag) {
-                Example example = new Example(ChargeRule.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("id", id);
-                if (null != rule.getModifyTime()) {
-                    criteria.andEqualTo("modifyTime", rule.getModifyTime());
-                }
-                rule.setModifyTime(LocalDateTime.now());
-                getActualMapper().updateByExample(rule, example);
-            }
+                int v = this.updateSelective(updatableItem);
+                return backupRule.getId();
+            }).orElseGet(() -> {
+                return this.chargeRuleExpiresScheduler.queryAndScheduleUpdateRuleStatusById(backupRule.getId())
+                        .map(ChargeRule::getId).orElse(null);
+            });
+
+        } else {
+            this.chargeRuleExpiresScheduler.checkRuleStateEnum(rule.getId()).map(updatableItem -> {
+//                updatableItem.setModifyTime(this.get(updatableItem.getId()).getModifyTime());
+                int v = this.updateSelective(updatableItem);
+                return rule.getId();
+            }).orElseGet(() -> {
+                return this.chargeRuleExpiresScheduler.queryAndScheduleUpdateRuleStatusById(rule.getId())
+                        .map(ChargeRule::getId).orElse(null);
+            });
+
         }
+
     }
 
     @Override
     public void updateStateByExpires(Long id, OperatorUser operatorUser) {
-        ChargeRule rule = this.get(id);
-        this.updateStateByExpires(rule, operatorUser);
+        ChargeRule temp = this.get(id);
+
+        if (YesOrNoEnum.YES.getCode().equals(temp.getIsBackup())) {
+
+            ChargeRule queryMain = new ChargeRule();
+            queryMain.setBackupedRuleId(temp.getId());
+            this.checkAndUpdateRuleStatus(StreamEx.of(super.listByExample(queryMain)).findFirst().orElse(null), temp);
+        } else {
+            this.checkAndUpdateRuleStatus(temp, null);
+        }
     }
 
     @Override
@@ -194,6 +186,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         queryCondition.setSort("group_id,priority,modifyTime,createTime");
         queryCondition.setOrder("DESC,DESC,DESC,DESC");
         queryCondition.setState(RuleStateEnum.ENABLED.getCode());
+        queryCondition.setIsDeleted(YesOrNoEnum.NO.getCode());
         List<ChargeRule> chargeRuleList = this.listByExample(queryCondition);
         // 返回对象
         QueryFeeOutput result = new QueryFeeOutput();
@@ -240,32 +233,31 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         return result;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public BaseOutput<Object> approve(Long id, Boolean pass) {
-        ChargeRule rule = this.get(id);
-        if (null == rule) {
-            return BaseOutput.failure("规则不存在");
-        }
-        if (!RuleStateEnum.UNAUDITED.getCode().equals(rule.getState())
-                && !RuleStateEnum.NOT_PASS.getCode().equals(rule.getState())) {
-            return BaseOutput.failure("状态已变更，不能进行此操作");
-        }
-        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        rule.setOperatorId(userTicket.getId());
-        rule.setOperatorName(userTicket.getRealName());
-        rule.setApproverId(userTicket.getId());
-        rule.setApproverName(userTicket.getRealName());
-        rule.setApprovalTime(LocalDateTime.now());
-        if (pass) {
-            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
-        } else {
-            rule.setState(RuleStateEnum.NOT_PASS.getCode());
-        }
-        this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
-        return BaseOutput.success();
-    }
-
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public BaseOutput<Object> approve(Long id, Boolean pass) {
+//        ChargeRule rule = this.get(id);
+//        if (null == rule) {
+//            return BaseOutput.failure("规则不存在");
+//        }
+//        if (!RuleStateEnum.UNAUDITED.getCode().equals(rule.getState())
+//                && !RuleStateEnum.NOT_PASS.getCode().equals(rule.getState())) {
+//            return BaseOutput.failure("状态已变更，不能进行此操作");
+//        }
+//        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+//        rule.setOperatorId(userTicket.getId());
+//        rule.setOperatorName(userTicket.getRealName());
+//        rule.setApproverId(userTicket.getId());
+//        rule.setApproverName(userTicket.getRealName());
+//        rule.setApprovalTime(LocalDateTime.now());
+//        if (pass) {
+//            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
+//        } else {
+//            rule.setState(RuleStateEnum.NOT_PASS.getCode());
+//        }
+//        this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
+//        return BaseOutput.success();
+//    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public BaseOutput<Object> enable(Long id, Boolean enable) {
@@ -281,42 +273,53 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             if (!allowedStatus.contains(rule.getState())) {
                 return BaseOutput.failure("状态已变更，不能进行此操作");
             }
-            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
+
+//            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
         } else {
             List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.ENABLED.getCode(),
                     RuleStateEnum.UN_STARTED.getCode());
             if (!allowedStatus.contains(rule.getState())) {
                 return BaseOutput.failure("状态已变更，不能进行此操作");
             }
-            rule.setState(this.calculateRuleState(rule, RuleStateEnum.DISABLED).getCode());
+//            rule.setState(this.calculateRuleState(rule, RuleStateEnum.DISABLED).getCode());
         }
         this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
+        this.chargeRuleExpiresScheduler.checkRuleStateEnum(rule.getId()).map(updatableItem -> {
+
+//                updatableItem.setModifyTime(this.get(updatableItem.getId()).getModifyTime());
+            int v = this.updateSelective(updatableItem);
+
+            return rule.getId();
+        }).orElseGet(() -> {
+            return this.chargeRuleExpiresScheduler.queryAndScheduleUpdateRuleStatusById(rule.getId())
+                    .map(ChargeRule::getId).orElse(null);
+        });
+
         return BaseOutput.success();
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Integer obsolete(Long id, OperatorUser operatorUser) {
-        ChargeRule item = this.get(id);
-        if (item == null) {
-            return 0;
-        }
-        ChargeRule rule = new ChargeRule();
-        rule.setId(id);
-        rule.setModifyTime(item.getModifyTime());
-        rule.setState(RuleStateEnum.OBSOLETE.getCode());
-        rule.setOperatorId(operatorUser.getUserId());
-        rule.setOperatorName(operatorUser.getUserName());
-        rule.setRevisable(YesOrNoEnum.YES.getCode());
-        return this.updateSelective(rule);
-    }
-
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public Integer obsolete(Long id, OperatorUser operatorUser) {
+//        ChargeRule item = this.get(id);
+//        if (item == null) {
+//            return 0;
+//        }
+//        ChargeRule rule = new ChargeRule();
+//        rule.setId(id);
+//        rule.setModifyTime(item.getModifyTime());
+//        rule.setState(RuleStateEnum.OBSOLETE.getCode());
+//        rule.setOperatorId(operatorUser.getUserId());
+//        rule.setOperatorName(operatorUser.getUserName());
+//        rule.setRevisable(YesOrNoEnum.YES.getCode());
+//        return this.updateSelective(rule);
+//    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer updateRuleInfoWithExpire(ChargeRule ruleInfo, OperatorUser operatorUser) {
         if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
             // 作废原规则
-            obsolete(ruleInfo.getOriginalId(), operatorUser);
+//            obsolete(ruleInfo.getOriginalId(), operatorUser);
             ruleInfo.setOriginalId(null);
         }
         super.updateSelective(ruleInfo);
@@ -379,21 +382,43 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param inputRuleInfo
      * @return
      */
-    private ChargeRule saveOrUpdateRuleInfo(ChargeRule inputRuleInfo, OperatorUser operatorUser) {
-        if (null == inputRuleInfo.getId()) {
-            if (this.isExistsSameRuleName(inputRuleInfo)) {
+    private ChargeRule saveOrUpdateRuleInfo(ChargeRule input, OperatorUser operatorUser) {
+        if (null == input.getId()) {
+            if (this.isExistsSameRuleName(input)) {
                 throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             // 插入新的记录
-            getActualMapper().insertBy(inputRuleInfo);
-            return inputRuleInfo;
+            getActualMapper().insertBy(input);
+            return input;
         } else {
-            ChargeRule old = this.get(inputRuleInfo.getId());
-            if (YesOrNoEnum.NO.getCode().equals(old.getRevisable())) {
-                throw new IllegalArgumentException("此规则已存在被修改的记录，暂时不能修改");
-            }
+            ChargeRule item = this.get(input.getId());
+//            if (YesOrNoEnum.NO.getCode().equals(item.getRevisable())) {
+//                throw new IllegalArgumentException("此规则已存在被修改的记录，暂时不能修改");
+//            }
             // 修改原记录的状态并新增一条 或者更新
-            return this.createRuleForRevisable(inputRuleInfo, old, operatorUser);
+//            return this.createRuleForRevisable(inputRuleInfo, item, operatorUser);
+
+            if (item.getIsBackup().equals(YesOrNoEnum.NO.getCode())) {
+                if (YesOrNoEnum.YES.getCode().equals(input.getIsBackup())) {
+
+                    input.setId(null);
+                    input.setCreateTime(LocalDateTime.now());
+                    input.setModifyTime(LocalDateTime.now());
+                    this.insert(input);
+                    item.setBackupedRuleId(input.getId());
+                    this.update(item);
+                } else {
+                    //                inputRuleInfo.setModifyTime(old.getModifyTime());
+                    input.setIsBackup(item.getIsBackup());
+                    this.update(input);
+                }
+
+            } else if (YesOrNoEnum.YES.getCode().equals(item.getIsBackup())) {
+//            inputRuleInfo.setModifyTime(old.getModifyTime());
+                input.setIsBackup(item.getIsBackup());
+                this.update(input);
+            }
+            return input;
         }
     }
 
@@ -404,28 +429,33 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param old
      * @return
      */
-    private ChargeRule createRuleForRevisable(ChargeRule inputRuleInfo, ChargeRule old, OperatorUser operatorUser) {
-        /*
-         * if (RuleStateEnum.ENABLED.getCode().equals(old.getState())) {
-         * inputRuleInfo.setOriginalId(old.getId()); inputRuleInfo.setId(null);
-         * 
-         * if (this.isExistsSameRuleName(inputRuleInfo)) { throw new
-         * IllegalArgumentException("已存在规则名称相同的记录"); } // 插入一条新的RuleInfo
-         * getActualMapper().insertBy(inputRuleInfo);
-         * old.setRevisable(YesOrNoEnum.NO.getCode()); // 更改原来数据的状态
-         * this.updateRuleInfoWithExpire(old,operatorUser); } else { if
-         * (this.isExistsSameRuleName(inputRuleInfo)) { throw new
-         * IllegalArgumentException("已存在规则名称相同的记录"); }
-         */
-        inputRuleInfo.setModifyTime(old.getModifyTime());
-        this.update(inputRuleInfo);
-        // }
-        return inputRuleInfo;
-    }
-
+//    private ChargeRule createRuleForRevisable(ChargeRule input, ChargeRule item, OperatorUser operatorUser) {
+//
+//        if (item.getIsBackup().equals(YesOrNoEnum.NO.getCode())) {
+//            if (YesOrNoEnum.YES.getCode().equals(input.getIsBackup())) {
+//
+//                input.setId(null);
+//                input.setCreateTime(LocalDateTime.now());
+//                input.setModifyTime(LocalDateTime.now());
+//                this.insert(input);
+//                item.setBackupedRuleId(input.getId());
+//                this.update(item);
+//            } else {
+//                //                inputRuleInfo.setModifyTime(old.getModifyTime());
+//                input.setIsBackup(item.getIsBackup());
+//                this.update(input);
+//            }
+//
+//        } else if (YesOrNoEnum.YES.getCode().equals(item.getIsBackup())) {
+////            inputRuleInfo.setModifyTime(old.getModifyTime());
+//            input.setIsBackup(item.getIsBackup());
+//            this.update(input);
+//        }
+//        return input;
+//    }
     /**
      * 组装规则条件信息
-     * 
+     *
      * @param rule
      * @param vo
      * @return
@@ -480,10 +510,10 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 .count();
         return sameNameCount > 0;
     }
-    
+
     /**
      * 根据规则信息，计算费用
-     * 
+     *
      * @param ruleInfo
      * @param calcParams
      * @return 计算后的结果值
@@ -495,70 +525,74 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         if (ActionExpressionTypeEnum.COMPLEX.equalsToCode(ruleInfo.getActionExpressionType())) {
             Map<String, Object> actionExpressionParams = (Map<String, Object>) JSON
                     .parse(ruleInfo.getActionExpressionParams());
-                    String matchKey= (String) actionExpressionParams.get("_start");
-                    String _first_tiered_period= (String) actionExpressionParams.get("_first_tiered_period");
-                    String _first_tiered_fee= (String) actionExpressionParams.get("_first_tiered_fee");
-                    String _second_tiered_period= (String) actionExpressionParams.get("_second_tiered_period");
-                    String _second_tiered_fee= (String) actionExpressionParams.get("_second_tiered_fee");
-                    String startValue=String.valueOf(calcParams.get(matchKey));
+            String matchKey = (String) actionExpressionParams.get("_start");
+            String _first_tiered_period = (String) actionExpressionParams.get("_first_tiered_period");
+            String _first_tiered_fee = (String) actionExpressionParams.get("_first_tiered_fee");
+            String _second_tiered_period = (String) actionExpressionParams.get("_second_tiered_period");
+            String _second_tiered_fee = (String) actionExpressionParams.get("_second_tiered_fee");
+            String startValue = String.valueOf(calcParams.get(matchKey));
 
-                    expression.setVariable("_first_tiered_period",_first_tiered_period);
-                    expression.setVariable("_first_tiered_fee",_first_tiered_fee);
-                    expression.setVariable("_second_tiered_period",_second_tiered_period);
-                    expression.setVariable("_second_tiered_fee",_second_tiered_fee);
+            expression.setVariable("_first_tiered_period", _first_tiered_period);
+            expression.setVariable("_first_tiered_fee", _first_tiered_fee);
+            expression.setVariable("_second_tiered_period", _second_tiered_period);
+            expression.setVariable("_second_tiered_fee", _second_tiered_fee);
 
-                    //增加自定义分钟函数
-                    expression.addLazyFunction(new AbstractLazyFunction("diffMinute", 2) {
-                        @Override
-                        public LazyNumber lazyEval(List<LazyNumber> lazyParams) {
-                   
-                            LocalDateTime firstArg = 
-                            LocalDateTime.ofEpochSecond(lazyParams.get(0).eval().longValue(),0,OffsetDateTime.now().getOffset());
-                            LocalDateTime secondArg = LocalDateTime.ofEpochSecond(lazyParams.get(1).eval().longValue(),0,OffsetDateTime.now().getOffset());
-                            long minutes = Duration.between(firstArg, secondArg).toMinutes();
-                            // System.out.println(firstArg.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                            // System.out.println(secondArg.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            
-                            // System.out.println(minutes);
-                            return new LazyNumber() {
-                                public BigDecimal eval() {
-                                    return new BigDecimal(minutes);
-                                }
-            
-                                public String getString() {
-                                    return String.valueOf(minutes);
-                                }
-                            };
-                        }
-            
-                    });
-                    //增加内部开始时间变量
-                    expression.with("_start", new LazyNumber() {
-                        LocalDateTime obj = LocalDateTime.parse(startValue,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            //增加自定义分钟函数
+            expression.addLazyFunction(new AbstractLazyFunction("diffMinute", 2) {
+                @Override
+                public LazyNumber lazyEval(List<LazyNumber> lazyParams) {
+
+                    LocalDateTime firstArg
+                            = LocalDateTime.ofEpochSecond(lazyParams.get(0).eval().longValue(), 0, OffsetDateTime.now().getOffset());
+                    LocalDateTime secondArg = LocalDateTime.ofEpochSecond(lazyParams.get(1).eval().longValue(), 0, OffsetDateTime.now().getOffset());
+                    long minutes = Duration.between(firstArg, secondArg).toMinutes();
+                    // System.out.println(firstArg.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    // System.out.println(secondArg.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+                    // System.out.println(minutes);
+                    return new LazyNumber() {
                         public BigDecimal eval() {
-                            return new BigDecimal(obj.atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli()).divide(new BigDecimal(1000));
+                            return new BigDecimal(minutes);
                         }
+
                         public String getString() {
-                            return startValue;
+                            return String.valueOf(minutes);
                         }
-                    });
-                    //增加内部now()函数
-                    expression.addLazyFunction(new AbstractLazyFunction("now", 0) {
-                        LocalDateTime now = LocalDateTime.now();
-                        @Override
-                        public LazyNumber lazyEval(List<LazyNumber> lazyParams) {
-                            return new LazyNumber() {
-                                public BigDecimal eval() {
-                                    return new BigDecimal(now.atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli()).divide(new BigDecimal(1000));
-                                }
-                                public String getString() {
-                                    return String.valueOf(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                                }
-                            };
+                    };
+                }
+
+            });
+            //增加内部开始时间变量
+            expression.with("_start", new LazyNumber() {
+                LocalDateTime obj = LocalDateTime.parse(startValue,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+                public BigDecimal eval() {
+                    return new BigDecimal(obj.atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli()).divide(new BigDecimal(1000));
+                }
+
+                public String getString() {
+                    return startValue;
+                }
+            });
+            //增加内部now()函数
+            expression.addLazyFunction(new AbstractLazyFunction("now", 0) {
+                LocalDateTime now = LocalDateTime.now();
+
+                @Override
+                public LazyNumber lazyEval(List<LazyNumber> lazyParams) {
+                    return new LazyNumber() {
+                        public BigDecimal eval() {
+                            return new BigDecimal(now.atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli()).divide(new BigDecimal(1000));
                         }
-            
-                    });
+
+                        public String getString() {
+                            return String.valueOf(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                        }
+                    };
+                }
+
+            });
         } else {
             for (String var : expression.getUsedVariables()) {
                 if (calcParams.containsKey(var)) {
@@ -588,39 +622,37 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     /**
      * 基于当前的状态和时间范围 及期望的状态值,来计算最终可用状态
      *
-     * @param ruleInfo      规则信息
+     * @param ruleInfo 规则信息
      * @param expectedState 预期的下一个状态
      * @return 最终的状态
      */
-    private RuleStateEnum calculateRuleState(ChargeRule ruleInfo, RuleStateEnum expectedState) {
-        LocalDateTime start = ruleInfo.getExpireStart();
-        LocalDateTime end = ruleInfo.getExpireEnd();
-        LocalDateTime now = LocalDateTime.now();
-        // 规则目前的状态
-        Integer originalState = ruleInfo.getState();
-        /**
-         * 期望下一个状态为启用
-         */
-        if (RuleStateEnum.ENABLED == expectedState) {
-            // 当前值为待审核时
-            if (RuleStateEnum.UNAUDITED.getCode().equals(originalState)) {
-                if (end.isBefore(now)) {
-                    return RuleStateEnum.EXPIRED;
-                } else if (start.isAfter(now)) {
-                    return RuleStateEnum.UN_STARTED;
-                } else {
-                    return RuleStateEnum.ENABLED;
-                }
-            } else if (RuleStateEnum.DISABLED.getCode().equals(originalState)) {
-                if (end.isBefore(now)) {
-                    return RuleStateEnum.EXPIRED;
-                } else if (start.isAfter(now)) {
-                    return RuleStateEnum.UN_STARTED;
-                } else {
-                    return RuleStateEnum.ENABLED;
-                }
-            }
-        }
-        return expectedState;
-    }
+//    private RuleStateEnum calculateRuleState(ChargeRule ruleInfo, RuleStateEnum expectedState) {
+//        LocalDateTime start = ruleInfo.getExpireStart();
+//        LocalDateTime end = ruleInfo.getExpireEnd();
+//        LocalDateTime now = LocalDateTime.now();
+//        // 规则目前的状态
+//        Integer originalState = ruleInfo.getState();
+//
+//        if (RuleStateEnum.ENABLED == expectedState) {
+//            // 当前值为待审核时
+//            if (RuleStateEnum.UNAUDITED.getCode().equals(originalState)) {
+//                if (end.isBefore(now)) {
+//                    return RuleStateEnum.EXPIRED;
+//                } else if (start.isAfter(now)) {
+//                    return RuleStateEnum.UN_STARTED;
+//                } else {
+//                    return RuleStateEnum.ENABLED;
+//                }
+//            } else if (RuleStateEnum.DISABLED.getCode().equals(originalState)) {
+//                if (end.isBefore(now)) {
+//                    return RuleStateEnum.EXPIRED;
+//                } else if (start.isAfter(now)) {
+//                    return RuleStateEnum.UN_STARTED;
+//                } else {
+//                    return RuleStateEnum.ENABLED;
+//                }
+//            }
+//        }
+//        return expectedState;
+//    }
 }

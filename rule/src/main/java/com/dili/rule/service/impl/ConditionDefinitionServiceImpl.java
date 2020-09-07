@@ -61,7 +61,7 @@ public class ConditionDefinitionServiceImpl extends BaseServiceImpl<ConditionDef
             if (isExistsSameMatchKey(conditionDefinition)) {
                 return BaseOutput.failure("在本业务对应的规则定义中，已存在相同指标的相同匹配key");
             }
-            saveOrUpdate(conditionDefinition);
+            super.saveOrUpdate(conditionDefinition);
             return BaseOutput.success();
         }
         return BaseOutput.failure("参数丢失");
