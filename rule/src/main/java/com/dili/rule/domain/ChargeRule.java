@@ -616,5 +616,10 @@ public class ChargeRule extends BaseDomain implements Serializable {
         this.isDeleted = isDeleted;
     }
 
+    @Override
+    public String toString() {
+        return "ChargeRule{" + "id=" + id + ", originalId=" + originalId + ", marketId=" + marketId + ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem + ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart=" + expireStart + ", expireEnd=" + expireEnd + ", actionExpressionParams=" + actionExpressionParams + ", actionExpressionType=" + actionExpressionType + ", actionExpression=" + actionExpression + ", minPayment=" + minPayment + ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId=" + operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime=" + approvalTime + ", isBackup=" + isBackup + ", backupedRuleId=" + backupedRuleId + ", isDeleted=" + isDeleted + ", expireValue=" + expireValue + '}';
+    }
+
 
 }
