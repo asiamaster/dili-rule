@@ -192,7 +192,7 @@
             sort: params.sort,
             order: params.order
         };
-        return $.extend(temp, bui.util.bindGridMeta2Form('dataSourceDefinitionGrid', dataSourceDefinitionQueryForm'));
+        return $.extend(temp, bui.util.bindGridMeta2Form('dataSourceDefinitionGrid', 'dataSourceDefinitionQueryForm'));
     }
 
     /*****************************************函数区 end**************************************/
