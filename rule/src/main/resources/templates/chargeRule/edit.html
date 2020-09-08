@@ -1,5 +1,9 @@
 <#bs4Body>
-
+<style>
+    .invalid-feedback {
+        width: auto;
+    }
+</style>
 <div class="container-fluid">
     <%if (has(chargeRule)){%>
     <form id="addForm" role="form" novalidate>
@@ -150,6 +154,8 @@
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2-exd.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/bui/lib/jquery-validation-1.19.1/jquery.validate-extend.js"></script>
+
 <#chargeRule_editJs />
 <script>
                 $.prototype.tooltip = (function (tooltip) {

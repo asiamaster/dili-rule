@@ -111,16 +111,19 @@ function isStartEndDatetime (el, value){
 }
 /************ 初始化日期/时间 end **************/
 
+/*展开收起*/
+$(document).on('hide.bs.collapse', 'form .collapse', function () {
+    let id = $(this).attr('id');
+    $('[data-target="#'+ id +'"]').html('展开 <i class="fa fa-angle-double-down" aria-hidden="true"></i>');
+});
+$(document).on('show.bs.collapse', 'form .collapse', function () {
+    debugger
+    let id = $(this).attr('id');
+    $('[data-target="#'+ id +'"]').html('收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i>');
+});
 
-/*气泡
-function formatterTooltip (value,row,index){
-    let temp = '<span data-toggle="tooltip" data-placement="top" title=' + value + '>' + value + '</span>';
-    return temp;
-}
-$(function () {
-    $('[data-toggle="tooltip"]').tooltip("show")
-})
-*/
+
+
 
 /************ 初始化日期/时间 end **************/
 
