@@ -54,6 +54,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import one.util.streamex.StreamEx;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * <B></B> <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其研发团队所有,未经许可不得任意复制与传播.</B>
@@ -136,9 +137,9 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 
     private void checkAndUpdateRuleStatus(ChargeRule rule, ChargeRule backupRule) {
         if (backupRule != null) {
-                this.chargeRuleExpiresScheduler.checkRuleStateEnum(backupRule.getId()).map(updatableItem -> {
+            this.chargeRuleExpiresScheduler.checkRuleStateEnum(backupRule.getId()).map(updatableItem -> {
                 updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
-                if(RuleStateEnum.ENABLED.getCode().equals(updatableItem.getState())||RuleStateEnum.EXPIRED.getCode().equals(updatableItem.getState())){
+                if (RuleStateEnum.ENABLED.getCode().equals(updatableItem.getState()) || RuleStateEnum.EXPIRED.getCode().equals(updatableItem.getState())) {
                     rule.setIsDeleted(YesOrNoEnum.YES.getCode());
                     this.update(rule);
                 }
@@ -617,6 +618,28 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     expression.toString(), e.getMessage()), e);
             throw new BusinessException("1", "根据规则及参数计算费用异常");
         }
+    }
+
+    /**
+     * 更新groupid
+     *
+     * @param ruleId
+     * @param groupId
+     */
+    @Override
+    public BaseOutput updateGroupId(Long ruleId, Long groupId) {
+        if (ruleId == null || groupId == null) {
+            return BaseOutput.failure("参数错误");
+        }
+        ChargeRule item = super.get(ruleId);
+        if (item == null) {
+            return BaseOutput.failure("数据不存在");
+        }
+
+        item.setGroupId(groupId);
+        this.update(item);
+        return BaseOutput.success();
+
     }
 
     /**

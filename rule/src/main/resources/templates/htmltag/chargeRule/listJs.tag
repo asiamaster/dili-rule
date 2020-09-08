@@ -272,6 +272,37 @@
     }
 
     /**
+    更新groupid
+    */
+
+    function updateGroupId(ruleId,groupId){
+        bui.loading.show('努力提交中，请稍候。。。');
+        $.ajax({
+            contentType: 'application/json',
+            type: "POST",
+            url: "${contextPath}/chargeRule/updateGroupId.action",
+            data: JSON.stringify({id: ruleId, groupId: groupId}),
+            processData:true,
+            dataType: "json",
+            async : true,
+            success : function(ret) {
+                bui.loading.hide();
+                if(ret.success){
+                    queryDataHandler();
+                }else{
+                    bs4pop.alert(ret.result, {type: 'error'});
+                }
+            },
+            error : function() {
+                bui.loading.hide();
+                bs4pop.alert('远程访问失败', {type: 'error'});
+            }
+        });
+
+
+    }
+
+    /**
      * table参数组装
      * 可修改queryParams向服务器发送其余的参数
      * @param params
@@ -291,6 +322,37 @@
     //选中行事件
     _dataGrid.on('uncheck.bs.table', function (e, row, $element) {
         currentSelectRowIndex = undefined;
+    });
+    _dataGrid.on('dbl-click-cell.bs.table', function (e, field, value, row, $element) {
+    
+            if('groupId'!==field){
+                return;
+            }
+            var ruleId=row.id;
+            
+            $element.attr('contenteditable', true);
+            $element.focus()
+            $element.one("blur", function(ev){
+                let index = $element.parent().data('index');
+                let tdValue = $element.html();
+                $('#chargeRuleGrid').bootstrapTable('updateCell', {
+                     index: index,       //行索引
+                     field: field,       //列名
+                     value: tdValue        //cell值
+                });
+              
+                updateGroupId(ruleId,tdValue);
+                $element.removeAttr('contenteditable', true);
+              });
+            $element.keypress(function(e){
+                if(e.keyCode>=48&&e.keyCode<=57){
+                    return true;
+                }
+                if(e.keyCode==13){
+                       $element.trigger('blur')
+                }
+                return false;
+            });
     });
 
 

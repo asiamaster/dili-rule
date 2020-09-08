@@ -21,6 +21,7 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
 
     /**
      * 分页查询计费规则数据
+     *
      * @param chargeRule
      * @return
      */
@@ -28,25 +29,28 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
 
     /**
      * 保存规则数据信息
+     *
      * @param chargeRuleVo
      * @return
      */
-    BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo,OperatorUser operatorUser);
+    BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo, OperatorUser operatorUser);
 
     /**
      * 根据有效期时间，变更规则的状态
+     *
      * @param rule 需要变更状态的规则
      */
 //    void updateStateByExpires(ChargeRule rule,OperatorUser operatorUser);
-
     /**
      * 根据有效期时间，变更规则的状态
+     *
      * @param id 需要变更状态的规则ID
      */
-    void updateStateByExpires(Long id,OperatorUser operatorUser);
+    void updateStateByExpires(Long id, OperatorUser operatorUser);
 
     /**
      * 根据条件查询规则并计算费用
+     *
      * @param queryFeeInput
      * @return 费用计算结果
      */
@@ -54,31 +58,32 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
 
     /**
      * 规则审核结果
-     * @param id   需要审核的规则ID
+     *
+     * @param id 需要审核的规则ID
      * @param pass 是否通过
      * @return
      */
 //    BaseOutput<Object> approve(Long id, Boolean pass);
-
     /**
      * 规则禁启用
-     * @param id       需要禁启用的规则ID
+     *
+     * @param id 需要禁启用的规则ID
      * @param enable 是否启用
      * @return
      */
     BaseOutput<Object> enable(Long id, Boolean enable);
 
-
     /**
      * 作废某条规则
+     *
      * @param id 规则ID
      * @param operatorUser 操作人信息
      * @return
      */
 //    Integer obsolete(Long id, OperatorUser operatorUser);
-
     /**
      * 根据规则有效期，更改规则信息
+     *
      * @param ruleInfo
      * @return
      */
@@ -86,6 +91,7 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
 
     /**
      * 扩大优先级
+     *
      * @param id 需要扩大优先级的数据ID
      * @return 是否成功
      */
@@ -93,9 +99,17 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
 
     /**
      * 缩小优先级
+     *
      * @param id 需要缩小优先级的数据ID
      * @return 是否成功
      */
     BaseOutput<Boolean> reducePriority(long id);
 
+    /**
+     * 更新groupid
+     *
+     * @param ruleId
+     * @param groupId
+     */
+    BaseOutput updateGroupId(Long ruleId, Long groupId);
 }

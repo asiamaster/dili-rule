@@ -289,6 +289,17 @@ public class ChargeRuleController {
     }
 
     /**
+     * 更新groupid
+     *
+     * @return
+     */
+    @RequestMapping(value = "/updateGroupId.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput updateGroupId(@RequestBody ChargeRule chargeRule) {
+        return this.chargeRuleService.updateGroupId(chargeRule.getId(), chargeRule.getGroupId());
+    }
+
+    /**
      * 获取费用业务类型
      *
      * @return
