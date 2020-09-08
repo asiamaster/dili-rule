@@ -13,7 +13,7 @@
             <div class="form-group col">
                 <label for="businessType">业务类型</label>
                 <select class="form-control" id="businessType" name="businessType"></select>
-                <#bcomboProvider  _id="businessType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"base_business_type",required:true}'  _valueField="value" _textField="text" _option='async:false'/>
+                <#bcomboProvider  _id="businessType" _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"base_business_type",required:true,dd_with_market:"true"}'  _valueField="value" _textField="text" _option='async:false'/>
             </div>
             <div class="form-group col">
                 <label for="targetType">指标类型</label>
@@ -78,7 +78,7 @@
                         <th data-width-unit="%" data-width="10" data-field="marketId" data-sortable="true" data-sort-name="market_id" data-align="center" data-provider="marketProvider">
                             所属市场
                         </th>
-                        <th data-width-unit="%" data-width="10" data-field="businessType" data-sortable="true" data-sort-name="business_type" data-align="center" data-provider="dataDictionaryValueProvider" data-query-params="{dd_code:'base_business_type'}">
+                        <th data-width-unit="%" data-width="10" data-field="businessType" data-sortable="true" data-sort-name="business_type" data-align="center" data-provider="dataDictionaryValueProvider" data-query-params="{dd_code:'base_business_type',dd_with_market:'true'}">
                             业务类型
                         </th>
                         <th data-width-unit="%" data-width="10" data-field="label" data-sortable="true"

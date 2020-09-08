@@ -11,6 +11,7 @@ import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
+import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -36,6 +37,8 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
 
     //前台需要传入的参数
     protected static final String DD_CODE_KEY = "dd_code";
+    //查询数据字典，是否需要根据当前市场过滤
+    private static final String DD_WITH_MARKET = "dd_with_market";
     @Autowired
     private DataDictionaryRpc dataDictionaryRpc;
 
@@ -46,7 +49,10 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
             return Lists.newArrayList();
         }
         List<ValuePair<?>> valuePairs = Lists.newArrayList();
-        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
+        JSONObject jsonObject = JSONObject.parseObject(String.valueOf(queryParams));
+        DataDictionaryValue query = DTOUtils.newDTO(DataDictionaryValue.class);
+        produceCondition(query, jsonObject);
+        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValue(query);
         if (output.isSuccess() && CollectionUtil.isNotEmpty(output.getData())) {
             valuePairs = output.getData().stream().filter(Objects::nonNull).sorted(Comparator.comparing(DataDictionaryValue::getId)).map(t -> {
                 ValuePairImpl<?> vp = new ValuePairImpl<>(t.getName(), t.getCode());
@@ -62,7 +68,10 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
         if(queryParams == null) {
             return Lists.newArrayList();
         }
-        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
+        JSONObject jsonObject = JSONObject.parseObject(String.valueOf(queryParams));
+        DataDictionaryValue query = DTOUtils.newDTO(DataDictionaryValue.class);
+        produceCondition(query, jsonObject);
+        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValue(query);
         if (output.isSuccess() && CollectionUtil.isNotEmpty(output.getData())) {
             return output.getData();
         }
@@ -87,12 +96,25 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
      * 获取数据字典编码
      * @return
      */
-    public String getDdCode(String queryParams) {
+    private String getDdCode(JSONObject jsonObject) {
         //清空缓存
-        String ddCode = JSONObject.parseObject(queryParams).getString(DD_CODE_KEY);
+        String ddCode = jsonObject.getString(DD_CODE_KEY);
         if (ddCode == null) {
             throw new RuntimeException("dd_code属性为空");
         }
         return ddCode;
+    }
+
+    /**
+     * 组装查询条件
+     * @param condition
+     */
+    private void produceCondition(DataDictionaryValue condition,JSONObject jsonObject){
+        condition.setDdCode(getDdCode(jsonObject));
+        //如果需要关联市场，则需要获取当前市场信息
+        Boolean aBoolean = jsonObject.getBoolean(DD_WITH_MARKET);
+        if (Objects.nonNull(aBoolean) && Boolean.TRUE.equals(aBoolean)) {
+            condition.setFirmId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        }
     }
 }
