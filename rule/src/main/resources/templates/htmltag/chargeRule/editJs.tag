@@ -293,7 +293,23 @@
         });
         return formJson;
     }
+    function checkInputBeforeSubmit(){
+            var validate=$('#addForm').validate();
+            var minPayment=$.trim($('input[name="minPayment"]').val());
+            var maxPayment=$.trim($('input[name="maxPayment"]').val());
+            
+            if(minPayment!==''&&maxPayment!==''){
+                if(parseFloat(minPayment)>=parseFloat(maxPayment)){
+                      validate.form();
+                      validate.showErrors({
+                            "minPayment": '不能大于或等于最高支付金额'
+                      });
+                      return false;
+                }
+            }
+            return validate.form();
 
+}
     $(document).on('click', '.btn-cancel', function () {
         window.location.href = document.referrer;
     });
@@ -301,7 +317,7 @@
      * 表单保存操作
      */
     $(document).on('click', '#formSubmit', function () {
-        if ($('#addForm').validate().form() === true) {
+        if ( checkInputBeforeSubmit() === true) {
             let expressionInput = $('#expressionInput').expressionBuilder();
             if ($('select[name="actionExpressionType"]').val()=='1'&&!expressionInput.isValid()){
                 bs4pop.alert("计算表达式输入不正确", {type: 'error', position: 'center'});

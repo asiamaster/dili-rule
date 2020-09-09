@@ -22,7 +22,7 @@
                 <input id="${cd.id}_${cd.matchKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"class="form-control"  min="0" max="9999999.99">
             </div>
         <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.BETWEEN.getCode()){%>
-            <!--/*  输入框的条件类型：  范围 */-->
+            <!--/*  输入框的条件类型：  范围 */-->${cd.values}
             <div class="form-group col-auto" data-name="${cd.id}_${cd.matchKey}">
                 <label for="" >${cd.label}</label>
                 <div class="form-inline">
