@@ -155,6 +155,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     this.update(rule);
                 }
                 updatableItem.setPriority(rule.getPriority());
+                updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
                 int v = this.updateSelective(updatableItem);
                 return backupRule.getId();
             }).orElseGet(() -> {
