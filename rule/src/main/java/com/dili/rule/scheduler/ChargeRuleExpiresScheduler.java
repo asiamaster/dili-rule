@@ -159,7 +159,7 @@ public class ChargeRuleExpiresScheduler {
         Integer state = ruleInfo.getState();
         if (RuleStateEnum.ENABLED.getCode().equals(state) ) {
             LocalDateTime expireEnd = LocalDateTime.now().plusMinutes(fixedRate);
-            if (ruleInfo.getExpireEnd().isBefore(expireEnd)) {
+            if (ruleInfo.getExpireEnd()!=null&&ruleInfo.getExpireEnd().isBefore(expireEnd)) {
                 chargeRuleExpiresTask.register(ruleInfo.getId(), ruleInfo.getExpireEnd());
             }
         } else if (RuleStateEnum.UN_STARTED.getCode().equals(state)) {

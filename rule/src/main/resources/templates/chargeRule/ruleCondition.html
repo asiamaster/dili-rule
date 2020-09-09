@@ -54,7 +54,7 @@
                 <!--/*  输入框的值类型：  小数类型*/-->
                 <div class="form-group col-auto between" data-name="${cd.id}_${cd.matchKey}">
                     <label for="" >${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden"data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
                             <input  data-target="${cdLP.index-1}" name="start"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput"  data-type="skip">
@@ -93,7 +93,7 @@
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="end" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
+                            <input data-target="${cdLP.index-1}" name="end" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend"  data-type="skip">
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -116,6 +116,12 @@
         laydate.render({
             elem: this
             , trigger: 'click'
+             ,done: function(value, date, endDate){
+                $( this.elem).trigger('input')
+    ///console.log(value); //得到日期生成的值，如：2017-08-18
+   // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+   // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+  }
         });
     });
     $('.between input').on('input',function(){

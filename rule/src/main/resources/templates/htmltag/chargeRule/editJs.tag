@@ -64,7 +64,27 @@
                             $('#' + target).val(currentVal.split(",")[0] + ',' + $(this).val());
                         }
                     });
-
+                    
+                    
+                     $('.laystart').on('input', function () {
+                        var target = $(this).data('target')
+                        var currentVal = $('#' + target).val();
+                        if (currentVal.indexOf(",") == -1) {
+                            $('#' + target).val($(this).val() + ',');
+                        } else {
+                            $('#' + target).val($(this).val() + ',' + currentVal.split(",")[1]);
+                        }
+                    });
+                    $('.layend').on('input', function () {
+                        var target = $(this).data('target')
+                        var currentVal = $('#' + target).val();
+                        if (currentVal.indexOf(",") == -1) {
+                            $('#' + target).val("," + $(this).val());
+                        } else {
+                            $('#' + target).val(currentVal.split(",")[0] + ',' + $(this).val());
+                        }
+                    });
+                    
 
                     $('[name="condition"]').on('blur', '.cusIsNaturalNum', function () {
                         $(this).siblings('.error').text('');
