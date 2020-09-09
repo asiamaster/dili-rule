@@ -32,6 +32,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.dili.rule.service.DataSourceDefinitionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <B></B>
@@ -43,7 +45,7 @@ import com.dili.rule.service.DataSourceDefinitionService;
  */
 @Service
 public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditionVal, Long> implements ChargeConditionValService {
-
+    private static final Logger logger=LoggerFactory.getLogger(ChargeConditionValServiceImpl.class);
     public ChargeConditionValMapper getActualMapper() {
         return (ChargeConditionValMapper)getDao();
     }
@@ -121,15 +123,18 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                 } else if (matchType == MatchTypeEnum.IN) {
                     vo.getValues().addAll(objects);
                     DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(conditionDefinition.getDataSourceId());
+                    logger.info("objects={}",objects);
                     if (Objects.nonNull(dataSourceDefinition)){
                         String matchColumn = conditionDefinition.getMatchColumn();
                         List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(dataSourceDefinition, objects,headerMap);
+                        logger.info("keyTextMap={}",keyTextMap);
                         DataSourceColumn condition = new DataSourceColumn();
                         condition.setDataSourceId(conditionDefinition.getDataSourceId());
                         List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
                         for (Object value : objects) {
                             for (Map<String, Object> row : keyTextMap) {
                                 Object matchValue = row.get(matchColumn);
+                                logger.info("value={},matchColumn={}，matchValue={}",value,matchColumn,matchValue);
                                 if (String.valueOf(value).equals(String.valueOf(matchValue))) {
                                     List<String> displayedText = new ArrayList<>();
                                     for (DataSourceColumn column : columns) {
