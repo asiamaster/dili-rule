@@ -74,14 +74,33 @@
             </div>
 
             <div class="form-group col-12">
-                <label for="">数学表达式</label>
-                <div class="row">
+                <label for="">数学表达式<i class="red">*</i></label>
+                <select name="actionExpressionType">
+                    <option value="1" >简单计算</option>
+                    <option value="2" >按时间分段计算</option>
+                </select>
+                <div class="row" style="display: block;" id="simpleExpressionDiv">
                     <div class="input-group col-6">
                         <div class="w-75 pr-0" id="expressionDiv">
-                            <input type="text" class="form-control" id="actionExpression" name="actionExpression"  value="${chargeRule.actionExpression!}" />
+                            <input type="text" id="expressionInput" name="expressionInput" data-target="#actionExpression" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.actionExpression!}"  value="${chargeRule.actionExpression!}" autocomplete="off" data-value-type="skip" required="required"/>
                         </div>
                     </div>
                 </div>
+
+                <div class="row"  style="display: none;"  id="complexsimpleExpressionDiv">
+                    <div class="input-group col-6">
+                        <div class="w-75 pr-0" id="tieredExpressionDiv">
+                            <select name="actionExpressionParams[_start]">
+                            </select>
+                            前<input name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
+                            分钟收费<input name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" placeholder="元"/>
+                            ，后每<input name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}" />
+                            分钟收费<input name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}"  placeholder="元"/>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
         <div class="breadcrumb">
@@ -110,6 +129,15 @@
         getRuleVariable();
         $(":input").attr("disabled", true);
         $("select").addClass("select-no-down");
+        
+        
+        
+         var actionExpressionType = "${chargeRule.actionExpressionType!}";
+        if (actionExpressionType !== ''&&actionExpressionType!== $('select[name="actionExpressionType"]').val()) {
+            $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
+            $('select[name="actionExpressionType"]').trigger('change');
+        }
+
 
     });
 

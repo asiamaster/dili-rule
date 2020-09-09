@@ -300,6 +300,28 @@ public class ChargeRuleController {
     }
 
     /**
+     * 跳转到计费规则管理首页面
+     *
+     * @param modelMap
+     * @return String
+     */
+    @RequestMapping(value = "/view.action", method = RequestMethod.GET)
+    public String view(ModelMap modelMap, Long id) {
+        if (id != null) {
+            ChargeRule item = this.chargeRuleService.get(id);
+            if (item == null) {
+                item = new ChargeRule();
+            }
+            modelMap.put("chargeRule", item);
+        } else {
+            modelMap.put("chargeRule", new ChargeRule());
+        }
+        //modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
+        modelMap.put("businessTypeList", getBusinessType());
+        return "chargeRule/view";
+    }
+
+    /**
      * 获取费用业务类型
      *
      * @return
