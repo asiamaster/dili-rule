@@ -117,6 +117,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         inputRuleInfo.setRevisable(YesOrNoEnum.YES.getCode());
         inputRuleInfo.setOperatorId(operatorUser.getUserId());
         inputRuleInfo.setOperatorName(operatorUser.getUserName());
+        inputRuleInfo.setIsDeleted(YesOrNoEnum.NO.getCode());
         ChargeRule temp = this.saveOrUpdateRuleInfo(inputRuleInfo, operatorUser);
         List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(temp, chargeRuleVo);
         // 如果是更新,则先删除原来的设置(如果是插入,下面的delByRuleId将导致死锁)
@@ -153,6 +154,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     rule.setIsDeleted(YesOrNoEnum.YES.getCode());
                     this.update(rule);
                 }
+                updatableItem.setPriority(rule.getPriority());
                 int v = this.updateSelective(updatableItem);
                 return backupRule.getId();
             }).orElseGet(() -> {
@@ -347,6 +349,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         query.setBusinessType(chargeRule.getBusinessType());
         query.setChargeItem(chargeRule.getChargeItem());
         query.setPriority(chargeRule.getPriority() + 1);
+        query.setIsDeleted(YesOrNoEnum.NO.getCode());
         List<ChargeRule> ruleList = this.listByExample(query);
         if (CollectionUtil.isEmpty(ruleList)) {
             return BaseOutput.failure("当前优先级已经最高！");
@@ -372,6 +375,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         query.setBusinessType(chargeRule.getBusinessType());
         query.setChargeItem(chargeRule.getChargeItem());
         query.setPriority(chargeRule.getPriority() - 1);
+        query.setIsDeleted(YesOrNoEnum.NO.getCode());
         List<ChargeRule> ruleList = list(query);
         if (CollectionUtil.isEmpty(ruleList)) {
             chargeRule.setPriority(chargeRule.getPriority() - 1);
@@ -421,12 +425,14 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 } else {
                     //                inputRuleInfo.setModifyTime(old.getModifyTime());
                     input.setIsBackup(item.getIsBackup());
+                    input.setIsDeleted(item.getIsDeleted());
                     this.update(input);
                 }
 
             } else if (YesOrNoEnum.YES.getCode().equals(item.getIsBackup())) {
 //            inputRuleInfo.setModifyTime(old.getModifyTime());
                 input.setIsBackup(item.getIsBackup());
+                input.setIsDeleted(item.getIsDeleted());
                 this.update(input);
             }
             return input;
