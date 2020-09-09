@@ -86,11 +86,21 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         if (chargeRule.getRows() != null && chargeRule.getRows() >= 1) {
             PageHelper.startPage(chargeRule.getPage(), chargeRule.getRows());
         }
+        StringBuilder sortSql=new StringBuilder();
         if (StringUtils.isNotBlank(chargeRule.getSort())) {
-            chargeRule.setSort(POJOUtils.humpToLineFast(chargeRule.getSort()));
+            if(chargeRule.getSort().equalsIgnoreCase("groupId")){
+                sortSql.append(chargeRule.getSort()).append(" ").append(chargeRule.getOrder()).append(",priority desc");
+            }else{
+                sortSql.append(chargeRule.getSort()).append(" ").append(chargeRule.getOrder()).append(",group_id desc").append(",priority desc");
+            }
+        }else{
+            sortSql.append(",group_id desc").append(",priority desc");
         }
+        chargeRule.setSortSql(sortSql.toString());
         chargeRule.setIsBackup(YesOrNoEnum.NO.getCode());
         chargeRule.setIsDeleted(YesOrNoEnum.NO.getCode());
+        
+        
         List<ChargeRuleVo> chargeRuleVoList = getActualMapper().listForPage(chargeRule);
         long total = chargeRuleVoList instanceof Page ? ((Page) chargeRuleVoList).getTotal()
                 : (long) chargeRuleVoList.size();

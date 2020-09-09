@@ -137,9 +137,32 @@
             $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
             $('select[name="actionExpressionType"]').trigger('change');
         }
+        
+        var _start = '${actionExpressionParams._start!}';
+
+        $('select[name="actionExpressionParams[_start]"]').empty();
+        $.ajax({
+            type: "POST",
+            url: "${contextPath}/chargeRule/getRuleVariable.action",
+            async: true,
+            data: {id: '${chargeRule.id!}', marketId: '${chargeRule.marketId!}', businessType: '${chargeRule.businessType!}', dataType: '${@com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()}'},
+            success: function (ret) {
+                $.each(ret, function (i, v) {
+                    if (_start == v.matchKey) {
+                        $('select[name="actionExpressionParams[_start]"]').append('<option selected value="' + v.matchKey + '">' + v.label + '</option>')
+                    } else {
+                        $('select[name="actionExpressionParams[_start]"]').append('<option value="' + v.matchKey + '">' + v.label + '</option>')
+                    }
+                });
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                bs4pop.alert('获取计算指标失败', {type: 0});
+            }
+        })     
 
 
     });
+    
 
     /**
      * 获取规则条件信息

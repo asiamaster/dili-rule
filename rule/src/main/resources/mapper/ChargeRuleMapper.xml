@@ -50,7 +50,7 @@
     LEFT JOIN charge_condition_val ccv ON cr.id = ccv.rule_id
     <include refid="QUERY_WHERE_CLAUSE" />
     GROUP BY  cr.id
-    order by ${sort} ${order}
+    order by ${sortSql}
   </select>
 
   <!-- 联合查询计费规则列表  -->

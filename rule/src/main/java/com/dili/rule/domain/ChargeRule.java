@@ -223,6 +223,10 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @Transient
     private String expireValue;
 
+    
+    @Transient
+    private String sortSql;
+        
     public String getExpireValue() {
         StringBuilder str = new StringBuilder();
         if (Objects.nonNull(getExpireStart())) {
@@ -614,6 +618,14 @@ public class ChargeRule extends BaseDomain implements Serializable {
 
     public void setIsDeleted(Integer isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public String getSortSql() {
+        return sortSql;
+    }
+
+    public void setSortSql(String sortSql) {
+        this.sortSql = sortSql;
     }
 
     @Override
