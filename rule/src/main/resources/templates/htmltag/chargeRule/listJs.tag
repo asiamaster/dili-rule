@@ -329,9 +329,9 @@
                 return;
             }
             var ruleId=row.id;
-            
+            var groupId=row.groupId;
             $element.attr('contenteditable', true);
-            $element.focus()
+            $element.focus();
             $element.one("blur", function(ev){
                 let index = $element.parent().data('index');
                 let tdValue = $element.html();
@@ -345,12 +345,24 @@
                 $element.removeAttr('contenteditable', true);
               });
             $element.keypress(function(e){
+                 /*console.info($element.val());
+                 console.info(groupId)
+                 console.info($element.html())*/
+                 if($.trim($element.html())==''){
+                     if(e.keyCode==48){
+                         return false;
+                     }
+                }
                 if(e.keyCode>=48&&e.keyCode<=57){
+                    if(parseInt($.trim($element.html()))>=999||$.trim($element.html()).length==3){
+                        return false;
+                    }
                     return true;
                 }
                 if(e.keyCode==13){
-                       $element.trigger('blur')
+                       $element.trigger('blur');
                 }
+                
                 return false;
             });
     });

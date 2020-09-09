@@ -337,7 +337,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         query.setBusinessType(chargeRule.getBusinessType());
         query.setChargeItem(chargeRule.getChargeItem());
         query.setPriority(chargeRule.getPriority() + 1);
-        List<ChargeRule> ruleList = list(query);
+        List<ChargeRule> ruleList = this.listByExample(query);
         if (CollectionUtil.isEmpty(ruleList)) {
             return BaseOutput.failure("当前优先级已经最高！");
         } else {
