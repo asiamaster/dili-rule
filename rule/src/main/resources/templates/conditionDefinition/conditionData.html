@@ -41,6 +41,11 @@
             idList:[],
             textList:[],
         },
+        unconfirmedBatchData:{
+            batched:false,
+            idList:[],
+            textList:[],
+        },
         removableData:{
             idList:[],
             textList:[],
@@ -53,8 +58,9 @@
      * @returns {undefined}
      */
     function addUnconfirmedListData(idList,textList){
-        conditionData.unconfirmedData.idList=idList;
-        conditionData.unconfirmedData.textList=textList;
+       conditionData.unconfirmedBatchData.batched=true;
+        conditionData.unconfirmedBatchData.idList=idList;
+        conditionData.unconfirmedBatchData.textList=textList;
     }
     /**
      * 增加未确认数据到列表
@@ -81,6 +87,11 @@
      * @returns {conditionData.checkedData}
      */
     function confirmConditionData(){
+        if(conditionData.unconfirmedBatchData.batched===true){
+            conditionData.checkedData.idList=conditionData.unconfirmedBatchData.idList;
+            conditionData.checkedData.textList=conditionData.unconfirmedBatchData.textList;
+            return conditionData.checkedData;
+        }
         $.each(conditionData.unconfirmedData.idList,function(i,id){
             if($.inArray(id,conditionData.checkedData.idList)<0){
                 conditionData.checkedData.idList.push(id);
