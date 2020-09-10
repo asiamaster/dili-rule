@@ -353,17 +353,20 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         query.setMarketId(chargeRule.getMarketId());
         query.setBusinessType(chargeRule.getBusinessType());
         query.setChargeItem(chargeRule.getChargeItem());
-        query.setPriority(chargeRule.getPriority() + 1);
-        //query.setIsDeleted(YesOrNoEnum.NO.getCode());
-//        query.setGroupId(chargeRule.getGroupId());
-        List<ChargeRule> ruleList = this.listByExample(query);
-        if (CollectionUtil.isEmpty(ruleList)) {
+//        query.setPriority(chargeRule.getPriority() + 1);
+        query.setIsBackup(YesOrNoEnum.NO.getCode());
+        query.setIsDeleted(YesOrNoEnum.NO.getCode());
+        query.setGroupId(chargeRule.getGroupId());
+        query.setOrder("asc");
+        query.setSort("priority");
+        ChargeRule old =    StreamEx.of(super.listByExample(query)).unordered().filter(item->item.getPriority().compareTo(chargeRule.getPriority())>0).findFirst().orElse(null);
+        if (old==null) {
             return BaseOutput.failure("当前优先级已经最高！");
         } else {
-            ChargeRule old = ruleList.get(0);
-            old.setPriority(old.getPriority() - 1);
+            Integer oldPriority=old.getPriority();
+            old.setPriority(chargeRule.getPriority());
             update(old);
-            chargeRule.setPriority(chargeRule.getPriority() + 1);
+            chargeRule.setPriority(oldPriority);
             this.update(chargeRule);
             return BaseOutput.successData(true);
         }
@@ -378,16 +381,20 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         query.setMarketId(chargeRule.getMarketId());
         query.setBusinessType(chargeRule.getBusinessType());
         query.setChargeItem(chargeRule.getChargeItem());
-        query.setPriority(chargeRule.getPriority() - 1);
-//        query.setGroupId(chargeRule.getGroupId());
-        List<ChargeRule> ruleList = list(query);
-        if (CollectionUtil.isEmpty(ruleList)) {
+//        query.setPriority(chargeRule.getPriority() - 1);
+        query.setIsBackup(YesOrNoEnum.NO.getCode());
+        query.setIsDeleted(YesOrNoEnum.NO.getCode());
+        query.setGroupId(chargeRule.getGroupId());
+        query.setOrder("desc");
+        query.setSort("priority");
+         ChargeRule old =    StreamEx.of(super.listByExample(query)).unordered().filter(item->item.getPriority().compareTo(chargeRule.getPriority())<0).findFirst().orElse(null);
+        if (old==null) {
             return BaseOutput.failure("当前优先级已经最低！");
         } else {
-            ChargeRule old = ruleList.get(0);
-            old.setPriority(old.getPriority() + 1);
+               Integer oldPriority=old.getPriority();
+            old.setPriority(chargeRule.getPriority());
             update(old);
-            chargeRule.setPriority(chargeRule.getPriority() - 1);
+            chargeRule.setPriority(oldPriority);
             this.update(chargeRule);
             return BaseOutput.successData(true);
         }

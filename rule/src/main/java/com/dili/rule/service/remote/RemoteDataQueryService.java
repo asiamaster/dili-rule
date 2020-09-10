@@ -15,10 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -39,6 +36,8 @@ public class RemoteDataQueryService {
     /**
      * 通过url请求远程接口(http+json)
      * @param url
+     * @param page
+     * @param rows
      * @return
      */
     public PageOutput<List> queryData(String url,Integer page,Integer rows) {
@@ -50,6 +49,9 @@ public class RemoteDataQueryService {
      *
      * @param url
      * @param params
+     * @param header
+     * @param page
+     * @param rows
      * @return
      */
     public PageOutput<List> queryData(String url, Map<String, Object> params,Map<String, String> header,Integer page,Integer rows) {
@@ -63,6 +65,9 @@ public class RemoteDataQueryService {
      *
      * @param dataSourceDefinition
      * @param params
+     * @param header
+     * @param page
+     * @param rows
      * @return
      */
     public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
@@ -97,6 +102,7 @@ public class RemoteDataQueryService {
      *
      * @param dataSourceDefinition
      * @param keys
+     * @param header
      * @return
      */
     public List<Map<String, Object>> queryKeys(DataSourceDefinition dataSourceDefinition, List<Object> keys, Map<String, String> header) {
@@ -145,7 +151,7 @@ public class RemoteDataQueryService {
         Map<String, Object> resultMap = params.entrySet().stream().filter(e -> Objects.nonNull(e.getKey())).map(e -> {
             String key = e.getKey();
             Object value = e.getValue();
-            MutablePair<String, Object> pair = new MutablePair<String, Object>(key, value);
+            MutablePair<String, Object> pair = new MutablePair<>(key, value);
             if (value instanceof String) {
                 Object v = StringUtils.trimToEmpty(String.valueOf(value));
                 pair.setValue(v);
