@@ -197,8 +197,9 @@
                 })
                 var actionExpressionType = "${chargeRule.actionExpressionType!}";
                 $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
-                $('select[name="actionExpressionType"]').val(actionExpressionType)
-                $('select[name="actionExpressionType"]').trigger('change');
+                if($('select[name="actionExpressionType"]').val()=='2'){
+                    $('select[name="actionExpressionType"]').trigger('change');
+                }
 
                 var _start = '${actionExpressionParams._start!}';
 
@@ -222,5 +223,6 @@
                         bs4pop.alert('获取计算指标失败', {type: 0});
                     }
                 })
+                
 
 </script>
