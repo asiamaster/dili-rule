@@ -43,7 +43,7 @@
             </div>
             <div class="form-group col">
                 <label for="maxPayment">定时生效</label>
-                <input type="checkbox" class="form-control" id="isBackup" name="isBackup" placeholder="" value="1" <%if(chargeRule.isBackup==1){%>checked<%}%>  <%if(chargeRule.id==null||chargeRule.isBackup==1){%>disabled<%}%>   >
+                <input type="checkbox" class="form-control" style="width:30px" id="isBackup" name="isBackup" placeholder="" value="1" <%if(chargeRule.isBackup==1){%>checked<%}%>  <%if(chargeRule.id==null||chargeRule.isBackup==1){%>disabled<%}%>   >
             </div>
             <div class="form-group col-auto">
                 <label for="expireStart">有效期<i class="red">*</i></label>
@@ -196,10 +196,9 @@
                     }
                 })
                 var actionExpressionType = "${chargeRule.actionExpressionType!}";
-                if (actionExpressionType !== ''&&actionExpressionType!== $('select[name="actionExpressionType"]').val()) {
-                    $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
-                    $('select[name="actionExpressionType"]').trigger('change');
-                }
+                $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
+                $('select[name="actionExpressionType"]').val(actionExpressionType)
+                $('select[name="actionExpressionType"]').trigger('change');
 
                 var _start = '${actionExpressionParams._start!}';
 

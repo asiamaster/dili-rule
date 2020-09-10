@@ -107,10 +107,13 @@
         operator_name,
         approver_id,
         approver_name,
-        approval_time
+        approval_time,
+        action_expression_type,
+        is_backup,
+        is_deleted
     )
     SELECT
-		#{originalId},
+	#{originalId},
         #{marketId},
         #{businessType},
         #{groupId},
@@ -129,8 +132,11 @@
         #{operatorName},
         #{approverId},
         #{approverName},
-        #{approvalTime}
-	    FROM charge_rule where market_id=#{marketId} and business_type=#{businessType} AND charge_item =#{chargeItem}
+        #{approvalTime},
+        #{actionExpressionType},
+        #{isBackup},
+        #{isDeleted}
+	    FROM charge_rule where market_id=#{marketId} and business_type=#{businessType} AND charge_item =#{chargeItem} AND group_id=#{groupId}
   </insert>
 
 </mapper>

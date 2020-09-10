@@ -118,6 +118,10 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         inputRuleInfo.setOperatorId(operatorUser.getUserId());
         inputRuleInfo.setOperatorName(operatorUser.getUserName());
         inputRuleInfo.setIsDeleted(YesOrNoEnum.NO.getCode());
+        if(inputRuleInfo.getIsBackup()==null){
+             inputRuleInfo.setIsBackup(YesOrNoEnum.NO.getCode());
+        }
+       
         ChargeRule temp = this.saveOrUpdateRuleInfo(inputRuleInfo, operatorUser);
         List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(temp, chargeRuleVo);
         // 如果是更新,则先删除原来的设置(如果是插入,下面的delByRuleId将导致死锁)
@@ -288,14 +292,14 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 return BaseOutput.failure("状态已变更，不能进行此操作");
             }
 
-//            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
+            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
         } else {
             List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.ENABLED.getCode(),
                     RuleStateEnum.UN_STARTED.getCode());
             if (!allowedStatus.contains(rule.getState())) {
                 return BaseOutput.failure("状态已变更，不能进行此操作");
             }
-//            rule.setState(this.calculateRuleState(rule, RuleStateEnum.DISABLED).getCode());
+            rule.setState(this.calculateRuleState(rule, RuleStateEnum.DISABLED).getCode());
         }
         this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
         this.chargeRuleExpiresScheduler.checkRuleStateEnum(rule.getId()).map(updatableItem -> {
@@ -331,11 +335,11 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer updateRuleInfoWithExpire(ChargeRule ruleInfo, OperatorUser operatorUser) {
-        if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
+//        if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
             // 作废原规则
 //            obsolete(ruleInfo.getOriginalId(), operatorUser);
             ruleInfo.setOriginalId(null);
-        }
+//        }
         super.updateSelective(ruleInfo);
         chargeRuleExpiresScheduler.updateRuleStatus(ruleInfo);
         return 1;
@@ -350,7 +354,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         query.setBusinessType(chargeRule.getBusinessType());
         query.setChargeItem(chargeRule.getChargeItem());
         query.setPriority(chargeRule.getPriority() + 1);
-        query.setIsDeleted(YesOrNoEnum.NO.getCode());
+        //query.setIsDeleted(YesOrNoEnum.NO.getCode());
+        query.setGroupId(chargeRule.getGroupId());
         List<ChargeRule> ruleList = this.listByExample(query);
         if (CollectionUtil.isEmpty(ruleList)) {
             return BaseOutput.failure("当前优先级已经最高！");
@@ -368,20 +373,16 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     @Transactional(rollbackFor = Exception.class)
     public BaseOutput<Boolean> reducePriority(long id) {
         ChargeRule chargeRule = get(id);
-        if (chargeRule.getPriority() == 1) {
-            return BaseOutput.failure("当前优先级已经最低！");
-        }
+
         ChargeRule query = new ChargeRule();
         query.setMarketId(chargeRule.getMarketId());
         query.setBusinessType(chargeRule.getBusinessType());
         query.setChargeItem(chargeRule.getChargeItem());
         query.setPriority(chargeRule.getPriority() - 1);
-        query.setIsDeleted(YesOrNoEnum.NO.getCode());
+        query.setGroupId(chargeRule.getGroupId());
         List<ChargeRule> ruleList = list(query);
         if (CollectionUtil.isEmpty(ruleList)) {
-            chargeRule.setPriority(chargeRule.getPriority() - 1);
-            this.update(chargeRule);
-            return BaseOutput.successData(true);
+            return BaseOutput.failure("当前优先级已经最低！");
         } else {
             ChargeRule old = ruleList.get(0);
             old.setPriority(old.getPriority() + 1);
@@ -427,6 +428,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     //                inputRuleInfo.setModifyTime(old.getModifyTime());
                     input.setIsBackup(item.getIsBackup());
                     input.setIsDeleted(item.getIsDeleted());
+                    input.setPriority(item.getPriority());
                     this.update(input);
                 }
 
@@ -434,6 +436,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 //            inputRuleInfo.setModifyTime(old.getModifyTime());
                 input.setIsBackup(item.getIsBackup());
                 input.setIsDeleted(item.getIsDeleted());
+                input.setPriority(item.getPriority());
                 this.update(input);
             }
             return input;

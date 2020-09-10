@@ -6,6 +6,7 @@ import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.dto.OperatorUser;
+import com.dili.rule.domain.enums.ActionExpressionTypeEnum;
 import com.dili.rule.domain.enums.RuleStateEnum;
 import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.rule.domain.vo.ChargeRuleVo;
@@ -133,6 +134,9 @@ public class ChargeRuleController {
         } else {
             chargeRule = new ChargeRule();
             chargeRule.setExpireStart(LocalDateTime.now());
+        }
+        if(chargeRule.getActionExpressionType()==null){
+            chargeRule.setActionExpressionType(ActionExpressionTypeEnum.SIMPLE.getCode());
         }
         return "chargeRule/edit";
     }
@@ -307,15 +311,46 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/view.action", method = RequestMethod.GET)
     public String view(ModelMap modelMap, Long id) {
-        if (id != null) {
-            ChargeRule item = this.chargeRuleService.get(id);
-            if (item == null) {
-                item = new ChargeRule();
+        ChargeRule chargeRule=new ChargeRule();
+        chargeRule.setId(id);
+         if (Objects.nonNull(chargeRule)) {
+            modelMap.addAttribute("action", "insert");
+            chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+            if (null != chargeRule.getId()) {
+                chargeRule = chargeRuleService.get(id);
+                if (Objects.nonNull(chargeRule)) {
+                    //转换获取计算参数
+                    String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), false);
+                    chargeRule.setActionExpression(actionExpression);
+                    modelMap.addAttribute("action", "update");
+                } else {
+                    chargeRule.setExpireStart(LocalDateTime.now());
+                }
+            } else {
+                chargeRule.setExpireStart(LocalDateTime.now());
             }
-            modelMap.put("chargeRule", item);
+            List<DataDictionaryValue> businessTypeList = getBusinessType();
+            String businessType = chargeRule.getBusinessType();
+            Optional<DataDictionaryValue> dataDictionaryValue = businessTypeList.stream().filter(t -> businessType.equals(t.getCode())).findFirst();
+            if (dataDictionaryValue.isPresent()) {
+                modelMap.put("businessTypeName", dataDictionaryValue.get().getName());
+            }
+            Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
+            if (businessChargeItemDto.isPresent()) {
+                modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
+            }
+            if (StringUtils.isNotBlank(chargeRule.getActionExpressionParams())) {
+                modelMap.addAttribute("actionExpressionParams", JSON.parse(chargeRule.getActionExpressionParams()));
+            }
+            modelMap.addAttribute("chargeRule", chargeRule);
         } else {
-            modelMap.put("chargeRule", new ChargeRule());
+            chargeRule = new ChargeRule();
+            chargeRule.setExpireStart(LocalDateTime.now());
         }
+        if(chargeRule.getActionExpressionType()==null){
+            chargeRule.setActionExpressionType(ActionExpressionTypeEnum.SIMPLE.getCode());
+        }
+         
         //modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         modelMap.put("businessTypeList", getBusinessType());
         return "chargeRule/view";

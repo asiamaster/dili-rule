@@ -38,7 +38,7 @@
             $.ajax({
                 type: "POST",
                 url: "${contextPath}/chargeRule/getRuleCondition.action",
-                async: true,
+                async: false,
                 data: {id: ruleId, marketId: marketId, businessType: businessType},
                 success: function (ret) {
                     $('#ruleConditionDiv').html(ret);
@@ -118,13 +118,13 @@
         let ruleId = $('#id').val();
         let marketId = $('#marketId').val();
         let businessType = $('#businessType').val();
-        $('#ruleConditionDiv').html('');
+        //$('#ruleConditionDiv').html('');
         if (marketId && businessType) {
             $('#variableListDiv').html('');
             $.ajax({
                 type: "POST",
                 url: "${contextPath}/chargeRule/getRuleVariable.action",
-                async: true,
+                async: false,
                 data: {id: ruleId, marketId: marketId, businessType: businessType},
                 success: function (ret) {
                     var options = {variables: []};
