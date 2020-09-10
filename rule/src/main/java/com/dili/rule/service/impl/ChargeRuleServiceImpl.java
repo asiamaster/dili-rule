@@ -292,14 +292,14 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 return BaseOutput.failure("状态已变更，不能进行此操作");
             }
 
-            rule.setState(this.calculateRuleState(rule, RuleStateEnum.ENABLED).getCode());
+            rule.setState(RuleStateEnum.ENABLED.getCode());
         } else {
             List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.ENABLED.getCode(),
                     RuleStateEnum.UN_STARTED.getCode());
             if (!allowedStatus.contains(rule.getState())) {
                 return BaseOutput.failure("状态已变更，不能进行此操作");
             }
-            rule.setState(this.calculateRuleState(rule, RuleStateEnum.DISABLED).getCode());
+            rule.setState(RuleStateEnum.DISABLED.getCode());
         }
         this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
         this.chargeRuleExpiresScheduler.checkRuleStateEnum(rule.getId()).map(updatableItem -> {
