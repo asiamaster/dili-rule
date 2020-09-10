@@ -136,7 +136,7 @@
         #{actionExpressionType},
         #{isBackup},
         #{isDeleted}
-	    FROM charge_rule where market_id=#{marketId} and business_type=#{businessType} AND charge_item =#{chargeItem} AND group_id=#{groupId}
+	    FROM charge_rule where market_id=#{marketId} and business_type=#{businessType} AND charge_item =#{chargeItem}
   </insert>
 
 </mapper>

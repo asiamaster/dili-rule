@@ -171,8 +171,8 @@
                     }
                 })
                 var actionExpressionType = "${chargeRule.actionExpressionType!}";
-                if (actionExpressionType !== ''&&actionExpressionType!== $('select[name="actionExpressionType"]').val()) {
-                    $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
+                $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
+                if($('select[name="actionExpressionType"]').val()=='2'){
                     $('select[name="actionExpressionType"]').trigger('change');
                 }
 
