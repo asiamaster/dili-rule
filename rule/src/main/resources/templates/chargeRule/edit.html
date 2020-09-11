@@ -73,65 +73,96 @@
         <div class="breadcrumb">
             计算指标<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#calcParamInfo" aria-expanded="true" aria-controls="calcParamInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
         </div>
-        <div class="row row-cols-4 collapse show form-calcParam-box" id="calcParamInfo">
-            <div class="col-auto mt-2 mb-2" id="calcVariable">
-                <label class="d-block" for="">计算参数</label>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="1">1</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="2">2</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="3">3</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="4">4</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="5">5</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="6">6</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="7">7</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="8">8</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="9">9</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="0">0</button>
-                <br>
-                <br>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="+">+</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="-">-</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="*">*</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="/">/</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="(">(</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable=")">)</button>
-                <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable=".">.</button>
-                <br>
-                <br>
-                <div class="d-inline-block" id="variableListDiv"></div>
+        <div class="collapse show form-calcParam-box" id="calcParamInfo">
+            <div class="row">
+                <input type="hidden" id="actionExpression" name="actionExpression"  autocomplete="off" value="${chargeRule.actionExpression!}" />
+                <div class="form-group col-auto mt-2">
+                    <label for="">数学表达式<i class="red">*</i></label>
+                    <select name="actionExpressionType" class="form-control" >
+                        <option value="1" >简单计算</option>
+                        <option value="2" >按时间分段计算</option>
+                    </select>
+                </div>
             </div>
-            <input type="hidden" id="actionExpression" name="actionExpression"  autocomplete="off" value="${chargeRule.actionExpression!}" />
-            <div class="form-group col-12">
-                <label for="">数学表达式<i class="red">*</i></label>
-                <select name="actionExpressionType">
-                    <option value="1" >简单计算</option>
-                    <option value="2" >按时间分段计算</option>
-                </select>
-                <div class="row" style="display: block;" id="simpleExpressionDiv">
-                    <div class="input-group col-6">
-                        <div class="w-75 pr-0" id="expressionDiv">
-                            <input type="text" id="expressionInput" name="expressionInput" data-target="#actionExpression" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.actionExpression!}"  value="${chargeRule.actionExpression!}" autocomplete="off" data-value-type="skip" required="required"/>
-                        </div>
+            <div class="row row-cols-4" >
+                <div class="col-auto mt-2 mb-2" id="calcVariable">
+                    <label class="d-block" for="">计算参数</label>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="1">1</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="2">2</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="3">3</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="4">4</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="5">5</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="6">6</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="7">7</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="8">8</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="9">9</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="0">0</button>
+                    <br>
+                    <br>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="+">+</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="-">-</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="*">*</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="/">/</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable="(">(</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable=")">)</button>
+                    <button class="btn btn-outline-secondary mr-1 btn-variable" type="button" data-variable=".">.</button>
+                    <br>
+                    <br>
+                    <div class="d-inline-block" id="variableListDiv"></div>
+                </div>
+            </div>
+
+            <div class="row" style="display: block;" id="simpleExpressionDiv">
+                <div class="input-group col-6">
+                    <div class="w-75 pr-0" id="expressionDiv">
+                        <input type="text" id="expressionInput" name="expressionInput" data-target="#actionExpression" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.actionExpression!}"  value="${chargeRule.actionExpression!}" autocomplete="off" data-value-type="skip" required="required"/>
+                    </div>
+                    <div class="input-group-append">
                         <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
                     </div>
                 </div>
-
-                <div class="row"  style="display: none;"  id="complexsimpleExpressionDiv">
-                    <div class="input-group col-6">
-                        <div class="w-75 pr-0" id="tieredExpressionDiv">
-                            <select name="actionExpressionParams[_start]">
-                            </select>
-                            前<input name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
-                            分钟收费<input name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" placeholder="元"/>
-                            ，  后每<input name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}" />
-                            分钟收费<input name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}"  placeholder="元"/>
-                        </div>
-                        <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
+            </div>
+            <div style="display: none;"  id="complexsimpleExpressionDiv">
+                <div class="row" id="tieredExpressionDiv">
+                    <div class="form-group col-auto">
+                        <select class="form-control" name="actionExpressionParams[_start]">
+                        </select>
                     </div>
+                    <div class="form-group col-auto">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" >前</span>
+                            </div>
+                            <input class="form-control" name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
+                            <div class="input-group-append">
+                                <span class="input-group-text">分钟收费</span>
+                            </div>
+                            <input class="form-control" name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">元</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-auto">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" >后每</span>
+                            </div>
+                            <input class="form-control" name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">分钟收费</span>
+                            </div>
+                            <input class="form-control" name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">元</span>
+                            </div>
+                        </div>
+                    </div>
+<!--                    <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>-->
                 </div>
-
-
             </div>
         </div>
+
         <div class="breadcrumb">
             其它信息<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#otherInfo" aria-expanded="true" aria-controls="otherInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
         </div>

@@ -74,10 +74,16 @@
                     <div class="form-inline">
                         <div class="input-group">
                             <input data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="skip"  min="0" max="9999999">
+                            <div class="input-group-append">
+                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
+                            </div>
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
                             <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]"  value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="skip"  min="0" max="9999999">
+                            <div class="input-group-append">
+                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
+                            </div>
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -90,10 +96,16 @@
                     <div class="form-inline">
                         <div class="input-group">
                             <input data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
+                            <div class="input-group-append">
+                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
+                            </div>
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
                             <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend"  data-type="skip">
+                            <div class="input-group-append">
+                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
+                            </div>
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -115,6 +127,7 @@
      lay('.laydatetime').each(function () {
         laydate.render({
             elem: this
+            ,theme: '#007bff'
             , trigger: 'click'
              ,done: function(value, date, endDate){
                 $( this.elem).trigger('input')
@@ -129,13 +142,19 @@
         var hasBetweenInput= betweenInputList.filter(function(i,v){
             return $.trim($(this).val())!=='';
         }).length>0;
-        $.each(betweenInputList,function(){
+        /*$.each(betweenInputList,function(){
             if(hasBetweenInput===true){
                 $(this).attr("required","required")
             }else{
                 $(this).removeAttr("required")
             }
-        });
+        });*/
         
     });
+    /* $.each($('.between input'), function(index, el){
+         if($(el).val() == '') {
+             $(el).parents('.form-inline').find('.invalid-feedback').text('')
+         }
+     })*/
+
 </script>
