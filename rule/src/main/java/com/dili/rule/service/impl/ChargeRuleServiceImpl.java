@@ -434,14 +434,17 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 } else {
                     //                inputRuleInfo.setModifyTime(old.getModifyTime());
                     input.setIsBackup(item.getIsBackup());
+                    input.setBackupedRuleId(item.getBackupedRuleId());
                     input.setIsDeleted(item.getIsDeleted());
                     input.setPriority(item.getPriority());
+                    
                     this.update(input);
                 }
 
             } else if (YesOrNoEnum.YES.getCode().equals(item.getIsBackup())) {
 //            inputRuleInfo.setModifyTime(old.getModifyTime());
                 input.setIsBackup(item.getIsBackup());
+                input.setBackupedRuleId(item.getBackupedRuleId());
                 input.setIsDeleted(item.getIsDeleted());
                 input.setPriority(item.getPriority());
                 this.update(input);
