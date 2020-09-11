@@ -75,6 +75,9 @@ public class ChargeRuleExpiresScheduler {
 
     public Optional<ChargeRule> checkRuleStateEnum(Long ruleId) {
         ChargeRule item = this.chargeRuleService.get(ruleId);
+        if(RuleStateEnum.DISABLED.getCode().equals(item.getState())||RuleStateEnum.EXPIRED.getCode().equals(item.getState())){
+              return Optional.empty();
+        }
         LocalDateTime now = LocalDateTime.now();
 
         ChargeRule updateItem = new ChargeRule();
