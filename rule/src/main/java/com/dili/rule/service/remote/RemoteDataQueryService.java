@@ -181,7 +181,9 @@ public class RemoteDataQueryService {
         try( HttpResponse response = HttpUtil.createPost(url).addHeaders(headerMap).body(jsonBody).execute();){
            if (response.isOk()) {
                 return  Optional.ofNullable(response.body());
-            }
+            }else{
+               logger.error("远程请求出错,status: {}", response.getStatus());
+           }
         }
         return Optional.empty();
     }
@@ -199,7 +201,7 @@ public class RemoteDataQueryService {
             try {
                 output = JSONObject.parseObject(json, PageOutput.class);
             } catch (Exception e) {
-                logger.error("解析json {} 出错 ", json, e);
+                logger.error("解析json:"+json+" 出错 ", e);
             }
         }
         return output;
