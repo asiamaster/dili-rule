@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
+import one.util.streamex.StreamEx;
 
 /**
  * <B></B>
@@ -150,7 +151,8 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/getRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, request.getSession().getId());
+        String uapSessionId=StreamEx.of(request.getCookies()).nonNull().findAny(c->c.getName().equals("UAP_SessionId")).map(c->c.getValue()).orElse("");
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
     }
@@ -255,7 +257,8 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/viewRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, request.getSession().getId());
+        String uapSessionId=StreamEx.of(request.getCookies()).nonNull().findAny(c->c.getName().equals("UAP_SessionId")).map(c->c.getValue()).orElse("");
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
         modelMap.addAllAttributes(map);
         return "chargeRule/viewCondition";
     }

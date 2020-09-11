@@ -250,7 +250,7 @@ public class ConditionDefinitionController {
         modelMap.put("dataSourceDefinition", dataSourceDefinition);
         modelMap.put("dataSourceColumns", dataSourceColumns);
         modelMap.put("params", params);
-
+        String uapSessionId=StreamEx.of(request.getCookies()).nonNull().findAny(c->c.getName().equals("UAP_SessionId")).map(c->c.getValue()).orElse("");
         switch (viewMode) {
             case TABLE_MULTI:
 
@@ -259,14 +259,14 @@ public class ConditionDefinitionController {
                 Integer rows=this.getRows(params);
                 params.put("page", page);
                 params.put("rows", rows);
-                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, request.getSession().getId(), page, rows);
+                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId, page, rows);
                 modelMap.put("pagedData", pagedData);
                 modelMap.put("queryConfigList", queryConfigList);
                 return "conditionDefinition/dynamic/table";
             case TREE_MULTI:
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, request.getSession().getId(), 1, Integer.MAX_VALUE);
+                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId, 1, Integer.MAX_VALUE);
                     modelMap.put("nodes", mapper.writeValueAsString(treeData.getData()));
                     DataSourceColumn displayColumn = StreamEx.of(dataSourceColumns).filter(item -> YesOrNoEnum.YES.getCode().equals(item.getDisplay())).findFirst().orElse(new DataSourceColumn());
                     modelMap.put("displayColumn", mapper.writeValueAsString(displayColumn));
