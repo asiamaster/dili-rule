@@ -41,6 +41,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.math.NumberUtils;
 import com.dili.rule.service.DataSourceDefinitionService;
+import com.dili.rule.utils.CookieUtil;
 
 /**
  * 由MyBatis Generator工具自动生成 This file was generated on 2020-05-13 11:23:41.
@@ -250,7 +251,7 @@ public class ConditionDefinitionController {
         modelMap.put("dataSourceDefinition", dataSourceDefinition);
         modelMap.put("dataSourceColumns", dataSourceColumns);
         modelMap.put("params", params);
-        String uapSessionId=StreamEx.of(request.getCookies()).nonNull().findAny(c->c.getName().equals("UAP_SessionId")).map(c->c.getValue()).orElse("");
+        String uapSessionId=CookieUtil.getUapSessionId(request);
         switch (viewMode) {
             case TABLE_MULTI:
 

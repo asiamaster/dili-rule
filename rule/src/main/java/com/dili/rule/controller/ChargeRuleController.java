@@ -14,6 +14,7 @@ import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.remote.BusinessChargeItemRpcService;
+import com.dili.rule.utils.CookieUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.dto.DTOUtils;
@@ -151,7 +152,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/getRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-        String uapSessionId=StreamEx.of(request.getCookies()).nonNull().findAny(c->c.getName().equals("UAP_SessionId")).map(c->c.getValue()).orElse("");
+        String uapSessionId=CookieUtil.getUapSessionId(request);
         Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
@@ -257,7 +258,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/viewRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-        String uapSessionId=StreamEx.of(request.getCookies()).nonNull().findAny(c->c.getName().equals("UAP_SessionId")).map(c->c.getValue()).orElse("");
+        String uapSessionId=CookieUtil.getUapSessionId(request);
         Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
         modelMap.addAllAttributes(map);
         return "chargeRule/viewCondition";
