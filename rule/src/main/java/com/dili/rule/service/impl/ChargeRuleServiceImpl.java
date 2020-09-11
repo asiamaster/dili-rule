@@ -153,13 +153,13 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     private void checkAndUpdateRuleStatus(ChargeRule rule, ChargeRule backupRule) {
         if (backupRule != null) {
             this.chargeRuleExpiresScheduler.checkRuleStateEnum(backupRule.getId()).map(updatableItem -> {
-                updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
+//                updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
                 if (RuleStateEnum.ENABLED.getCode().equals(updatableItem.getState()) || RuleStateEnum.EXPIRED.getCode().equals(updatableItem.getState())) {
                     rule.setIsDeleted(YesOrNoEnum.YES.getCode());
+                    updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
                     this.update(rule);
                 }
                 updatableItem.setPriority(rule.getPriority());
-                updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
                 int v = this.updateSelective(updatableItem);
                 return backupRule.getId();
             }).orElseGet(() -> {
