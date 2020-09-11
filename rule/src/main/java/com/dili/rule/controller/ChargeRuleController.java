@@ -142,18 +142,6 @@ public class ChargeRuleController {
     }
 
     /**
-     * 返回当前登录用户sessionid
-     *
-     * @param request
-     * @return
-     */
-    private Map<String, String> getSessionIdHead(HttpServletRequest request) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put("sessionId", request.getSession().getId());
-        return map;
-    }
-
-    /**
      * 获取对应的规则条件值
      *
      * @param chargeRule
@@ -162,7 +150,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/getRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, this.getSessionIdHead(request));
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, request.getSession().getId());
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
     }
@@ -267,7 +255,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/viewRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, this.getSessionIdHead(request));
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, request.getSession().getId());
         modelMap.addAllAttributes(map);
         return "chargeRule/viewCondition";
     }

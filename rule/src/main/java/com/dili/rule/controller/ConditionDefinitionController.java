@@ -174,17 +174,7 @@ public class ConditionDefinitionController {
         return "conditionDefinition/conditionData";
     }
 
-    /**
-     * 返回当前登录用户sessionid
-     *
-     * @param request
-     * @return
-     */
-    private Map<String, String> getSessionIdHead(HttpServletRequest request) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put("sessionId", request.getSession().getId());
-        return map;
-    }
+
 
     /**
      * 返回当前分页参数
@@ -269,14 +259,14 @@ public class ConditionDefinitionController {
                 Integer rows=this.getRows(params);
                 params.put("page", page);
                 params.put("rows", rows);
-                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, this.getSessionIdHead(request), page, rows);
+                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, request.getSession().getId(), page, rows);
                 modelMap.put("pagedData", pagedData);
                 modelMap.put("queryConfigList", queryConfigList);
                 return "conditionDefinition/dynamic/table";
             case TREE_MULTI:
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, this.getSessionIdHead(request), 1, Integer.MAX_VALUE);
+                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, request.getSession().getId(), 1, Integer.MAX_VALUE);
                     modelMap.put("nodes", mapper.writeValueAsString(treeData.getData()));
                     DataSourceColumn displayColumn = StreamEx.of(dataSourceColumns).filter(item -> YesOrNoEnum.YES.getCode().equals(item.getDisplay())).findFirst().orElse(new DataSourceColumn());
                     modelMap.put("displayColumn", mapper.writeValueAsString(displayColumn));

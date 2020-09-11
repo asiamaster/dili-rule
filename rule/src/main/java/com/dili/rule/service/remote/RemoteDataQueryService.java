@@ -32,16 +32,19 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RemoteDataQueryService {
-	private static final Logger logger=LoggerFactory.getLogger(RemoteDataQueryService.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(RemoteDataQueryService.class);
+
     /**
      * 通过url请求远程接口(http+json)
+     *
      * @param url
      * @param page
      * @param rows
      * @return
      */
-    public PageOutput<List> queryData(String url,Integer page,Integer rows) {
-        return this.queryData(url, Collections.emptyMap(), Collections.emptyMap(),page,rows);
+    public PageOutput<List> queryData(String url, Integer page, Integer rows) {
+        return this.queryData(url, Collections.emptyMap(), Collections.emptyMap(), page, rows);
     }
 
     /**
@@ -54,8 +57,8 @@ public class RemoteDataQueryService {
      * @param rows
      * @return
      */
-    public PageOutput<List> queryData(String url, Map<String, Object> params,Map<String, String> header,Integer page,Integer rows) {
-        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params),header,page,rows);
+    public PageOutput<List> queryData(String url, Map<String, Object> params, Map<String, String> header, Integer page, Integer rows) {
+        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params), header, page, rows);
         PageOutput<List> pageout = this.parseJson(jsonDataOpt, false);
         return pageout;
     }
@@ -65,25 +68,40 @@ public class RemoteDataQueryService {
      *
      * @param dataSourceDefinition
      * @param params
-     * @param header
+     * @param sessionId
      * @param page
      * @param rows
      * @return
      */
-    public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
-        Optional<String> jsonDataOpt = this.queryJsonData(dataSourceDefinition, params,header,page,rows);
+    public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId, Integer page, Integer rows) {
+
+        Optional<String> jsonDataOpt = this.queryJsonData(dataSourceDefinition, params, sessionId, page, rows);
         PageOutput<List> pageout = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(dataSourceDefinition.getPaged()));
         return pageout;
     }
 
+    /**
+     * 创建headermap
+     *
+     * @param sessionId
+     * @return
+     */
+    private Map<String, String> buildHeaderMap(String sessionId) {
+
+        Map<String, String> header = new HashMap<>();
+        header.put("sessionId", sessionId);
+        header.put("UAP_SessionId", sessionId);
+        return header;
+    }
 
     /**
      * 远程请求或者本地返回数据转换为json数据结构
+     *
      * @param dataSourceDefinition
      * @param params
-     * @return 
+     * @return
      */
-    private Optional<String> queryJsonData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, Map<String, String> header,Integer page,Integer rows) {
+    private Optional<String> queryJsonData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId, Integer page, Integer rows) {
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(dataSourceDefinition.getDataSourceType());
         if (StrUtil.isNotBlank(dataSourceDefinition.getQueryCondition())) {
             params.putAll(JSONObject.parseObject(dataSourceDefinition.getQueryCondition()));
@@ -92,11 +110,10 @@ public class RemoteDataQueryService {
             String localJsonData = dataSourceDefinition.getDataJson();
             return Optional.ofNullable(localJsonData);
         } else {
-            return this.remoteQuery(dataSourceDefinition.getQueryUrl(), params,header,page,rows);
+            return this.remoteQuery(dataSourceDefinition.getQueryUrl(), params, this.buildHeaderMap(sessionId), page, rows);
         }
     }
-    
-    
+
     /**
      * 通过DataSourceDefinition.queeryUrl对应的的url和keys列表参数请求远程接口(http+json)
      *
@@ -105,33 +122,33 @@ public class RemoteDataQueryService {
      * @param header
      * @return
      */
-    public List<Map<String, Object>> queryKeys(DataSourceDefinition dataSourceDefinition, List<Object> keys, Map<String, String> header) {
+    public List<Map<String, Object>> queryKeys(DataSourceDefinition dataSourceDefinition, List<Object> keys, String sessionId) {
         if (CollectionUtil.isEmpty(keys)) {
             return Collections.emptyList();
         }
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(dataSourceDefinition.getDataSourceType());
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = dataSourceDefinition.getDataJson();
-            return this.parseJson( Optional.ofNullable(localJsonData), false).getData();
+            return this.parseJson(Optional.ofNullable(localJsonData), false).getData();
         } else {
             //构建查询参数
             Map<String, Object> params = Maps.newHashMap();
             if (StrUtil.isNotBlank(dataSourceDefinition.getQueryCondition())) {
                 params.putAll(JSONObject.parseObject(dataSourceDefinition.getQueryCondition()));
             }
-            if (StrUtil.isNotBlank(dataSourceDefinition.getKeysField())){
+            if (StrUtil.isNotBlank(dataSourceDefinition.getKeysField())) {
                 params.put(dataSourceDefinition.getKeysField(), keys);
             }
             //强制内置两个参数，根据当前用户的市场隔离
             params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
             params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
             params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-            String keyUrl=dataSourceDefinition.getKeysUrl();
-            String jsonBody=JSONObject.toJSONString(params);
-            logger.info("keyUrl={},data={}",keyUrl,jsonBody);
-            try(HttpResponse response = HttpUtil.createPost(keyUrl).addHeaders(header).body(jsonBody).execute();){
+            String keyUrl = dataSourceDefinition.getKeysUrl();
+            String jsonBody = JSONObject.toJSONString(params);
+            logger.info("keyUrl={},data={}", keyUrl, jsonBody);
+            try (HttpResponse response = HttpUtil.createPost(keyUrl).addHeaders(this.buildHeaderMap(sessionId)).body(jsonBody).execute();) {
                 if (response.isOk()) {
-                    return   this.parseJson(Optional.ofNullable(response.body()), false).getData();
+                    return this.parseJson(Optional.ofNullable(response.body()), false).getData();
                 }
             }
         }
@@ -163,33 +180,35 @@ public class RemoteDataQueryService {
 
     /**
      * 远程查询，并返回对应的responseBody
+     *
      * @param url
      * @param params
      * @return
      */
-    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap,Integer page,Integer rows) {
-       
+    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap, Integer page, Integer rows) {
+
         params.put("page", page);
         params.put("rows", rows);
         //强制内置两个参数，根据当前用户的市场隔离
         params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
         params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-        
-        String jsonBody=JSONObject.toJSONString(params);
-        logger.info("url={},  data={},  headerMap={}",url,jsonBody,headerMap);
-        try( HttpResponse response = HttpUtil.createPost(url).addHeaders(headerMap).body(jsonBody).execute();){
-           if (response.isOk()) {
-                return  Optional.ofNullable(response.body());
-            }else{
-               logger.error("远程请求出错,status: {}", response.getStatus());
-           }
+
+        String jsonBody = JSONObject.toJSONString(params);
+        logger.info("url={},  data={},  headerMap={}", url, jsonBody, headerMap);
+        try (HttpResponse response = HttpUtil.createPost(url).addHeaders(headerMap).body(jsonBody).execute();) {
+            if (response.isOk()) {
+                return Optional.ofNullable(response.body());
+            } else {
+                logger.error("远程请求出错,status: {}", response.getStatus());
+            }
         }
         return Optional.empty();
     }
 
     /**
      * 转换结果对象
+     *
      * @param jsonDataOpt
      * @param paged
      * @return
@@ -201,7 +220,7 @@ public class RemoteDataQueryService {
             try {
                 output = JSONObject.parseObject(json, PageOutput.class);
             } catch (Exception e) {
-                logger.error("解析json:"+json+" 出错 ", e);
+                logger.error("解析json:" + json + " 出错 ", e);
             }
         }
         return output;
