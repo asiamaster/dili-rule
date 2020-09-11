@@ -57,11 +57,11 @@
                     <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input  data-target="${cdLP.index-1}" name="start"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput"  data-type="skip">
+                            <input  data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput"  data-type="skip"  min="0" max="9999999.99">
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="end" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusFloatReserve betweenMaxInput"  data-type="skip">
+                            <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusFloatReserve betweenMaxInput"  data-type="skip"  min="0" max="9999999.99">
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -73,11 +73,11 @@
                     <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="start"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="skip">
+                            <input data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="skip"  min="0" max="9999999">
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="end"  value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="skip">
+                            <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]"  value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="skip"  min="0" max="9999999">
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -89,11 +89,11 @@
                     <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="start"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
+                            <input data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="end" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend"  data-type="skip">
+                            <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend"  data-type="skip">
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>

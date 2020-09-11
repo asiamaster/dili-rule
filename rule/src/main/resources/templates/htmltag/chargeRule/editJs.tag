@@ -307,6 +307,39 @@
                       return false;
                 }
             }
+            var hasError=false;
+            $.each($('.between'),function(v,i){
+                var startEl=$(this).find('input[name^="start"]');
+                var startElName=startEl.attr('name');
+                var start=$.trim(startEl.val());
+                var end=$.trim($(this).find('input[name^="end"]').val());
+           
+                if(start!=''&&end!=''){
+                    if($.isNumeric(start)&&$.isNumeric(end)){
+                         if(parseFloat(start)>=parseFloat(end)){
+                                validate.form();
+                                var err={}
+                                err[startElName]='不能大于或等于最大值';
+                                validate.showErrors(err);
+                                hasError=true;
+                                return false;
+                          }
+                    }else{
+                           if(start>=end){
+                                validate.form();
+                                var err={}
+                                err[startElName]='不能大于或等于结束时间';
+                                validate.showErrors(err);
+                                hasError=true;
+                                return false;
+                          }
+                    }
+                }
+                
+            })
+            if(hasError){
+                return false;
+            }
             return validate.form();
 
 }
