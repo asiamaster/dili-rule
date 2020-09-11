@@ -69,7 +69,7 @@
         and cr.state = #{state}
       </if>
       <if test="ruleName != null and ruleName !=''">
-        and cr.rule_name like concat('', #{ruleName}, '%')
+        and cr.rule_name like concat('%', #{ruleName}, '%')
       </if>
       <if test="operatorId != null and operatorId !=''">
         and cr.operator_id = #{operatorId}
