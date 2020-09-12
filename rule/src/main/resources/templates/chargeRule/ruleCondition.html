@@ -74,16 +74,10 @@
                     <div class="form-inline">
                         <div class="input-group">
                             <input data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="skip"  min="0" max="9999999">
-                            <div class="input-group-append">
-                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
-                            </div>
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
                             <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]"  value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="skip"  min="0" max="9999999">
-                            <div class="input-group-append">
-                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
-                            </div>
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -95,16 +89,16 @@
                     <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
+                            <input data-target="${cdLP.index-1}" id="start[${cdLP.index-1}]" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
                             <div class="input-group-append">
-                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
+                                <label for="start[${cdLP.index-1}]" class="input-group-text fa fa-calendar"></label>
                             </div>
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend"  data-type="skip">
+                            <input data-target="${cdLP.index-1}" id="end[${cdLP.index-1}]" name="end[${cdLP.index-1}]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend"  data-type="skip">
                             <div class="input-group-append">
-                                <label for="expireStart" class="input-group-text fa fa-calendar"></label>
+                                <label for="end[${cdLP.index-1}]" class="input-group-text fa fa-calendar"></label>
                             </div>
                             <label class="error invalid-feedback" ></label>
                         </div>
