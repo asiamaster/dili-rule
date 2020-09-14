@@ -35,6 +35,7 @@ public class RuleApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
+        
         SpringApplication.run(RuleApplication.class, args);
     }
 
