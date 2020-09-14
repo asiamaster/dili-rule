@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WebMvcConfig {
 
-    @Bean(name = "parameterTrimFilter") // 不写name属性，默认beanName为方法名
+    //@Bean(name = "parameterTrimFilter") // 不写name属性，默认beanName为方法名
     public FilterRegistrationBean<ParameterTrimFilter> parameterTrimFilter() {
         FilterRegistrationBean<ParameterTrimFilter> filter = new FilterRegistrationBean<>();
         filter.setDispatcherTypes(DispatcherType.REQUEST);
