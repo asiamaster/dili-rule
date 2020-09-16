@@ -86,21 +86,20 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         if (chargeRule.getRows() != null && chargeRule.getRows() >= 1) {
             PageHelper.startPage(chargeRule.getPage(), chargeRule.getRows());
         }
-        StringBuilder sortSql=new StringBuilder();
+        StringBuilder sortSql = new StringBuilder();
         if (StringUtils.isNotBlank(chargeRule.getSort())) {
-            if(chargeRule.getSort().equalsIgnoreCase("groupId")){
+            if (chargeRule.getSort().equalsIgnoreCase("groupId")) {
                 sortSql.append(chargeRule.getSort()).append(" ").append(chargeRule.getOrder()).append(",priority desc");
-            }else{
+            } else {
                 sortSql.append(chargeRule.getSort()).append(" ").append(chargeRule.getOrder()).append(",group_id desc").append(",priority desc");
             }
-        }else{
+        } else {
             sortSql.append(",group_id desc").append(",priority desc");
         }
         chargeRule.setSortSql(sortSql.toString());
         chargeRule.setIsBackup(YesOrNoEnum.NO.getCode());
         chargeRule.setIsDeleted(YesOrNoEnum.NO.getCode());
-        
-        
+
         List<ChargeRuleVo> chargeRuleVoList = getActualMapper().listForPage(chargeRule);
         long total = chargeRuleVoList instanceof Page ? ((Page) chargeRuleVoList).getTotal()
                 : (long) chargeRuleVoList.size();
@@ -118,10 +117,10 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         inputRuleInfo.setOperatorId(operatorUser.getUserId());
         inputRuleInfo.setOperatorName(operatorUser.getUserName());
         inputRuleInfo.setIsDeleted(YesOrNoEnum.NO.getCode());
-        if(inputRuleInfo.getIsBackup()==null){
-             inputRuleInfo.setIsBackup(YesOrNoEnum.NO.getCode());
+        if (inputRuleInfo.getIsBackup() == null) {
+            inputRuleInfo.setIsBackup(YesOrNoEnum.NO.getCode());
         }
-       
+
         ChargeRule temp = this.saveOrUpdateRuleInfo(inputRuleInfo, operatorUser);
         List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(temp, chargeRuleVo);
         // 如果是更新,则先删除原来的设置(如果是插入,下面的delByRuleId将导致死锁)
@@ -155,11 +154,14 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             this.chargeRuleExpiresScheduler.checkRuleStateEnum(backupRule.getId()).map(updatableItem -> {
 //                updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
                 if (RuleStateEnum.ENABLED.getCode().equals(updatableItem.getState()) || RuleStateEnum.EXPIRED.getCode().equals(updatableItem.getState())) {
-                    rule.setIsDeleted(YesOrNoEnum.YES.getCode());
+                    if (rule != null) {
+                        rule.setIsDeleted(YesOrNoEnum.YES.getCode());
+                        updatableItem.setPriority(rule.getPriority());
+                        this.update(rule);
+                    }
                     updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
-                    this.update(rule);
                 }
-                updatableItem.setPriority(rule.getPriority());
+
                 int v = this.updateSelective(updatableItem);
                 return backupRule.getId();
             }).orElseGet(() -> {
@@ -336,9 +338,9 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     @Transactional(rollbackFor = Exception.class)
     public Integer updateRuleInfoWithExpire(ChargeRule ruleInfo, OperatorUser operatorUser) {
 //        if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
-            // 作废原规则
+        // 作废原规则
 //            obsolete(ruleInfo.getOriginalId(), operatorUser);
-            ruleInfo.setOriginalId(null);
+        ruleInfo.setOriginalId(null);
 //        }
         super.updateSelective(ruleInfo);
         chargeRuleExpiresScheduler.updateRuleStatus(ruleInfo);
@@ -359,11 +361,11 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         query.setGroupId(chargeRule.getGroupId());
         query.setOrder("asc");
         query.setSort("priority");
-        ChargeRule old =    StreamEx.of(super.listByExample(query)).unordered().filter(item->item.getPriority().compareTo(chargeRule.getPriority())>0).findFirst().orElse(null);
-        if (old==null) {
+        ChargeRule old = StreamEx.of(super.listByExample(query)).unordered().filter(item -> item.getPriority().compareTo(chargeRule.getPriority()) > 0).findFirst().orElse(null);
+        if (old == null) {
             return BaseOutput.failure("当前优先级已经最高！");
         } else {
-            Integer oldPriority=old.getPriority();
+            Integer oldPriority = old.getPriority();
             old.setPriority(chargeRule.getPriority());
             update(old);
             chargeRule.setPriority(oldPriority);
@@ -387,11 +389,11 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         query.setGroupId(chargeRule.getGroupId());
         query.setOrder("desc");
         query.setSort("priority");
-         ChargeRule old =    StreamEx.of(super.listByExample(query)).unordered().filter(item->item.getPriority().compareTo(chargeRule.getPriority())<0).findFirst().orElse(null);
-        if (old==null) {
+        ChargeRule old = StreamEx.of(super.listByExample(query)).unordered().filter(item -> item.getPriority().compareTo(chargeRule.getPriority()) < 0).findFirst().orElse(null);
+        if (old == null) {
             return BaseOutput.failure("当前优先级已经最低！");
         } else {
-               Integer oldPriority=old.getPriority();
+            Integer oldPriority = old.getPriority();
             old.setPriority(chargeRule.getPriority());
             update(old);
             chargeRule.setPriority(oldPriority);
@@ -437,7 +439,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     input.setBackupedRuleId(item.getBackupedRuleId());
                     input.setIsDeleted(item.getIsDeleted());
                     input.setPriority(item.getPriority());
-                    
+
                     this.update(input);
                 }
 
