@@ -269,9 +269,9 @@
             var _second_tiered_fee_val = $('input[name="actionExpressionParams[_second_tiered_fee]"]').val();
             var diffMinuteEx = 'diffMinute(_start,now())-' + _first_tiered_period_val;
 
-            var _condExp = '(diffMinute(_start,now())-_first_tiered_period_val)<=0';
-            var _firstExp = 'diffMinute(_start,now())*_first_tiered_fee_val';
-            var _secondExp = '((diffMinute(_start,now())-_first_tiered_period_val)-_first_tiered_period_val-1+_second_tiered_period_val)/_second_tiered_period_val)*_second_tiered_fee_val+diffMinute(_start,now())*_first_tiered_fee_val';
+            var _condExp = '(diffMinute(_start,now())-_first_tiered_period)<=0';
+            var _firstExp = 'diffMinute(_start,now())*_first_tiered_fee';
+            var _secondExp = '((diffMinute(_start,now())-_first_tiered_period)-_first_tiered_period-1+_second_tiered_period)/_second_tiered_period)*_second_tiered_fee+diffMinute(_start,now())*_first_tiered_fee';
 
             var expression = 'IF(' + _condExp + ',' + _firstExp + ',' + _secondExp + ')';
             $('input[name="actionExpression"]').val(expression);

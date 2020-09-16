@@ -90,19 +90,45 @@
                     </div>
                 </div>
 
-                <div class="row"  style="display: none;"  id="complexsimpleExpressionDiv">
-                    <div class="input-group col-6">
-                        <div class="w-75 pr-0" id="tieredExpressionDiv">
-                            <select name="actionExpressionParams[_start]">
-                            </select>
-                            前<input name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
-                            分钟收费<input name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" placeholder="元"/>
-                            ，  后每<input name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}" />
-                            分钟收费<input name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}"  placeholder="元"/>
-                        </div>
-                        <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
+                 <div style="display: none;"  id="complexsimpleExpressionDiv">
+                <div class="row" id="tieredExpressionDiv">
+                    <div class="form-group col-auto">
+                        <select class="form-control" name="actionExpressionParams[_start]">
+                        </select>
                     </div>
+                    <div class="form-group col-auto">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" >前</span>
+                            </div>
+                            <input class="form-control" name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
+                            <div class="input-group-append">
+                                <span class="input-group-text">分钟收费</span>
+                            </div>
+                            <input class="form-control" name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">元</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-auto">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" >后每</span>
+                            </div>
+                            <input class="form-control" name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">分钟收费</span>
+                            </div>
+                            <input class="form-control" name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">元</span>
+                            </div>
+                        </div>
+                    </div>
+<!--                    <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>-->
                 </div>
+            </div>
 
 
             </div>
