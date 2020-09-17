@@ -7,29 +7,24 @@ let getChargeItemUrl = '/commonInfo/getChargeItem.action';
 /**
  * 默认实现的获取业务类型的方法
  * @param _defaultValue 默认值
- * @param _fromLocal 是否从本地获取
+ * @param _enable 是否查询启用
  * @param _tips 首项提示信息(全部？请选择？null?)
  */
-function defaultGetBizTypeInfo(_defaultValue, _fromLocal, _tips) {
+function defaultGetBizTypeInfo(_defaultValue, _enable, _tips) {
     let marketId = $('#marketId').val();
-    let systemCode = $('#systemCode').val();
-    getBusinessType(marketId, systemCode, 'businessType', _defaultValue, _fromLocal, _tips);
+    getBusinessType(marketId, 'businessType', _defaultValue, _enable, _tips);
 }
 
 /**
  * 根据市场及系统，获取对应的业务类型
  * 返回数据为下拉框中的option，会默认清空原来的值
  * @param marketId 市场值
- * @param systemCode 系统值
  * @param _viewTargetId 下拉回显到控件ID
  * @param _defaultValue 默认值(默认选中的值)
- * @param _fromLocal 是否从本地获取
+ * @param _enable 是否查询启用状态 boolean
  * @param _tips 首项提示信息(全部？请选择？null?)
  */
-function getBusinessType(marketId, systemCode, _viewTargetId, _defaultValue, _fromLocal, _tips) {
-    if (typeof (_fromLocal) != "undefined") {
-        _fromLocal = false;
-    }
+function getBusinessType(marketId, _viewTargetId, _defaultValue, _enable, _tips) {
     let targetId = $('#' + _viewTargetId);
     targetId.empty();
     let msg = null;
@@ -37,19 +32,19 @@ function getBusinessType(marketId, systemCode, _viewTargetId, _defaultValue, _fr
         msg = "<option value=''>" + _tips + "</option>"
     }
     let datas = [msg];
-    if (typeof (marketId) != "undefined" && typeof (systemCode) != "undefined" && marketId && systemCode) {
+    if (typeof (marketId) != "undefined" && marketId) {
         $.ajax({
             type: 'post',
             url: getBusinessTypeUrl,
-            data: {marketId: marketId, systemCode: systemCode, fromLocal: _fromLocal},
+            data: {marketId: marketId, enable: _enable},
             async: false,
             success: function (ret) {
                 if (ret.success) {
-                    $.each(ret.data, function (k, v) {
-                        if (typeof (_defaultValue) != "undefined" && null != _defaultValue && '' != _defaultValue && _defaultValue == k) {
-                            datas.push('<option selected value="' + k + '">' + v + '</option>');
+                    $.each(ret.data, function (i, item) {
+                        if (typeof (_defaultValue) != "undefined" && null != _defaultValue && '' != _defaultValue && _defaultValue === item.code) {
+                            datas.push('<option selected value="' + item.code + '">' + item.name + '</option>');
                         } else {
-                            datas.push('<option value="' + k + '">' + v + '</option>');
+                            datas.push('<option value="' + item.code + '">' + item.name + '</option>');
                         }
                     });
                 }

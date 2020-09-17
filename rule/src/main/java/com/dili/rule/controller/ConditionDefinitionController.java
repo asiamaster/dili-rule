@@ -1,17 +1,28 @@
 package com.dili.rule.controller;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.dili.commons.glossary.YesOrNoEnum;
+import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.DataSourceColumn;
+import com.dili.rule.domain.DataSourceDefinition;
+import com.dili.rule.domain.DatasourceQueryConfig;
+import com.dili.rule.domain.enums.ViewModeEnum;
+import com.dili.rule.service.ConditionDefinitionService;
+import com.dili.rule.service.DataSourceColumnService;
+import com.dili.rule.service.DataSourceDefinitionService;
+import com.dili.rule.service.DatasourceQueryConfigService;
+import com.dili.rule.service.remote.RemoteDataQueryService;
+import com.dili.rule.utils.CookieUtil;
+import com.dili.ss.constant.ResultCode;
+import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.ss.domain.PageOutput;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import one.util.streamex.StreamEx;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,29 +30,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import one.util.streamex.StreamEx;
-
-import com.dili.commons.glossary.YesOrNoEnum;
-import com.dili.rule.domain.DataSourceDefinition;
-import com.dili.rule.domain.ConditionDefinition;
-import com.dili.rule.domain.DataSourceColumn;
-import com.dili.rule.domain.DatasourceQueryConfig;
-import com.dili.rule.domain.enums.ViewModeEnum;
-import com.dili.rule.service.ConditionDefinitionService;
-import com.dili.rule.service.DataSourceColumnService;
-import com.dili.rule.service.DatasourceQueryConfigService;
-import com.dili.rule.service.remote.RemoteDataQueryService;
-import com.dili.ss.constant.ResultCode;
-import com.dili.ss.domain.BaseOutput;
-import com.dili.ss.domain.EasyuiPageOutput;
-import com.dili.ss.domain.PageOutput;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.math.NumberUtils;
-import com.dili.rule.service.DataSourceDefinitionService;
-import com.dili.rule.utils.CookieUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 由MyBatis Generator工具自动生成 This file was generated on 2020-05-13 11:23:41.
@@ -97,17 +90,15 @@ public class ConditionDefinitionController {
     /**
      * 跳转到编辑页面
      *
-     * @param id 数据ID
+     * @param conditionDefinition 数据ID
      * @return
      */
     @RequestMapping(value = "/preSave.html", method = RequestMethod.GET)
-    public String preSave(Long id, ModelMap modelMap) {
-        if (Objects.nonNull(id)) {
-            ConditionDefinition conditionDefinition = conditionDefinitionService.get(id);
-            if (Objects.nonNull(conditionDefinition)) {
-                modelMap.put("conditionDefinition", conditionDefinition);
-            }
+    public String preSave(ConditionDefinition conditionDefinition, ModelMap modelMap) {
+        if (Objects.nonNull(conditionDefinition.getId())) {
+            conditionDefinition = conditionDefinitionService.get(conditionDefinition.getId());
         }
+        modelMap.put("conditionDefinition", conditionDefinition);
         return "conditionDefinition/edit";
     }
 

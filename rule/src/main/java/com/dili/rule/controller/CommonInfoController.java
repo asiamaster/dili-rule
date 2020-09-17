@@ -1,16 +1,17 @@
 package com.dili.rule.controller;
 
-import java.util.List;
-import java.util.Objects;
-
+import com.dili.assets.sdk.dto.BusinessChargeItemDto;
+import com.dili.rule.service.remote.BusinessChargeItemRpcService;
+import com.dili.rule.service.remote.DataDictionaryRpcService;
+import com.dili.ss.domain.BaseOutput;
+import com.dili.uap.sdk.domain.DataDictionaryValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.dili.assets.sdk.dto.BusinessChargeItemDto;
-import com.dili.rule.service.remote.BusinessChargeItemRpcService;
-import com.dili.ss.domain.BaseOutput;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * <B>公共信息服务控制层</B>
@@ -26,18 +27,19 @@ public class CommonInfoController {
 
     @Autowired
     private BusinessChargeItemRpcService businessChargeItemRpcService;
+    @Autowired
+    private DataDictionaryRpcService dataDictionaryRpcService;
 
     /**
      * 根据市场、系统获取对应的业务类型
      * @param marketId 市场
-     * @param systemCode 系统
-     * @param fromLocal 是否从本地获取数据(即：不调用远程接口，查询本地数据库)
+     * @param enable 是否查询启用状态
      * @return
      */
     @RequestMapping("/getBusinessType.action")
     @ResponseBody
-    public BaseOutput<Object> getBusinessType(Long marketId, String systemCode, Boolean fromLocal){
-        return BaseOutput.failure("业务类型目前采用数据字典配置,此方法为预留方法");
+    public BaseOutput<List<DataDictionaryValue>> getBusinessType(Long marketId, Boolean enable) {
+        return BaseOutput.successData(dataDictionaryRpcService.getBusinessType(marketId, enable));
     }
 
     /**

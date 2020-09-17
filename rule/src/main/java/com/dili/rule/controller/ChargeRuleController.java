@@ -14,14 +14,12 @@ import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.remote.BusinessChargeItemRpcService;
+import com.dili.rule.service.remote.DataDictionaryRpcService;
 import com.dili.rule.utils.CookieUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
-import com.dili.ss.dto.DTOUtils;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
-import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.dili.uap.sdk.session.SessionContext;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
-import one.util.streamex.StreamEx;
 
 /**
  * <B></B>
@@ -57,7 +54,7 @@ public class ChargeRuleController {
     @Autowired
     private ChargeConditionValService chargeConditionValService;
     @Autowired
-    private DataDictionaryRpc dataDictionaryRpc;
+    private DataDictionaryRpcService dataDictionaryRpcService;
     @Autowired
     private ConditionDefinitionService conditionDefinitionService;
     @Autowired
@@ -354,18 +351,6 @@ public class ChargeRuleController {
      * @return
      */
     private List<DataDictionaryValue> getBusinessType() {
-        List<DataDictionaryValue> dataList = null;
-        try {
-            DataDictionaryValue dataDictionaryValue = DTOUtils.newInstance(DataDictionaryValue.class);
-            dataDictionaryValue.setDdCode("base_business_type");
-            dataDictionaryValue.setFirmId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-            BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValue(dataDictionaryValue);
-            if (output.isSuccess()) {
-                dataList = output.getData();
-            }
-        } catch (Throwable t) {
-            log.error("获取业务类型异常:" + t.getMessage(), t);
-        }
-        return dataList;
+        return dataDictionaryRpcService.getBusinessType(SessionContext.getSessionContext().getUserTicket().getFirmId(), null);
     }
 }
