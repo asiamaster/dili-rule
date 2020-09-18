@@ -19,36 +19,36 @@
 </div>
 </#bs4Body>
 <script>
-    function addSelectedItem(key,text){
+    function addSelectedItem(key, text) {
         $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + key + '"><td>' + text + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
     }
-    function removeSelectedItemByKey(key){
+    function removeSelectedItemByKey(key) {
         alert('removeSelectedItem')
     }
     var choice = parent.window.choiceTarget;
     //debugger
     var checkedids = choice.data('checkedids');
-    var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : []).filter(function(v,i){
-        return $.trim(v)!='';
+    var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : []).filter(function (v, i) {
+        return $.trim(v) != '';
     });
 
-    var conditionData={
-        checkedData:{
-            idList:checkedids,
-            textList:checkedtexts
+    var conditionData = {
+        checkedData: {
+            idList: checkedids,
+            textList: checkedtexts
         },
-        unconfirmedData:{
-            idList:[],
-            textList:[],
+        unconfirmedData: {
+            idList: [],
+            textList: [],
         },
-        unconfirmedBatchData:{
-            batched:false,
-            idList:[],
-            textList:[],
+        unconfirmedBatchData: {
+            batched: false,
+            idList: [],
+            textList: [],
         },
-        removableData:{
-            idList:[],
-            textList:[],
+        removableData: {
+            idList: [],
+            textList: [],
         }
     }
     /**
@@ -57,10 +57,10 @@
      * @param {type} textList
      * @returns {undefined}
      */
-    function addUnconfirmedListData(idList,textList){
-       conditionData.unconfirmedBatchData.batched=true;
-        conditionData.unconfirmedBatchData.idList=idList;
-        conditionData.unconfirmedBatchData.textList=textList;
+    function addUnconfirmedListData(idList, textList) {
+        conditionData.unconfirmedBatchData.batched = true;
+        conditionData.unconfirmedBatchData.idList = idList;
+        conditionData.unconfirmedBatchData.textList = textList;
     }
     /**
      * 增加未确认数据到列表
@@ -68,7 +68,7 @@
      * @param {type} text
      * @returns {undefined}
      */
-    function addUnconfirmedData(id,text){
+    function addUnconfirmedData(id, text) {
         conditionData.unconfirmedData.idList.push(id)
         conditionData.unconfirmedData.textList.push(text)
     }
@@ -78,7 +78,7 @@
      * @param {type} text
      * @returns {undefined}
      */
-    function addRemovableData(id,text){
+    function addRemovableData(id, text) {
         conditionData.removableData.idList.push(id)
         conditionData.removableData.textList.push(text)
     }
@@ -86,32 +86,41 @@
      * 合并并返回最终数据
      * @returns {conditionData.checkedData}
      */
-    function confirmConditionData(){
-        if(conditionData.unconfirmedBatchData.batched===true){
-            conditionData.checkedData.idList=conditionData.unconfirmedBatchData.idList;
-            conditionData.checkedData.textList=conditionData.unconfirmedBatchData.textList;
+    function confirmConditionData() {
+        if (conditionData.unconfirmedBatchData.batched === true) {
+            conditionData.checkedData.idList = conditionData.unconfirmedBatchData.idList;
+            conditionData.checkedData.textList = conditionData.unconfirmedBatchData.textList;
             return conditionData.checkedData;
         }
-        $.each(conditionData.unconfirmedData.idList,function(i,id){
-            if($.inArray(id,conditionData.checkedData.idList)<0){
+        $.each(conditionData.unconfirmedData.idList, function (i, id) {
+            if ($.inArray(id, conditionData.checkedData.idList) < 0) {
                 conditionData.checkedData.idList.push(id);
                 conditionData.checkedData.textList.push(conditionData.unconfirmedData.textList[i]);
             }
         });
-        $.each(conditionData.removableData.idList,function(i,id){
-            var index=$.inArray(id,conditionData.checkedData.idList);
-            if(index>=0){
-                conditionData.checkedData.idList.splice(index,1);
-                conditionData.checkedData.textList.splice(index,1);
+        $.each(conditionData.removableData.idList, function (i, id) {
+            var index = $.inArray(id, conditionData.checkedData.idList);
+            if (index >= 0) {
+                conditionData.checkedData.idList.splice(index, 1);
+                conditionData.checkedData.textList.splice(index, 1);
             }
         })
+        //id不能为空数据(空值处理)
+        conditionData.checkedData.idList = $.makeArray(conditionData.checkedData.idList).filter(function (v, i) {
+            if ($.type(v) == 'string') {
+                return v != '';
+            }else if($.type(v)=='undefined'){
+                return false;
+            }
+            return true;
+        });
         return conditionData.checkedData;
     }
     /* 选择项 子父页面的存储 处理  */
     $(document).ready(function () {
         let definitionId = $('#definitionId').val();
         loadAjaxTable(definitionId);
-        $.each(conditionData.checkedData.idList, function(k,ele) {
+        $.each(conditionData.checkedData.idList, function (k, ele) {
             $('body').find('.checkboxWrap [data-id="' + parseInt(ele) + '"]').find(':checkbox').click();
             if (!$('.checkedShow .table [data-id="' + ele + '"]').length) {
                 $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + parseInt(ele) + '"><td>' + conditionData.checkedData.textList[k] + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
@@ -128,7 +137,7 @@
         let data = {};
         $.extend(data, {'definitionId': definitionId});
         $.extend(data, params);
-        let json =  JSON.stringify(data);
+        let json = JSON.stringify(data);
         let html = $.ajax({
             type: "POST",
             url: "${contextPath}/conditionDefinition/popupPage.action",
