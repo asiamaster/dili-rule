@@ -249,7 +249,12 @@
     $(document).on('click', '.form-group .input-group .clear',  function () {
         $(this).parents('.input-group').find('.form-control').val('');
         $(this).siblings('.choice').attr('checkedids', '');
-     
+        $(this).parents('.input-group').find('.input-group-append span').each(function(i,v){
+          if($(this).data('checkedids')){
+              $(this).data("checkedids",[])
+           }
+        })
+     //input-group-append
        //diaWindow.removableAllData();
  
     });
