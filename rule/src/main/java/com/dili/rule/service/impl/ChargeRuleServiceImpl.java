@@ -509,8 +509,12 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             // 转换为RuleConditionVal对象
 
             String val = "[]";
-            if (Objects.nonNull(c.getMatchValues())) {
-                val = JSONObject.toJSONString(c.getMatchValues());
+            
+            List<String>valueList=StreamEx.of(CollectionUtil.emptyIfNull(c.getMatchValues())).nonNull().filter(StringUtils::isNotBlank).toList();
+            if (valueList.isEmpty()) {
+                 val = JSONObject.toJSONString(valueList);
+            }else{
+                 val = JSONObject.toJSONString(c.getMatchValues());
             }
             ChargeConditionVal conditionValItem = new ChargeConditionVal();
             conditionValItem.setRuleId(rule.getId());

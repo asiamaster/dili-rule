@@ -163,7 +163,7 @@
                 // 选择项
                 $('.checkboxWrap td :checkbox').on('change', function () {
                     debugger
-                    let id = $(this).parents('tr').data('id');
+                    let id = $(this).parents('tr').data('id')+'';
                     let text = $(this).parents('tr').find('.text').text();
                     if ($(this).is(':checked')) {
                         if (conditionData.checkedData.idList.indexOf(id) < 0) {

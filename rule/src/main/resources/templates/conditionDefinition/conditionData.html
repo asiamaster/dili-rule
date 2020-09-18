@@ -27,15 +27,10 @@
     var choice = parent.window.choiceTarget;
     //debugger
     var checkedids = (choice.data('checkedids') ? choice.data('checkedids') : []).filter(function (v, i) {
-        return $.trim(v) != '';
-    }).map(function(v,i){
-            if ($.type(v) == 'string') {
-                return $.trim(v);
-            }
-            return v;
-        });
+        return $.trim(v) !== '';
+    });
     var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : []).filter(function (v, i) {
-        return $.trim(v) != '';
+        return $.trim(v) !== '';
     });
     var conditionData = {
         checkedData: {
@@ -74,7 +69,7 @@
      * @returns {undefined}
      */
     function addUnconfirmedData(id, text) {
-        conditionData.unconfirmedData.idList.push(id)
+        conditionData.unconfirmedData.idList.push($.trim(id+''))
         conditionData.unconfirmedData.textList.push(text)
     }
     /**
@@ -84,9 +79,11 @@
      * @returns {undefined}
      */
     function addRemovableData(id, text) {
-        conditionData.removableData.idList.push(id)
+        conditionData.removableData.idList.push($.trim(id+''))
         conditionData.removableData.textList.push(text)
     }
+
+
     /**
      * 合并并返回最终数据
      * @returns {conditionData.checkedData}
@@ -110,28 +107,24 @@
                 conditionData.checkedData.textList.splice(index, 1);
             }
         })
+
         //id不能为空数据(空值处理)
         conditionData.checkedData.idList = $.makeArray(conditionData.checkedData.idList).filter(function (v, i) {
             if ($.type(v) == 'string') {
                 return v != '';
-            }else if($.type(v)=='undefined'){
-                return false;
             }
             return true;
-        }).map(function(v,i){
-            if ($.type(v) == 'string') {
-                return $.trim(v);
-            }
-            return v;
         });
+
         return conditionData.checkedData;
     }
+
     /* 选择项 子父页面的存储 处理  */
     $(document).ready(function () {
         let definitionId = $('#definitionId').val();
         loadAjaxTable(definitionId);
         $.each(conditionData.checkedData.idList, function (k, ele) {
-            $('body').find('.checkboxWrap [data-id="' + parseInt(ele) + '"]').find(':checkbox').click();
+            $('body').find('.checkboxWrap [data-id="' + ele + '"]').find(':checkbox').click();
             if (!$('.checkedShow .table [data-id="' + ele + '"]').length) {
                 $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + parseInt(ele) + '"><td>' + conditionData.checkedData.textList[k] + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
             }

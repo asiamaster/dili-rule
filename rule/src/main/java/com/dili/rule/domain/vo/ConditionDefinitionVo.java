@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dili.rule.domain.ConditionDefinition;
+import one.util.streamex.StreamEx;
 
 /**
  * <B></B>
@@ -56,7 +57,14 @@ public class ConditionDefinitionVo extends ConditionDefinition {
 
     public String getJsonValues() {
         if (this.values != null) {
-            return JSONObject.toJSONString(this.values);
+            List<Object>list=StreamEx.of(this.values).map(item->{
+                if(item!=null){
+                    return String.valueOf(item).trim();
+                }
+                return item;
+            
+            }).toList();
+            return JSONObject.toJSONString(list);
         }
         return "[]";
 

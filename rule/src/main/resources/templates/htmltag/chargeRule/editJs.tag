@@ -49,40 +49,44 @@
                     $('.betweenMinInput').on('input', function () {
                         var target = $(this).data('target')
                         var currentVal = $('#' + target).val();
-                        if (currentVal.indexOf(",") == -1) {
-                            $('#' + target).val($(this).val() + ',');
-                        } else {
-                            $('#' + target).val($(this).val() + ',' + currentVal.split(",")[1]);
-                        }
+//                        debugger
+//                        if (currentVal.indexOf(",") == -1) {
+//                            $('#' + target).val($(this).val() + ',');
+//                        } else {
+//                            $('#' + target).val($(this).val() + ',' + currentVal.split(",")[1]);
+//                        }
                     });
                     $('.betweenMaxInput').on('input', function () {
                         var target = $(this).data('target')
                         var currentVal = $('#' + target).val();
-                        if (currentVal.indexOf(",") == -1) {
-                            $('#' + target).val("," + $(this).val());
-                        } else {
-                            $('#' + target).val(currentVal.split(",")[0] + ',' + $(this).val());
-                        }
+//                         debugger
+//                        if (currentVal.indexOf(",") == -1) {
+//                            $('#' + target).val("," + $(this).val());
+//                        } else {
+//                            $('#' + target).val(currentVal.split(",")[0] + ',' + $(this).val());
+//                        }
                     });
                     
                     
                      $('.laystart').on('input', function () {
                         var target = $(this).data('target')
                         var currentVal = $('#' + target).val();
-                        if (currentVal.indexOf(",") == -1) {
-                            $('#' + target).val($(this).val() + ',');
-                        } else {
-                            $('#' + target).val($(this).val() + ',' + currentVal.split(",")[1]);
-                        }
+//                         debugger
+//                        if (currentVal.indexOf(",") == -1) {
+//                            $('#' + target).val($(this).val() + ',');
+//                        } else {
+//                            $('#' + target).val($(this).val() + ',' + currentVal.split(",")[1]);
+//                        }
                     });
                     $('.layend').on('input', function () {
                         var target = $(this).data('target')
                         var currentVal = $('#' + target).val();
-                        if (currentVal.indexOf(",") == -1) {
-                            $('#' + target).val("," + $(this).val());
-                        } else {
-                            $('#' + target).val(currentVal.split(",")[0] + ',' + $(this).val());
-                        }
+//                         debugger
+//                        if (currentVal.indexOf(",") == -1) {
+//                            $('#' + target).val("," + $(this).val());
+//                        } else {
+//                            $('#' + target).val(currentVal.split(",")[0] + ',' + $(this).val());
+//                        }
                     });
                     
 
@@ -215,7 +219,7 @@
                         console.info("conditionData="+ JSON.stringify(conditionData));
                         $('#'+targetId).val(conditionData.idList)
                         choice.data('checkedids', conditionData.idList);
-                        choice.parents('.input-group').find('.form-control').val(conditionData.textList);
+                        choice.parents('.input-group').find('.dsInput').val(conditionData.textList);
                         dia.hide()
 
                     }
@@ -245,7 +249,9 @@
     $(document).on('click', '.form-group .input-group .clear',  function () {
         $(this).parents('.input-group').find('.form-control').val('');
         $(this).siblings('.choice').attr('checkedids', '');
-        // isCalcParamDateRange();
+     
+       //diaWindow.removableAllData();
+ 
     });
 
     /* 数组删除指定元素 */

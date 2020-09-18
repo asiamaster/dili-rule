@@ -9,7 +9,7 @@
         <div class="form-group col form-choice">
             <label for="">${cd.label}</label>
             <div class="input-group">
-         		<input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+         	<input id="${cdLP.index-1}" class="form-control" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                 <input value="${stringListJoin(cd.texts,',')}" type="text" class="form-control dsInput" readonly>
                 <div class="input-group-append">
                     <span class="input-group-text text-primary clear"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
@@ -54,14 +54,13 @@
                 <!--/*  输入框的值类型：  小数类型*/-->
                 <div class="form-group col-auto between" data-name="${cd.id}_${cd.matchKey}">
                     <label for="" >${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input  data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput"  data-type="skip"  min="0" max="9999999.99">
+                            <input  data-target="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput"  data-type="string"  min="0" max="9999999.99">
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusFloatReserve betweenMaxInput"  data-type="skip"  min="0" max="9999999.99">
+                            <input data-target="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues][1]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusFloatReserve betweenMaxInput"  data-type="string"  min="0" max="9999999.99">
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -70,14 +69,13 @@
                 <!--/*  输入框的值类型：  整数类型*/-->
                 <div class="form-group col-auto between" data-name="${cd.id}_${cd.matchKey}">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="skip"  min="0" max="9999999">
+                            <input data-target="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="string"  min="0" max="9999999">
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="end[${cdLP.index-1}]"  value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="skip"  min="0" max="9999999">
+                            <input data-target="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues][1]"  value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="string"  min="0" max="9999999">
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -86,17 +84,16 @@
                 <!--/*  输入框的值类型：  日期类型*/-->
                 <div class="form-group col-auto between" data-name="${cd.id}_${cd.matchKey}">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" id="start[${cdLP.index-1}]" name="start[${cdLP.index-1}]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart"  data-type="skip">
+                            <input data-target="${cdLP.index-1}" id="start[${cdLP.index-1}]" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart">
                             <div class="input-group-append">
                                 <label for="start[${cdLP.index-1}]" class="input-group-text fa fa-calendar"></label>
                             </div>
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" id="end[${cdLP.index-1}]" name="end[${cdLP.index-1}]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend"  data-type="skip">
+                            <input data-target="${cdLP.index-1}" id="end[${cdLP.index-1}]" name="conditionList[${cdLP.index-1}][matchValues][1]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend">
                             <div class="input-group-append">
                                 <label for="end[${cdLP.index-1}]" class="input-group-text fa fa-calendar"></label>
                             </div>
