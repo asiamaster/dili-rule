@@ -458,15 +458,6 @@
         <%}%>
     }
 
-    /**
-     * 当市场或系统改变时，重新获取业务类型
-     */
-    function getBizType() {
-        //重新获取业务类型
-        defaultGetBizTypeInfo();
-        //重新获取业务类型后，需重新获取收费项
-        defaultGetChargeItem();
-    }
 
     /**
     *清空查询条件

@@ -11,13 +11,13 @@
 
     /******************************驱动执行区 begin***************************/
     $(function () {
+        defaultGetBizTypeInfo();
         $(window).resize(function () {
             _dataGrid.bootstrapTable('resetView')
         });
         let size = ($(window).height() - $('#conditionDefinitionQueryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
         _dataGrid.bootstrapTable('refreshOptions', {url: '/conditionDefinition/listPage.action', pageSize: parseInt(size)});
-
         _dataGrid.on('load-success.bs.table', function () {
             $('[data-toggle="tooltip"]').tooltip()
         })
@@ -40,7 +40,9 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        let url = "/conditionDefinition/preSave.html";
+        let marketId = $('#marketId').val() == null ? '' : $('#marketId').val();
+        let businessType = $('#businessType').val() == null ? '' : $('#businessType').val();
+        let url = "/conditionDefinition/preSave.html?marketId=" + marketId + "&businessType=" + businessType;
         dia = bs4pop.dialog({
             title: '新增预定义条件',
             content: url,
@@ -182,6 +184,13 @@
 
 
     /*****************************************自定义事件区 end**************************************/
+
+    /**
+     * 市场信息改变时，重新加载业务类型
+     */
+    $('#marketId').on('change', function(){
+        defaultGetBizTypeInfo();
+    });
 
     /**
      * 显示栏格式化显示tip
