@@ -1,5 +1,6 @@
 package com.dili.rule.domain.vo;
 
+import com.alibaba.fastjson.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +52,14 @@ public class ConditionDefinitionVo extends ConditionDefinition {
      */
     public void setTexts(List<Object> texts) {
         this.texts = texts;
+    }
+
+    public String getJsonValues() {
+        if (this.values != null) {
+            return JSONObject.toJSONString(this.values);
+        }
+        return "[]";
+
     }
 
 }

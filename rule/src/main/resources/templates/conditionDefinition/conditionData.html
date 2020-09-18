@@ -2,7 +2,6 @@
 
 <div class="container-fluid">
     <input type="hidden" id="definitionId" value="${conditionDefinition.id}">
-    <input type="hidden" id="selectedids" value="[]"/>
     <div class="table-wrap row justify-content-between">
         <div id="popupDiv" class="col-8">
 
@@ -27,11 +26,17 @@
     }
     var choice = parent.window.choiceTarget;
     //debugger
-    var checkedids = choice.data('checkedids');
+    var checkedids = (choice.data('checkedids') ? choice.data('checkedids') : []).filter(function (v, i) {
+        return $.trim(v) != '';
+    }).map(function(v,i){
+            if ($.type(v) == 'string') {
+                return $.trim(v);
+            }
+            return v;
+        });
     var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : []).filter(function (v, i) {
         return $.trim(v) != '';
     });
-
     var conditionData = {
         checkedData: {
             idList: checkedids,
@@ -113,6 +118,11 @@
                 return false;
             }
             return true;
+        }).map(function(v,i){
+            if ($.type(v) == 'string') {
+                return $.trim(v);
+            }
+            return v;
         });
         return conditionData.checkedData;
     }
