@@ -1,6 +1,7 @@
 package com.dili.rule.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -189,7 +189,8 @@ public class RuleEngineServiceImpl implements RuleEngineService {
         String str = String.valueOf(value);
         switch (valueDataTypeEnum) {
             case DATE:
-                return (Comparable<T>) Instant.parse(str);
+//                return (Comparable<T>) Instant.parse(str);
+                return (Comparable<T>) DateUtil.toInstant(DateUtil.parse(str));
             case DECIMAL:
                 return (Comparable<T>) new BigDecimal(str);
             case INTEGER:
