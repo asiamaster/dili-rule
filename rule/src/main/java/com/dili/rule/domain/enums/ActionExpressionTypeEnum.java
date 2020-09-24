@@ -17,7 +17,7 @@ import one.util.streamex.StreamEx;
 public enum ActionExpressionTypeEnum {
 
     SIMPLE(1, "简单计算"),
-    COMPLEX(2, "复杂计算"),
+    COMPLEX(2, "阶梯计算"),
     // SELECT_MULTI(30, "下拉多选"),
     /*** 以下格式暂未支持 ***/
 //    TABLE_SINGLE(20, "表格单选"),
