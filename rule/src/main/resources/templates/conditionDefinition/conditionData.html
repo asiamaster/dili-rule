@@ -29,9 +29,10 @@
     var checkedids = (choice.data('checkedids') ? choice.data('checkedids') : []).filter(function (v, i) {
         return $.trim(v) !== '';
     });
-    var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('.form-control').val().split(',') : []).filter(function (v, i) {
+    var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('input[name="checkedtexts"]').val().split(',') : []).filter(function (v, i) {
         return $.trim(v) !== '';
     });
+//    debugger
     var conditionData = {
         checkedData: {
             idList: checkedids,
