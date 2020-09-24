@@ -281,8 +281,8 @@
             var diffMinuteEx = 'diffMinute(_start,now())-' + _first_tiered_period_val;
 
             var _condExp = '(diffMinute(_start,now())-_first_tiered_period)<=0';
-            var _firstExp = 'diffMinute(_start,now())*_first_tiered_fee';
-            var _secondExp = 'ceiling(((diffMinute(_start,now())-_first_tiered_period)-_first_tiered_period)/_second_tiered_period)*_second_tiered_fee+diffMinute(_start,now())*_first_tiered_fee';
+            var _firstExp = '_first_tiered_fee';
+            var _secondExp = 'ceiling(((diffMinute(_start,now())-_first_tiered_period))/_second_tiered_period)*_second_tiered_fee+_first_tiered_fee';
 
             var expression = 'IF(' + _condExp + ',' + _firstExp + ',' + _secondExp + ')';
             $('input[name="actionExpression"]').val(expression);
