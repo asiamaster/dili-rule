@@ -587,7 +587,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     long minutes = Duration.between(firstArg, secondArg).toMinutes();
                     // System.out.println(firstArg.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                     // System.out.println(secondArg.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
+                    logger.info("minutes={}",minutes);
                     // System.out.println(minutes);
                     return new LazyNumber() {
                         public BigDecimal eval() {
