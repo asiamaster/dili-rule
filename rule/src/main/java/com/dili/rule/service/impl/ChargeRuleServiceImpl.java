@@ -562,13 +562,15 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         if (ActionExpressionTypeEnum.COMPLEX.equalsToCode(ruleInfo.getActionExpressionType())) {
             Map<String, Object> actionExpressionParams = (Map<String, Object>) JSON
                     .parse(ruleInfo.getActionExpressionParams());
+            logger.info("actionExpressionParams={}",actionExpressionParams);
             String matchKey = (String) actionExpressionParams.get("_start");
             String _first_tiered_period = (String) actionExpressionParams.get("_first_tiered_period");
             String _first_tiered_fee = (String) actionExpressionParams.get("_first_tiered_fee");
             String _second_tiered_period = (String) actionExpressionParams.get("_second_tiered_period");
             String _second_tiered_fee = (String) actionExpressionParams.get("_second_tiered_fee");
             String startValue = String.valueOf(calcParams.get(matchKey));
-
+            logger.info("startValue={},_first_tiered_period={},_first_tiered_fee={},_second_tiered_period={},_second_tiered_fee={}"
+                    ,startValue,_first_tiered_period,_first_tiered_fee,_second_tiered_period,_second_tiered_fee);
             expression.setVariable("_first_tiered_period", _first_tiered_period);
             expression.setVariable("_first_tiered_fee", _first_tiered_fee);
             expression.setVariable("_second_tiered_period", _second_tiered_period);
