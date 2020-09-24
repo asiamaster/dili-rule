@@ -451,10 +451,10 @@
      */
     function priorityFormatter(value,row,index) {
         <%if(hasResource("adjustPriority")) {%>
-            return '<a class="like" href="javascript:void(0)" onclick="adjustPriorityHandler(' + row.id + ',true)" >向上</a>&nbsp;&nbsp;' +
-            '<a class="like" href="javascript:void(0)" onclick="adjustPriorityHandler(' + row.id + ',false)" >向下</a>';
+            return '<a class="like" href="javascript:void(0)" onclick="adjustPriorityHandler(' + row.id + ',true)" ><i class="fa fa-arrow-up" aria-hidden="true"></i></a>&nbsp;&nbsp;' +
+            '<a class="like" href="javascript:void(0)" onclick="adjustPriorityHandler(' + row.id + ',false)" ><i class="fa fa-arrow-down" aria-hidden="true"></i></a>';
         <%}else{%>
-            return '向上&nbsp;&nbsp;向下';
+            return `<i class="fa fa-arrow-up" aria-hidden="true"></i>&nbsp;&nbsp;<i class="fa fa-arrow-down" aria-hidden="true"></i>`;
         <%}%>
     }
 
