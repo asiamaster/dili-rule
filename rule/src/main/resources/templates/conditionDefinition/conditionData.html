@@ -126,7 +126,7 @@
         $.each(conditionData.checkedData.idList, function (k, ele) {
             $('body').find('.checkboxWrap [data-id="' + ele + '"]').find(':checkbox').click();
             if (!$('.checkedShow .table [data-id="' + ele + '"]').length) {
-                $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + parseInt(ele) + '"><td>' + conditionData.checkedData.textList[k] + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
+                $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + ele + '"><td>' + conditionData.checkedData.textList[k] + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
             }
         });
     });
