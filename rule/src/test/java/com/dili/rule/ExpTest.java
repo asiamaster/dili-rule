@@ -81,5 +81,11 @@ public class ExpTest {
         // BigDecimal(new Date().getHours()))
         // .and("b", new BigDecimal(new Date().getHours())).eval(); // 9.5591845
         // System.out.println(result.toPlainString());
+        
+     
+    }
+    public static void main(String[] args) {
+           BigDecimal result2 = new Expression("5/2").eval() ;
+        System.out.println(result2);
     }
 }
