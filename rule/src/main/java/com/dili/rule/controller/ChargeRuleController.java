@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
+import one.util.streamex.StreamEx;
 
 /**
  * <B></B>
@@ -137,6 +138,8 @@ public class ChargeRuleController {
         if(chargeRule.getActionExpressionType()==null){
             chargeRule.setActionExpressionType(ActionExpressionTypeEnum.SIMPLE.getCode());
         }
+        Map<Integer,String>actionExpressionTypeMap=StreamEx.of(ActionExpressionTypeEnum.values()).toMap(ActionExpressionTypeEnum::getCode, ActionExpressionTypeEnum::getDesc);
+         modelMap.addAttribute("actionExpressionTypeMap",actionExpressionTypeMap);
         return "chargeRule/edit";
     }
 

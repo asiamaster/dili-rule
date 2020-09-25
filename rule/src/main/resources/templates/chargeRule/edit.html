@@ -79,8 +79,7 @@
                 <div class="form-group col-auto mt-2">
                     <label for="">数学表达式<i class="red">*</i></label>
                     <select name="actionExpressionType" class="form-control" >
-                        <option value="1" >简单计算</option>
-                        <option value="2" >按时间分段计算</option>
+                        <%for (e in actionExpressionTypeMap){%>  <option value="${e.key}"  <%if(e.key==chargeRule.actionExpressionType){%>selected<%}%> >${e.value}</option><%}%>
                     </select>
                 </div>
             </div>
@@ -158,7 +157,7 @@
                             </div>
                         </div>
                     </div>
-<!--                    <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>-->
+                    <!--                    <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>-->
                 </div>
             </div>
         </div>
@@ -220,22 +219,25 @@
                     $('input[name="expressionInput"]').val('');
                     if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
                         $('#simpleExpressionDiv').show();
+                        $('#calcVariable').show();
                         $('#complexsimpleExpressionDiv').hide();
+                        $('select[name="actionExpressionParams[_start]"]').attr('required',false);
                     } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
                         $('#simpleExpressionDiv').hide();
+                        $('#calcVariable').hide();
                         $('#complexsimpleExpressionDiv').show();
+                        $('select[name="actionExpressionParams[_start]"]').attr('required',true);
+                        
                     }
                 })
-                var actionExpressionType = "${chargeRule.actionExpressionType!}";
-                $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
-                if($('select[name="actionExpressionType"]').val()=='2'){
+                
+                if($("select[name='actionExpressionType']").find("option:selected").index()!=0){
                     $('select[name="actionExpressionType"]').trigger('change');
-                }
-
+                };
                 var _start = '${actionExpressionParams._start!}';
 
                 $('select[name="actionExpressionParams[_start]"]').empty();
-                $('select[name="actionExpressionParams[_start]"]').append('<option>请选择</option>')
+                $('select[name="actionExpressionParams[_start]"]').append('<option value="">请选择</option>')
                 $.ajax({
                     type: "POST",
                     url: "${contextPath}/chargeRule/getRuleVariable.action",
@@ -254,6 +256,6 @@
                         bs4pop.alert('获取计算指标失败', {type: 0});
                     }
                 })
-                
+
 
 </script>

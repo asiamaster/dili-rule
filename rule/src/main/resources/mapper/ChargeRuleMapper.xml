@@ -109,6 +109,7 @@
         approver_name,
         approval_time,
         action_expression_type,
+        `action_expression_params`,
         is_backup,
         is_deleted
     )
@@ -134,6 +135,7 @@
         #{approverName},
         #{approvalTime},
         #{actionExpressionType},
+        #{actionExpressionParams},
         #{isBackup},
         #{isDeleted}
 	    FROM charge_rule where market_id=#{marketId} and business_type=#{businessType} AND charge_item =#{chargeItem}
