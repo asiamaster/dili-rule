@@ -137,64 +137,20 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             }
         }
 
-        if (YesOrNoEnum.YES.getCode().equals(temp.getIsBackup())) {
-
-            ChargeRule queryMain = new ChargeRule();
-            queryMain.setBackupedRuleId(temp.getId());
-            this.checkAndUpdateRuleStatus(StreamEx.of(super.listByExample(queryMain)).findFirst().orElse(null), temp);
-        } else {
-            this.checkAndUpdateRuleStatus(temp, null);
-        }
+        this.checkAndUpdateRuleStatus(temp);
 
         return BaseOutput.success().setData(temp);
     }
 
-    private void checkAndUpdateRuleStatus(ChargeRule rule, ChargeRule backupRule) {
-        if (backupRule != null) {
-            this.chargeRuleExpiresScheduler.checkRuleStateEnum(backupRule.getId()).map(updatableItem -> {
-//                updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
-                if (RuleStateEnum.ENABLED.getCode().equals(updatableItem.getState()) || RuleStateEnum.EXPIRED.getCode().equals(updatableItem.getState())) {
-                    if (rule != null) {
-                        rule.setIsDeleted(YesOrNoEnum.YES.getCode());
-                        updatableItem.setPriority(rule.getPriority());
-                        this.update(rule);
-                    }
-                    updatableItem.setIsBackup(YesOrNoEnum.NO.getCode());
-                }
+    private void checkAndUpdateRuleStatus(ChargeRule rule) {
 
-                int v = this.updateSelective(updatableItem);
-                return backupRule.getId();
-            }).orElseGet(() -> {
-                return this.chargeRuleExpiresScheduler.queryAndScheduleUpdateRuleStatusById(backupRule.getId())
-                        .map(ChargeRule::getId).orElse(null);
-            });
-
-        } else {
-            this.chargeRuleExpiresScheduler.checkRuleStateEnum(rule.getId()).map(updatableItem -> {
-//                updatableItem.setModifyTime(this.get(updatableItem.getId()).getModifyTime());
-                int v = this.updateSelective(updatableItem);
-                return rule.getId();
-            }).orElseGet(() -> {
-                return this.chargeRuleExpiresScheduler.queryAndScheduleUpdateRuleStatusById(rule.getId())
-                        .map(ChargeRule::getId).orElse(null);
-            });
-
-        }
-
+        this.chargeRuleExpiresScheduler.queryAndScheduleUpdateState(rule.getId());
     }
 
     @Override
     public void updateStateByExpires(Long id, OperatorUser operatorUser) {
-        ChargeRule temp = this.get(id);
-
-        if (YesOrNoEnum.YES.getCode().equals(temp.getIsBackup())) {
-
-            ChargeRule queryMain = new ChargeRule();
-            queryMain.setBackupedRuleId(temp.getId());
-            this.checkAndUpdateRuleStatus(StreamEx.of(super.listByExample(queryMain)).findFirst().orElse(null), temp);
-        } else {
-            this.checkAndUpdateRuleStatus(temp, null);
-        }
+        ChargeRule item = this.get(id);
+        this.checkAndUpdateRuleStatus(item);
     }
 
     @Override
@@ -304,16 +260,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             rule.setState(RuleStateEnum.DISABLED.getCode());
         }
         this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
-        this.chargeRuleExpiresScheduler.checkRuleStateEnum(rule.getId()).map(updatableItem -> {
-
-//                updatableItem.setModifyTime(this.get(updatableItem.getId()).getModifyTime());
-            int v = this.updateSelective(updatableItem);
-
-            return rule.getId();
-        }).orElseGet(() -> {
-            return this.chargeRuleExpiresScheduler.queryAndScheduleUpdateRuleStatusById(rule.getId())
-                    .map(ChargeRule::getId).orElse(null);
-        });
+        this.checkAndUpdateRuleStatus(rule);
 
         return BaseOutput.success();
     }
@@ -343,7 +290,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         ruleInfo.setOriginalId(null);
 //        }
         super.updateSelective(ruleInfo);
-        chargeRuleExpiresScheduler.updateRuleStatus(ruleInfo);
+        chargeRuleExpiresScheduler.queryAndScheduleUpdateState(ruleInfo.getId());
         return 1;
     }
 
@@ -570,7 +517,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             String _second_tiered_fee = (String) actionExpressionParams.get("_second_tiered_fee");
             String startValue = String.valueOf(calcParams.get(matchKey));
             logger.info("startValue={},_first_tiered_period={},_first_tiered_fee={},_second_tiered_period={},_second_tiered_fee={}",
-                     startValue, _first_tiered_period, _first_tiered_fee, _second_tiered_period, _second_tiered_fee);
+                    startValue, _first_tiered_period, _first_tiered_fee, _second_tiered_period, _second_tiered_fee);
             expression.setVariable("_first_tiered_period", _first_tiered_period);
             expression.setVariable("_first_tiered_fee", _first_tiered_fee);
             expression.setVariable("_second_tiered_period", _second_tiered_period);
@@ -587,7 +534,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     long minutes = Duration.between(firstArg, secondArg).toMinutes();
                     // System.out.println(firstArg.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                     // System.out.println(secondArg.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                    logger.info("minutes={}",minutes);
+                    logger.info("minutes={}", minutes);
                     // System.out.println(minutes);
                     return new LazyNumber() {
                         public BigDecimal eval() {
