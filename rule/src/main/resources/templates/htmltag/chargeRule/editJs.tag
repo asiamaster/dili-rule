@@ -320,10 +320,10 @@
             }
             var hasError=false;
             $.each($('.between'),function(v,i){
-                var startEl=$(this).find('input[name^="start"]');
+                var startEl=$(this).find('input[class~="betweenMinInput"]');
                 var startElName=startEl.attr('name');
                 var start=$.trim(startEl.val());
-                var end=$.trim($(this).find('input[name^="end"]').val());
+                var end=$.trim($(this).find('input[class~="betweenMaxInput"]').val());
            
                 if(start!=''&&end!=''){
                     if($.isNumeric(start)&&$.isNumeric(end)){
