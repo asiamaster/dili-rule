@@ -66,14 +66,15 @@ public class RuleEngineServiceImpl implements RuleEngineService {
 
     /**
      * 构建计费规则实际用到的值信息
+     *
      * @param ruleConditionValList
      * @param conditionParams
      * @return
      */
     private Map<String, RuleFactsDto> buildRuleFactsMap(List<ChargeConditionVal> ruleConditionValList, Map<String, Object> conditionParams) {
         Map<String, RuleFactsDto> ruleFactsVoMap = ruleConditionValList.stream()
-//                .filter(rcv -> conditionParams.containsKey(rcv.getMatchKey()))
-                .filter(rcv -> CollectionUtil.isNotEmpty(JSON.parseArray(rcv.getVal())))    //过滤掉未设置条件项数据的条件指标
+                //                .filter(rcv -> conditionParams.containsKey(rcv.getMatchKey()))
+                .filter(rcv -> CollectionUtil.isNotEmpty(JSON.parseArray(rcv.getVal()))) //过滤掉未设置条件项数据的条件指标
                 .map(rcv -> {
                     String matchKey = rcv.getMatchKey();
                     MatchTypeEnum matchTypeEnum = MatchTypeEnum.getInitDataMaps().get(rcv.getMatchType());
@@ -97,6 +98,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
 
     /**
      * 封装一组规则事实数据
+     *
      * @param ruleFactsDtoMap
      * @return
      */
@@ -110,13 +112,14 @@ public class RuleEngineServiceImpl implements RuleEngineService {
 
     /**
      * 构建一组规则信息
+     *
      * @param ruleId
      * @param ruleName
      * @return
      */
-    private  Rules buildRules(Long ruleId,String ruleName) {
+    private Rules buildRules(Long ruleId, String ruleName) {
         Rules rules = new Rules();
-        StringBuilder ruleDesc=new StringBuilder()
+        StringBuilder ruleDesc = new StringBuilder()
                 .append("RuleInfo id: ").append(ruleId)
                 .append(",name: ").append(ruleName);
         Rule r = buildRule(ruleName, ruleDesc.toString());
@@ -126,6 +129,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
 
     /**
      * 构建一个规则信息
+     *
      * @param name
      * @param desc
      * @return
@@ -140,12 +144,14 @@ public class RuleEngineServiceImpl implements RuleEngineService {
                 return conditionResult(ruleFactsVo);
             }).allMatch(Boolean.TRUE::equals);
             return result;
-        }).then(f -> {}).build();
+        }).then(f -> {
+        }).build();
 
     }
 
     /**
      * 条件匹配是否匹配
+     *
      * @param ruleFactsVo
      * @return
      */
@@ -177,6 +183,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
 
     /**
      * 转换值信息
+     *
      * @param value
      * @param valueDataTypeEnum
      * @param <T>
@@ -187,6 +194,9 @@ public class RuleEngineServiceImpl implements RuleEngineService {
             return null;
         }
         String str = String.valueOf(value);
+        if (str.trim().equalsIgnoreCase("null")) {
+            return null;
+        }
         switch (valueDataTypeEnum) {
             case DATE:
 //                return (Comparable<T>) Instant.parse(str);
@@ -203,6 +213,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
 
     /**
      * 批量转换值信息
+     *
      * @param values
      * @param valueDataTypeEnum
      * @param <T>
@@ -214,6 +225,7 @@ public class RuleEngineServiceImpl implements RuleEngineService {
 
     /**
      * 对比值数据
+     *
      * @param givenValue
      * @param conditionValues
      * @return

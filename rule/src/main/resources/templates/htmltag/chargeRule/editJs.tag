@@ -323,8 +323,10 @@
                 var startEl=$(this).find('input[class~="betweenMinInput"]');
                 var startElName=startEl.attr('name');
                 var start=$.trim(startEl.val());
-                var end=$.trim($(this).find('input[class~="betweenMaxInput"]').val());
-           
+                
+                 var endEl=$(this).find('input[class~="betweenMaxInput"]');
+                var end=$.trim(endEl.val());
+                var endElName=endEl.attr('name');
                 if(start!=''&&end!=''){
                     if($.isNumeric(start)&&$.isNumeric(end)){
                          if(parseFloat(start)>=parseFloat(end)){
@@ -345,6 +347,18 @@
                                 return false;
                           }
                     }
+                }else if(start!=''||end!=''){
+                        validate.form();
+                        var err={}
+                    if(start==''){
+                        err[startElName]='不能为空';
+                    }else{
+                        err[endElName]='不能为空';
+                    }
+                    validate.showErrors(err);
+                    hasError=true;
+                    return false;
+                    
                 }
                 
             })
