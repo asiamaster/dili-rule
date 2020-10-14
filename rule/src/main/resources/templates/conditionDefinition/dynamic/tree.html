@@ -34,7 +34,8 @@
     </form>
     <hr>
     <div class="row">
-        <el-tree :data="data" ref="tree" :props="defaultProps" node-key="id" show-checkbox @check-change="handleCheckChange"></el-tree>
+        <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
+        <el-tree :data="data" ref="tree" :props="defaultProps" node-key="id" show-checkbox @check-change="handleCheckChange" :filter-node-method="filterNode"></el-tree>
     </div>
 </div>
 
@@ -73,7 +74,16 @@
                 }
             };
         },
+          watch: {
+      filterText(val) {
+        this.$refs.tree.filter(val);
+      }
+    },
         methods: {
+             filterNode(value, data) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
+      },
             handleCheckChange(data, checked, indeterminate) {
                 let checkedNodes = this.$refs.tree.getCheckedNodes();
                 var idList = checkedNodes.map(item => {
