@@ -315,7 +315,8 @@
             order: params.order
         };
         
-        if($.trim($('#state').val())==''){
+        
+        if($.trim($("#state").find("option:selected").text())==''){
             temp.state=${state}    
         }
         return $.extend(temp, bui.util.bindGridMeta2Form('chargeRuleGrid', 'chargeRuleQueryForm'));
