@@ -314,6 +314,10 @@
             sort: params.sort,
             order: params.order
         };
+        
+        if($.trim($('#state').val())==''){
+            temp.state=${state}    
+        }
         return $.extend(temp, bui.util.bindGridMeta2Form('chargeRuleGrid', 'chargeRuleQueryForm'));
     }
 

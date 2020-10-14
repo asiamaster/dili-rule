@@ -26,7 +26,7 @@
                 <div class="form-group col">
                     <label for="state">状态</label>
                     <select class="form-control" id="state" name="state"></select>
-                    <#bcomboProvider _id="state" _provider="ruleStateProvider" _valueField="value" _textField="text" _value="" _queryParams='{emptyText:"-- 全部 --"}' />
+                    <#bcomboProvider _id="state" _provider="ruleStateProvider" _valueField="value" _textField="text" _value="${state}" _queryParams='{emptyText:"-- 全部 --"}' />
                 </div>
                 <div class="form-group col">
                     <label for="ruleName">规则名称</label>

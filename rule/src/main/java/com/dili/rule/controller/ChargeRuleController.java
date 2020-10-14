@@ -71,6 +71,7 @@ public class ChargeRuleController {
     public String index(ModelMap modelMap) {
         modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         modelMap.put("businessTypeList", getBusinessType());
+        modelMap.put("state", RuleStateEnum.ENABLED.getCode());
         return "chargeRule/list";
     }
 
