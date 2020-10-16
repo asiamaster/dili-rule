@@ -146,7 +146,7 @@ public class ChargeRuleApiController {
         for (QueryFeeInput queryFeeInput : queryFeeInputList) {
             QueryFeeOutput output = this.queryRule(queryFeeInput);
             if (StringUtils.isNotBlank(output.getMessage())) {
-                return BaseOutput.failure(output.getMessage()).setData(output).setCode(output.getCode());
+                return BaseOutput.failure(output.getMessage()).setCode(output.getCode());
             }
             resultList.add(output);
         }
