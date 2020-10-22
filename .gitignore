@@ -15,3 +15,5 @@
 **/.vscode
 **/spy.log
 */spy.log
+**/nbactions.xml
+**/.externalToolBuilders
