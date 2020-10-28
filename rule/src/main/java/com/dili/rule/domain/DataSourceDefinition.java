@@ -6,7 +6,6 @@ import com.dili.ss.domain.annotation.Like;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -29,7 +28,7 @@ public class DataSourceDefinition extends BaseDomain {
      */
     @Column(name = "`name`")
     @Like
-    @NotBlank(message = "名称不能为空")
+//    @NotBlank(message = "名称不能为空")
     private String name;
 
     /**

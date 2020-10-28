@@ -21,6 +21,7 @@ import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ChargeRuleService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.RuleEngineService;
+import com.dili.rule.utils.EasyuiPageOutputUtil;
 import com.dili.ss.base.BaseServiceImpl;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
@@ -104,7 +105,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         long total = chargeRuleVoList instanceof Page ? ((Page) chargeRuleVoList).getTotal()
                 : (long) chargeRuleVoList.size();
         List results = true ? ValueProviderUtils.buildDataByProvider(chargeRule, chargeRuleVoList) : chargeRuleVoList;
-        return new EasyuiPageOutput((int) total, results);
+        return EasyuiPageOutputUtil.build( total, results);
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.dili.rule.service.DataSourceDefinitionService;
 import com.dili.rule.service.DatasourceQueryConfigService;
 import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.rule.utils.CookieUtil;
+import com.dili.rule.utils.EasyuiPageOutputUtil;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
@@ -83,7 +84,7 @@ public class ConditionDefinitionController {
             return conditionDefinitionService.listEasyuiPageByExample(conditionDefinition, true).toString();
         } catch (Exception e) {
             log.error("查询条件预定义列表异常," + e.getMessage(), e);
-            return new EasyuiPageOutput(0, Collections.emptyList()).toString();
+            return EasyuiPageOutputUtil.build(0, Collections.emptyList()).toString();
         }
     }
 

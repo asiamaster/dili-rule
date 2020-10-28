@@ -16,6 +16,7 @@ import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.remote.BusinessChargeItemRpcService;
 import com.dili.rule.service.remote.DataDictionaryRpcService;
 import com.dili.rule.utils.CookieUtil;
+import com.dili.rule.utils.EasyuiPageOutputUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
@@ -89,7 +90,7 @@ public class ChargeRuleController {
             return chargeRuleService.listForEasyuiPage(chargeRule).toString();
         } catch (Exception e) {
             log.error(String.format("根据[%s]查询计费规则列表异常,[%s]", chargeRule, e.getMessage()), e);
-            return new EasyuiPageOutput(0, Collections.emptyList()).toString();
+            return EasyuiPageOutputUtil.build(0, Collections.emptyList()).toString();
         }
     }
 
@@ -141,6 +142,10 @@ public class ChargeRuleController {
         }
         Map<Integer,String>actionExpressionTypeMap=StreamEx.of(ActionExpressionTypeEnum.values()).toMap(ActionExpressionTypeEnum::getCode, ActionExpressionTypeEnum::getDesc);
          modelMap.addAttribute("actionExpressionTypeMap",actionExpressionTypeMap);
+         
+         
+         modelMap.addAttribute("operator",SessionContext.getSessionContext().getUserTicket());
+         
         return "chargeRule/edit";
     }
 

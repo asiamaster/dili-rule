@@ -1,26 +1,26 @@
 package com.dili.rule.api;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.dili.rule.domain.dto.CalculateFeeDto;
-import com.dili.rule.sdk.domain.input.QueryFeeInput;
-import com.dili.rule.sdk.domain.output.QueryFeeOutput;
-import com.dili.rule.service.ChargeRuleService;
-import com.dili.ss.constant.ResultCode;
-import com.dili.ss.domain.BaseOutput;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import com.alibaba.fastjson.JSONObject;
+import com.dili.rule.sdk.domain.input.QueryFeeInput;
+import com.dili.rule.sdk.domain.output.QueryFeeOutput;
+import com.dili.rule.service.ChargeRuleService;
+import com.dili.ss.constant.ResultCode;
+import com.dili.ss.domain.BaseOutput;
+
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * 计费规则服务

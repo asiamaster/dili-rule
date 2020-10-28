@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dili.rule.domain.DataSourceColumn;
 import com.dili.rule.service.DataSourceColumnService;
+import com.dili.rule.utils.EasyuiPageOutputUtil;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
@@ -57,13 +58,13 @@ public class DataSourceColumnController {
     public String listPage(DataSourceColumn dataSourceColumn, HttpServletRequest request) {
         if (Objects.isNull(dataSourceColumn) || Objects.isNull(dataSourceColumn.getDataSourceId())) {
             log.warn("查询数据列时,数据源参数丢失");
-            return new EasyuiPageOutput(0, Collections.emptyList()).toString();
+            return EasyuiPageOutputUtil.build(0, Collections.emptyList()).toString();
         }
         try {
             return dataSourceColumnService.listEasyuiPageByExample(dataSourceColumn, true).toString();
         } catch (Exception e) {
             log.error(String.format("查询数据源[%d]对应的数据列时异常[%s]", dataSourceColumn.getDataSourceId(), e.getMessage()), e);
-            return new EasyuiPageOutput(0, Collections.emptyList()).toString();
+            return EasyuiPageOutputUtil.build(0, Collections.emptyList()).toString();
         }
     }
 

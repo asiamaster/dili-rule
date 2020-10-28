@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import com.dili.rule.service.DataSourceDefinitionService;
+import com.dili.rule.utils.EasyuiPageOutputUtil;
 
 /**
  * 数据源管理控制层
@@ -56,7 +57,7 @@ public class DataSourceDefinitionController {
             return dataSourceDefinitionService.listEasyuiPageByExample(dataSourceDefinition, true).toString();
         } catch (Exception e) {
             log.error("查询数据源列表异常," + e.getMessage(), e);
-            return new EasyuiPageOutput(0, Collections.emptyList()).toString();
+            return EasyuiPageOutputUtil.build(0, Collections.emptyList()).toString();
         }
     }
 
