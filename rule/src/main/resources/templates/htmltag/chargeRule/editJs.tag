@@ -395,6 +395,10 @@
                 success: function (ret) {
                     bui.loading.hide();
                     if (ret.success) {
+                    	logObj.content = logger.buildUpdateContent();
+                    	//logObj.notes = "客户此次市场数据为：" + $("#marketName").val();
+                    	console.info(logObj)
+                    	logger.operatorLog(logObj);
                         bs4pop.notice('操作成功', {type: 'info', position: 'center'});
                         parent.dia.hide();
                         parent.queryDataHandler();

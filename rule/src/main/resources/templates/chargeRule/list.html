@@ -30,7 +30,7 @@
                 </div>
                 <div class="form-group col">
                     <label for="ruleName">规则名称</label>
-                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="25">
+                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="60">
                 </div>
                 <div class="col align-self-center mt-3">
                     <button type="button" class="btn btn-outline-primary mr-2" onclick="clearForm()"><i class="fa fa-refresh"></i> 清空
@@ -111,7 +111,7 @@
                         <th data-width-unit="%" data-width="10" data-field="chargeItem" data-align="center" data-sortable="true" data-sort-name="charge_item" data-provider="chargeItemProvider">
                             费用科目
                         </th>
-                        <th data-width-unit="%" data-width="10" data-field="ruleName" data-align="center" data-sortable="true" data-sort-name="convert(rule_name using gbk)">
+                        <th data-width-unit="%" data-width="10" data-field="ruleName" data-align="center" data-sortable="true" data-sort-name="convert(rule_name using gbk)"  data-formatter="dataFormatterTip">
                             规则名称
                         </th>
                         <th data-width-unit="%" data-width="10" data-field="groupId" data-align="center" data-sortable="true" data-sort-name="group_id">

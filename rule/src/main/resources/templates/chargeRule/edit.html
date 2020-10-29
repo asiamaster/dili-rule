@@ -26,19 +26,19 @@
                 <input type="" class="form-control" id="chargeItemName" readonly value="${chargeItemName!}" required>
             </div>
             <div class="form-group col">
-                <label for="ruleName">规则名称<i class="red">*</i></label>
-                <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="20" value="${chargeRule.ruleName!}" required>
+                <label for="ruleName" _log>规则名称<i class="red">*</i></label>
+                <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="60" value="${chargeRule.ruleName!}" required>
             </div>
             <div class="form-group col">
-                <label for="groupId">分组<i class="red">*</i></label>
+                <label for="groupId" _log>分组<i class="red">*</i></label>
                 <input type="" class="form-control isInt" id="groupId" name="groupId" placeholder="" value="${chargeRule.groupId!}" range="0 999" required>
             </div>
             <div class="form-group col">
-                <label for="minPayment">最低支付金额</label>
+                <label for="minPayment" _log>最低支付金额</label>
                 <input type="" class="form-control floatReserve" id="minPayment" name="minPayment" placeholder="" value="${chargeRule.minPayment!}" range="0 999999.99">
             </div>
             <div class="form-group col">
-                <label for="maxPayment">最高支付金额</label>
+                <label for="maxPayment" _log>最高支付金额</label>
                 <input type="" class="form-control floatReserve" id="maxPayment" name="maxPayment" placeholder="" value="${chargeRule.maxPayment!}" range="0 999999.99">
             </div>
             <div class="form-group col">
@@ -49,13 +49,13 @@
                 <label for="expireStart">有效期<i class="red">*</i></label>
                 <div class="form-inline">
                     <div class="input-group">
-                        <input type="text" name="expireStart" id="expireStart"  autocomplete="off"  class="form-control laydatetime laystart" value="${chargeRule.expireStart!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
+                        <input type="text" _log="有效期开始" name="expireStart" id="expireStart"  autocomplete="off"  class="form-control laydatetime laystart" value="${chargeRule.expireStart!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" required/>
                         <div class="input-group-append">
                             <label for="expireStart" class="input-group-text fa fa-calendar"></label>
                         </div>
                     </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                     <div class="input-group">
-                        <input type="text" name="expireEnd" id="expireEnd"  autocomplete="off"  class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}"/>
+                        <input type="text"  _log="有效期结束" name="expireEnd" id="expireEnd"  autocomplete="off"  class="form-control laydatetime layend" value="${chargeRule.expireEnd!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}"/>
                         <div class="input-group-append">
                             <label for="expireEnd" class="input-group-text fa fa-calendar"></label>
                         </div>
@@ -75,10 +75,10 @@
         </div>
         <div class="collapse show form-calcParam-box" id="calcParamInfo">
             <div class="row">
-                <input type="hidden" id="actionExpression" name="actionExpression"  autocomplete="off" value="${chargeRule.actionExpression!}" />
+                <input type="hidden" id="actionExpression" _log="计算表达式" name="actionExpression"  autocomplete="off" value="${chargeRule.actionExpression!}" />
                 <div class="form-group col-auto mt-2">
-                    <label for="">数学表达式<i class="red">*</i></label>
-                    <select name="actionExpressionType" class="form-control" >
+                    <label for="" _log>数学表达式<i class="red">*</i></label>
+                    <select name="actionExpressionType" class="form-control">
                         <%for (e in actionExpressionTypeMap){%>  <option value="${e.key}"  <%if(e.key==chargeRule.actionExpressionType){%>selected<%}%> >${e.value}</option><%}%>
                     </select>
                 </div>
@@ -132,11 +132,11 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" >前</span>
                             </div>
-                            <input class="form-control" name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
+                            <input class="form-control" _log="阶梯计算[前]" name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
                             <div class="input-group-append">
                                 <span class="input-group-text">分钟收费</span>
                             </div>
-                            <input class="form-control" name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" />
+                            <input class="form-control" _log="阶梯计算[分钟收费]" name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}" />
                             <div class="input-group-append">
                                 <span class="input-group-text">元</span>
                             </div>
@@ -147,11 +147,11 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" >后每</span>
                             </div>
-                            <input class="form-control" name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}" />
+                            <input class="form-control" _log="阶梯计算[后每]" name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}" />
                             <div class="input-group-append">
                                 <span class="input-group-text">分钟收费</span>
                             </div>
-                            <input class="form-control" name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}" />
+                            <input class="form-control" _log="阶梯计算[分钟收费]" name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}" />
                             <div class="input-group-append">
                                 <span class="input-group-text">元</span>
                             </div>
@@ -167,7 +167,7 @@
         </div>
         <div class="row  row-cols-4 collapse show" id="otherInfo">
             <div class="form-group col-8">
-                <label for="remark">备注</label>
+                <label for="remark" _log>备注</label>
                 <textarea id="remark" class="form-control" name="remark" rows="2" maxlength="50">${chargeRule.remark!}</textarea>
             </div>
         </div>
@@ -188,74 +188,90 @@
 <script type="text/javascript" src="${contextPath}/resources/bui/lib/jquery-validation-1.19.1/jquery.validate-extend.js"></script>
 
 <#chargeRule_editJs />
+
 <script>
-                $.prototype.tooltip = (function (tooltip) {
-                    return function (config) {
-                        try {
-                            return tooltip.call(this, config);
-                        } catch (ex) {
-                            if (ex instanceof TypeError && config === "destroy") {
-                                return tooltip.call(this, "dispose");
-                            } else if (ex instanceof TypeError && config === "fixTitle") {
-                                var $e = this
-                                if ($e.attr('title') || typeof ($e.attr('data-original-title')) != 'string') {
-                                    $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
-                                }
-                                return this;
-                            }
-                        }
-                    };
-                })($.prototype.tooltip);
-                /*
-                 Tooltip.prototype.fixTitle = function () {
-                 var $e = this.$element
-                 if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
-                 $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
-                 }
-                 }*/
+	var logger = new Logger(); //option参数对象可作为实例对象属性，可覆盖defaults属性
+	let logObj = {};
+	
+	logObj.businessCode = $("#id").val();
+	logObj.businessId = $("#id").val();
+	
+	logObj.systemCode = "RULE";
+	logObj.businessType = "dili-rule";
+	
+	logObj.operationType = "edit";
+	
+	logObj.marketId = '${operator.firmId}';
+	logObj.operatorId = '${operator.id}';
+	logObj.operatorName = '${operator.realName}';
 
-                $('select[name="actionExpressionType"]').change(function () {
-                    $('input[name="actionExpression"]').val('');
-                    $('input[name="expressionInput"]').val('');
-                    if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
-                        $('#simpleExpressionDiv').show();
-                        $('#calcVariable').show();
-                        $('#complexsimpleExpressionDiv').hide();
-                        $('select[name="actionExpressionParams[_start]"]').attr('required',false);
-                    } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
-                        $('#simpleExpressionDiv').hide();
-                        $('#calcVariable').hide();
-                        $('#complexsimpleExpressionDiv').show();
-                        $('select[name="actionExpressionParams[_start]"]').attr('required',true);
-                        
-                    }
-                })
-                
-                if($("select[name='actionExpressionType']").find("option:selected").index()!=0){
-                    $('select[name="actionExpressionType"]').trigger('change');
-                };
-                var _start = '${actionExpressionParams._start!}';
+  $.prototype.tooltip = (function (tooltip) {
+      return function (config) {
+          try {
+              return tooltip.call(this, config);
+          } catch (ex) {
+              if (ex instanceof TypeError && config === "destroy") {
+                  return tooltip.call(this, "dispose");
+              } else if (ex instanceof TypeError && config === "fixTitle") {
+                  var $e = this
+                  if ($e.attr('title') || typeof ($e.attr('data-original-title')) != 'string') {
+                      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+                  }
+                  return this;
+              }
+          }
+      };
+  })($.prototype.tooltip);
+   /*
+    Tooltip.prototype.fixTitle = function () {
+    var $e = this.$element
+    if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
+    $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+    }
+    }*/
 
-                $('select[name="actionExpressionParams[_start]"]').empty();
-                $('select[name="actionExpressionParams[_start]"]').append('<option value="">请选择</option>')
-                $.ajax({
-                    type: "POST",
-                    url: "${contextPath}/chargeRule/getRuleVariable.action",
-                    async: true,
-                    data: {id: '${chargeRule.id!}', marketId: '${chargeRule.marketId!}', businessType: '${chargeRule.businessType!}', dataType: '${@com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()}'},
-                    success: function (ret) {
-                        $.each(ret, function (i, v) {
-                            if (_start == v.matchKey) {
-                                $('select[name="actionExpressionParams[_start]"]').append('<option selected value="' + v.matchKey + '">' + v.label + '</option>')
-                            } else {
-                                $('select[name="actionExpressionParams[_start]"]').append('<option value="' + v.matchKey + '">' + v.label + '</option>')
-                            }
-                        });
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        bs4pop.alert('获取计算指标失败', {type: 0});
-                    }
-                })
+   $('select[name="actionExpressionType"]').change(function () {
+       $('input[name="actionExpression"]').val('');
+       $('input[name="expressionInput"]').val('');
+       if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
+           $('#simpleExpressionDiv').show();
+           $('#calcVariable').show();
+           $('#complexsimpleExpressionDiv').hide();
+           $('select[name="actionExpressionParams[_start]"]').attr('required',false);
+       } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
+           $('#simpleExpressionDiv').hide();
+           $('#calcVariable').hide();
+           $('#complexsimpleExpressionDiv').show();
+           $('select[name="actionExpressionParams[_start]"]').attr('required',true);
+           
+       }
+   })
+   
+   if($("select[name='actionExpressionType']").find("option:selected").index()!=0){
+       $('select[name="actionExpressionType"]').trigger('change');
+   };
+   var _start = '${actionExpressionParams._start!}';
+
+   $('select[name="actionExpressionParams[_start]"]').empty();
+   $('select[name="actionExpressionParams[_start]"]').append('<option value="">请选择</option>')
+   $.ajax({
+       type: "POST",
+       url: "${contextPath}/chargeRule/getRuleVariable.action",
+       async: true,
+       data: {id: '${chargeRule.id!}', marketId: '${chargeRule.marketId!}', businessType: '${chargeRule.businessType!}', dataType: '${@com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()}'},
+       success: function (ret) {
+           $.each(ret, function (i, v) {
+               if (_start == v.matchKey) {
+                   $('select[name="actionExpressionParams[_start]"]').append('<option selected value="' + v.matchKey + '">' + v.label + '</option>')
+               } else {
+                   $('select[name="actionExpressionParams[_start]"]').append('<option value="' + v.matchKey + '">' + v.label + '</option>')
+               }
+           });
+       },
+       error: function (XMLHttpRequest, textStatus, errorThrown) {
+           bs4pop.alert('获取计算指标失败', {type: 0});
+       }
+   })
 
 
 </script>
