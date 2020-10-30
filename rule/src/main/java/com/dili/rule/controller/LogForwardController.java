@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +27,7 @@ import one.util.streamex.StreamEx;
 @Controller
 @RequestMapping("/logForwardController")
 public class LogForwardController {
+	private static final Logger logge=LoggerFactory.getLogger(LogForwardController.class);
 	@Value("${logger.contextPath:http://logger.diligrp.com:8283/api/businessLog/save}")
 	private String loggerContextPath;
 
@@ -51,7 +54,9 @@ public class LogForwardController {
 			return StreamEx.of(enu).toList();
 
 		}).toMap();
-
+		logge.info("loggerContextPath={}",loggerContextPath);
+		logge.info("headers={}",headers);
+		logge.info("requestBody={}",requestBody);
 		String respBody = HttpRequest.post(loggerContextPath).header(headers).body(requestBody).execute().body();
 		return mapper.readValue(respBody, Map.class);
 
