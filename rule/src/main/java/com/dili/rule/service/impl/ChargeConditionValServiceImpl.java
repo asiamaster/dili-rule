@@ -128,29 +128,34 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                         String matchColumn = conditionDefinition.getMatchColumn();
                         List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(dataSourceDefinition, objects,sessionId);
 //                        logger.info("keyTextMap={}",keyTextMap);
-                        DataSourceColumn condition = new DataSourceColumn();
-                        condition.setDataSourceId(conditionDefinition.getDataSourceId());
-                        List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
-                        for (Object value : objects) {
-                            for (Map<String, Object> row : keyTextMap) {
-                                Object matchValue = row.get(matchColumn);
-                                if (String.valueOf(value).equals(String.valueOf(matchValue))) {
-//                                    logger.info("value={},matchColumn={}，matchValue={}",value,matchColumn,matchValue);
-                                    List<String> displayedText = new ArrayList<>();
-                                    for (DataSourceColumn column : columns) {
-                                        if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
-                                            Object obj=row.get(column.getColumnCode());
-//                                            logger.info("displayedText={}",obj);
-                                            if(obj!=null) {
-                                                displayedText.add(String.valueOf(obj));
-                                            }
+                        if(!keyTextMap.isEmpty()) {
+                            DataSourceColumn condition = new DataSourceColumn();
+                            condition.setDataSourceId(conditionDefinition.getDataSourceId());
+                            List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
+                            for (Object value : objects) {
+                                for (Map<String, Object> row : keyTextMap) {
+                                    Object matchValue = row.get(matchColumn);
+                                    if (String.valueOf(value).equals(String.valueOf(matchValue))) {
+//                                        logger.info("value={},matchColumn={}，matchValue={}",value,matchColumn,matchValue);
+                                        List<String> displayedText = new ArrayList<>();
+                                        for (DataSourceColumn column : columns) {
+                                            if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
+                                                Object obj=row.get(column.getColumnCode());
+//                                                logger.info("displayedText={}",obj);
+                                                if(obj!=null) {
+                                                    displayedText.add(String.valueOf(obj));
+                                                }
 
+                                            }
                                         }
+                                        vo.getTexts().add(String.join("#", displayedText));
                                     }
-                                    vo.getTexts().add(String.join("#", displayedText));
                                 }
                             }
+                        }else {
+                        	vo.getTexts().add(objects);
                         }
+
                     }else{
                         vo.getTexts().add(objects);
                     }

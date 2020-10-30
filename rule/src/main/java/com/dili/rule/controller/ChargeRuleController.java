@@ -158,17 +158,10 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/getRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-    	try {
-            String uapSessionId=CookieUtil.getUapSessionId(request);
-            Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
-            modelMap.addAllAttributes(map);
-            return "chargeRule/ruleCondition";
-    	}catch (Throwable e) {
-    		log.error(e.getMessage(),e);
-    		throw e;
-    		
-		}
-
+        String uapSessionId=CookieUtil.getUapSessionId(request);
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
+        modelMap.addAllAttributes(map);
+        return "chargeRule/ruleCondition";
     }
 
     /**

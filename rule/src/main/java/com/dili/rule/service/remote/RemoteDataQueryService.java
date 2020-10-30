@@ -150,7 +150,10 @@ public class RemoteDataQueryService {
                 if (response.isOk()) {
                     return this.parseJson(Optional.ofNullable(response.body()), false).getData();
                 }
-            }
+            }catch (Exception e) {
+            	logger.error(e.getMessage(),e);
+            	return Collections.emptyList();
+			}
         }
         return Collections.emptyList();
     }
