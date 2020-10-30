@@ -28,7 +28,7 @@ import one.util.streamex.StreamEx;
 @RequestMapping("/logForwardController")
 public class LogForwardController {
 	private static final Logger logge=LoggerFactory.getLogger(LogForwardController.class);
-	@Value("${logger.contextPath:http://logger.diligrp.com:8283/api/businessLog/save}")
+	@Value("${logger.contextPath:http://logger.diligrp.com:8283}")
 	private String loggerContextPath;
 
 	private ObjectMapper mapper = new ObjectMapper();
@@ -54,10 +54,11 @@ public class LogForwardController {
 			return StreamEx.of(enu).toList();
 
 		}).toMap();
-		logge.info("loggerContextPath={}",loggerContextPath);
+		String url=this.loggerContextPath+"/api/businessLog/save";
+		logge.info("url={}",url);
 		logge.info("headers={}",headers);
 		logge.info("requestBody={}",requestBody);
-		String respBody = HttpRequest.post(loggerContextPath).header(headers).body(requestBody).execute().body();
+		String respBody = HttpRequest.post(url).header(headers).body(requestBody).execute().body();
 		return mapper.readValue(respBody, Map.class);
 
 	}
