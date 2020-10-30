@@ -73,6 +73,7 @@ public class ChargeRuleController {
         modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         modelMap.put("businessTypeList", getBusinessType());
         modelMap.put("state", RuleStateEnum.ENABLED.getCode());
+        modelMap.addAttribute("operator",SessionContext.getSessionContext().getUserTicket());
         return "chargeRule/list";
     }
 

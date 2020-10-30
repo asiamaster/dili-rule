@@ -395,6 +395,8 @@
                 success: function (ret) {
                     bui.loading.hide();
                     if (ret.success) {
+                    	logObj.businessId = ret.data.id;
+                    	logObj.businessCode = ret.data.id;
                     	logObj.content = logger.buildUpdateContent();
                     	//logObj.notes = "客户此次市场数据为：" + $("#marketName").val();
                     	console.info(logObj)

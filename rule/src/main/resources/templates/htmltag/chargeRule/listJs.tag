@@ -193,6 +193,16 @@
         let msg = (enable || 'true' == enable) ? '确定要启用该规则吗？' : '确定要禁用该规则吗？';
         bs4pop.confirm(msg, undefined, function (sure) {
             if(sure){
+            	let logObj = {};
+            	logObj.businessCode = selectedRow.id;
+            	logObj.businessId = selectedRow.id;
+            	logObj.systemCode = "RULE";
+            	logObj.businessType = "dili-rule";
+            	logObj.operationType = "enable";
+            	logObj.marketId = '${operator.firmId}';
+            	logObj.operatorId = '${operator.id}';
+            	logObj.operatorName = '${operator.realName}';
+            	logObj.content = ((enable==true)?"启用":"禁用")+"规则:"+selectedRow.ruleName;
                 bui.loading.show('努力提交中，请稍候。。。');
                 $.ajax({
                     type: "POST",
@@ -204,6 +214,8 @@
                     success : function(ret) {
                         bui.loading.hide();
                         if(ret.success){
+                        	var logger = new Logger(); //option参数对象可作为实例对象属性，可覆盖defaults属性
+                        	logger.operatorLog(logObj);
                             queryDataHandler();
                         }else{
                             bs4pop.alert(ret.result, {type: 'error'});
