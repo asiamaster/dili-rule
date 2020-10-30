@@ -200,7 +200,9 @@
 	logObj.businessType = "dili-rule";
 	
 	logObj.operationType = "edit";
-	
+	if($.trim(logObj.businessCode)==''){
+		logObj.operationType = "add";	
+	}
 	logObj.marketId = '${operator.firmId}';
 	logObj.operatorId = '${operator.id}';
 	logObj.operatorName = '${operator.realName}';
