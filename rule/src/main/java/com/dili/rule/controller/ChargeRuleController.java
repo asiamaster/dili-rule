@@ -69,11 +69,13 @@ public class ChargeRuleController {
      * @return String
      */
     @RequestMapping(value = "/index.html", method = RequestMethod.GET)
-    public String index(ModelMap modelMap) {
+    public String index(HttpServletRequest req,ModelMap modelMap) {
         modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         modelMap.put("businessTypeList", getBusinessType());
         modelMap.put("state", RuleStateEnum.ENABLED.getCode());
         modelMap.addAttribute("operator",SessionContext.getSessionContext().getUserTicket());
+        modelMap.addAttribute("serverIp",req.getLocalAddr());
+        
         return "chargeRule/list";
     }
 
@@ -103,7 +105,7 @@ public class ChargeRuleController {
      * @return
      */
     @RequestMapping(value = "/preSave.html", method = {RequestMethod.GET, RequestMethod.POST})
-    public String preSave(ChargeRule chargeRule, ModelMap modelMap) {
+    public String preSave(HttpServletRequest req,ChargeRule chargeRule, ModelMap modelMap) {
         if (Objects.nonNull(chargeRule)) {
             modelMap.addAttribute("action", "insert");
             chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
@@ -146,7 +148,7 @@ public class ChargeRuleController {
          
          
          modelMap.addAttribute("operator",SessionContext.getSessionContext().getUserTicket());
-         
+         modelMap.addAttribute("serverIp",req.getLocalAddr());
         return "chargeRule/edit";
     }
 

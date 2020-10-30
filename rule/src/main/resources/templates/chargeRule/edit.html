@@ -190,7 +190,7 @@
 <#chargeRule_editJs />
 
 <script>
-	var logger = new Logger({remoteUrl:"${contextPath}/logForwardController/sendLog.action"}); //option参数对象可作为实例对象属性，可覆盖defaults属性
+	var logger = new Logger(); //option参数对象可作为实例对象属性，可覆盖defaults属性
 	let logObj = {};
 	
 	logObj.businessCode = $("#id").val();
@@ -206,7 +206,8 @@
 	logObj.marketId = '${operator.firmId}';
 	logObj.operatorId = '${operator.id}';
 	logObj.operatorName = '${operator.realName}';
-
+	logObj.serverIp = '${serverIp}';
+	
   $.prototype.tooltip = (function (tooltip) {
       return function (config) {
           try {

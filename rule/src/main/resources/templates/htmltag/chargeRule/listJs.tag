@@ -202,6 +202,7 @@
             	logObj.marketId = '${operator.firmId}';
             	logObj.operatorId = '${operator.id}';
             	logObj.operatorName = '${operator.realName}';
+            	logObj.serverIp = '${serverIp}';
             	if(enable || 'true' == enable){
             		logObj.operationType = "enable";
             		logObj.content = "启用规则:"+selectedRow.ruleName;
@@ -222,7 +223,7 @@
                     success : function(ret) {
                         bui.loading.hide();
                         if(ret.success){
-                        	var logger = new Logger({remoteUrl:"${contextPath}/logForwardController/sendLog.action"}); //option参数对象可作为实例对象属性，可覆盖defaults属性
+                        	var logger = new Logger(); //option参数对象可作为实例对象属性，可覆盖defaults属性
                         	logger.operatorLog(logObj);
                             queryDataHandler();
                         }else{
