@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Service
 public class RuleEngineServiceImpl implements RuleEngineService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RuleEngineServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RuleEngineServiceImpl.class);
 
     private final RulesEngine rulesEngine = new DefaultRulesEngine();
 
@@ -107,6 +107,8 @@ public class RuleEngineServiceImpl implements RuleEngineService {
         List matchKeys = new ArrayList<>(ruleFactsDtoMap.keySet());
         facts.put("matchKeys", matchKeys);
         facts.put("ruleFactsDtoMap", ruleFactsDtoMap);
+        logger.info("matchKeys={}",matchKeys);
+        logger.info("ruleFactsDtoMap={}",ruleFactsDtoMap);
         return facts;
     }
 
