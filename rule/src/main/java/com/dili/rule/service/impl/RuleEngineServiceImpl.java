@@ -76,8 +76,10 @@ public class RuleEngineServiceImpl implements RuleEngineService {
                 //                .filter(rcv -> conditionParams.containsKey(rcv.getMatchKey()))
                 .filter(rcv -> CollectionUtil.isNotEmpty(JSON.parseArray(rcv.getVal()))) //过滤掉未设置条件项数据的条件指标
                 .map(rcv -> {
+                	logger.info("ChargeConditionVal={}",rcv);
                     String matchKey = rcv.getMatchKey();
                     MatchTypeEnum matchTypeEnum = MatchTypeEnum.getInitDataMaps().get(rcv.getMatchType());
+                    logger.info("matchTypeEnum={}",matchTypeEnum);
                     ValueDataTypeEnum valueDataTypeEnum = ValueDataTypeEnum.getInitDataMaps().get(rcv.getDataType());
                     RuleFactsDto ruleFactsDto = new RuleFactsDto();
                     ruleFactsDto.setMatchTypeEnum(matchTypeEnum);
