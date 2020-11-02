@@ -107,6 +107,10 @@
                             $(this).val('');
                         }
                     });
+                    if(logger==null){
+                    	logger = new Logger(); //option参数对象可作为实例对象属性，可覆盖defaults属性	
+                    }
+                	
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     bs4pop.alert('获取规则条件失败', {type: 0});

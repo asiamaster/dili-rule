@@ -126,6 +126,20 @@
         }
         let selectedRow = rows[0];
         let msg = '删除后，规则不可使用亦不可恢复，是否删除？';
+        
+    	let logObj = {};
+    	logObj.businessCode = selectedRow.id;
+    	logObj.businessId = selectedRow.id;
+    	logObj.systemCode = "RULE";
+    	logObj.businessType = "dili-rule";
+    	logObj.marketId = '${operator.firmId}';
+    	logObj.operatorId = '${operator.id}';
+    	logObj.operatorName = '${operator.realName}';
+    	logObj.serverIp = '${serverIp}';
+   		logObj.operationType = "delete";
+   		logObj.content = "删除定时规则:"+selectedRow.ruleName;
+    	
+    	
         bs4pop.confirm(msg, undefined, function (sure) {
             if(sure){
                 bui.loading.show('努力提交中，请稍候。。。');
@@ -137,6 +151,8 @@
                     dataType: "json",
                     async : true,
                     success : function(ret) {
+                    	var logger = new Logger();
+                    	logger.operatorLog(logObj);
                         bui.loading.hide();
                         if(ret.success){
                             queryDataHandler();

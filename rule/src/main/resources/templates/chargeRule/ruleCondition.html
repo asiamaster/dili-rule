@@ -9,8 +9,8 @@
         <div class="form-group col form-choice">
             <label for="">${cd.label}</label>
             <div class="input-group">
-         	<input id="${cdLP.index-1}" class="form-control" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
-                <input value="${stringListJoin(cd.texts,',')}" name="checkedtexts" type="text" class="form-control dsInput"  data-value-type="skip" readonly>
+         	<input id="${cdLP.index-1}" class="form-control" _log="${cd.label}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                <input value="${stringListJoin(cd.texts,',')}"  name="checkedtexts" type="text" class="form-control dsInput"  data-value-type="skip" readonly>
                 <div class="input-group-append">
                     <span class="input-group-text text-primary clear"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
                     <span class="input-group-text text-primary choice" data-type="matchType" data-definitionid="${cd.id}" data-label="${cd.label}" data-target="${cdLP.index-1}" data-checkedids='${cd.jsonValues}'><a href="javascript:;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a></span>
@@ -25,27 +25,27 @@
                 <!--/*  输入框的值类型：  小数类型*/-->
                 <div class="form-group col">
                     <label for="" >${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" _log="${cd.label}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <input id="${cd.id}_${cd.matchKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"class="form-control floatReserve eqInput"  min="0" max="9999999.99">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.INTEGER.getCode()){%>
                 <!--/*  输入框的值类型：  整数类型*/-->
                 <div class="form-group col form-number">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" _log="${cd.label}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <input id="${cd.id}_${cd.matchKey}"  data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control isNaturalNum  eqInput"  min="0" max="9999999">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.TEXT.getCode()){%>
                 <!--/*  输入框的值类型：  文本类型*/-->
                 <div class="form-group col form-text">
                     <label for="">${cd.label}</label>
-                    <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
+                    <input id="${cdLP.index-1}" _log="${cd.label}" name="conditionList[${cdLP.index-1}][matchValues]" value="${stringListJoin(cd.values,',')}" type="hidden" data-skip-falsy="true" data-value-type="stringToArray">
                     <input id="${cd.id}_${cd.matchKey}" data-target="${cdLP.index-1}" value="${stringListJoin(cd.values,',')}" type="text"  class="form-control  eqInput" maxlength="22">
                 </div>
             <%}else if(cd.dataType == @com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()){%>
                 <!--/*  输入框的值类型：  日期类型*/-->
                 <div class="form-group col form-date">
-                    date2
+                     
                 </div>
             <%}%>
         <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.BETWEEN.getCode()){%>
@@ -56,11 +56,11 @@
                     <label for="" >${cd.label}</label>
                     <div class="form-inline">
                         <div class="input-group">
-                            <input  data-target="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput"  data-type="string"  min="0" max="9999999.99">
+                            <input  data-target="${cdLP.index-1}" _log="${cd.label}开始" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusFloatReserve betweenMinInput"  data-type="string"  min="0" max="9999999.99">
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues][1]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusFloatReserve betweenMaxInput"  data-type="string"  min="0" max="9999999.99">
+                            <input data-target="${cdLP.index-1}" _log="${cd.label}结束" name="conditionList[${cdLP.index-1}][matchValues][1]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusFloatReserve betweenMaxInput"  data-type="string"  min="0" max="9999999.99">
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -71,11 +71,11 @@
                     <label for="">${cd.label}</label>
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="string"  min="0" max="9999999">
+                            <input data-target="${cdLP.index-1}" _log="${cd.label}开始" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control cusIsNaturalNum  betweenMinInput" data-type="string"  min="0" max="9999999">
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues][1]"  value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="string"  min="0" max="9999999">
+                            <input data-target="${cdLP.index-1}" _log="${cd.label}结束" name="conditionList[${cdLP.index-1}][matchValues][1]"  value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control cusIsNaturalNum  betweenMaxInput" data-type="string"  min="0" max="9999999">
                             <label class="error invalid-feedback" ></label>
                         </div>
                     </div>
@@ -86,14 +86,14 @@
                     <label for="">${cd.label}</label>
                     <div class="form-inline">
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" id="start[${cdLP.index-1}]" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart">
+                            <input data-target="${cdLP.index-1}" _log="${cd.label}开始" id="start[${cdLP.index-1}]" name="conditionList[${cdLP.index-1}][matchValues][0]"  value="${cd.values.~size>0?cd.values[0]:''}" type="text" class="form-control  laydatetime laystart">
                             <div class="input-group-append">
                                 <label for="start[${cdLP.index-1}]" class="input-group-text fa fa-calendar"></label>
                             </div>
                             <label class="error invalid-feedback" ></label>
                         </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                         <div class="input-group">
-                            <input data-target="${cdLP.index-1}" id="end[${cdLP.index-1}]" name="conditionList[${cdLP.index-1}][matchValues][1]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend">
+                            <input data-target="${cdLP.index-1}" _log="${cd.label}结束" id="end[${cdLP.index-1}]" name="conditionList[${cdLP.index-1}][matchValues][1]" value="${cd.values.~size>1?cd.values[1]:''}" type="text" class="form-control  laydatetime layend">
                             <div class="input-group-append">
                                 <label for="end[${cdLP.index-1}]" class="input-group-text fa fa-calendar"></label>
                             </div>
@@ -105,7 +105,7 @@
         <%}else if(cd.matchType == @com.dili.rule.domain.enums.MatchTypeEnum.IN.getCode()){%>
             <div class="form-group col form-text">
                 <label for="">${cd.label}</label>
-                <input id="${cdLP.index-1}" name="conditionList[${cdLP.index-1}][matchValues]"  value="${stringListJoin(cd.values,',')}" type="text"  class="form-control" maxlength="50" placeholder="如有多个值，以英文逗号隔开" data-value-type="stringToArray">
+                <input id="${cdLP.index-1}" _log="${cd.label}" name="conditionList[${cdLP.index-1}][matchValues]"  value="${stringListJoin(cd.values,',')}" type="text"  class="form-control" maxlength="50" placeholder="如有多个值，以英文逗号隔开" data-value-type="stringToArray">
             </div>
         <%}%>
     <%}}}%>

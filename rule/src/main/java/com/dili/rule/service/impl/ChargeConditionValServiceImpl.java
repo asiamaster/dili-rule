@@ -128,7 +128,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                         String matchColumn = conditionDefinition.getMatchColumn();
                         List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(dataSourceDefinition, objects,sessionId);
 //                        logger.info("keyTextMap={}",keyTextMap);
-                        if(!keyTextMap.isEmpty()) {
+                        if(keyTextMap!=null&&!keyTextMap.isEmpty()) {
                             DataSourceColumn condition = new DataSourceColumn();
                             condition.setDataSourceId(conditionDefinition.getDataSourceId());
                             List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
