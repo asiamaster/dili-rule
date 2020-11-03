@@ -386,22 +386,18 @@
          * 其它状态，则不可操作以上按钮
          */
 
-          if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}) { //启用
-            $('.control-btn').attr('disabled', true);
-            $('#btn_disable').attr('disabled', false);
-        } else if (state == ${@com.dili.rule.domain.enums.RuleStateEnum.DISABLED.getCode()}) {  //禁用
-            $('.control-btn').attr('disabled', true);
-            $('#btn_enable').attr('disabled', false);
-        }  else {
-            $('.control-btn').attr('disabled', true);
+        $('.control-btn').attr('disabled', 'disabled');
+        if (state == '${@com.dili.rule.domain.enums.RuleStateEnum.ENABLED.getCode()}') { //启用
+            $('#btn_disable').removeAttr('disabled')
+        } else if (state == '${@com.dili.rule.domain.enums.RuleStateEnum.DISABLED.getCode()}') {  //禁用
+            $('#btn_enable').removeAttr('disabled')
         }
-        if ($.type(row.backupedRuleId) !='undefined') {  
-            $('.control-btn').attr('disabled', true);
-            $('#btn_delete_backup').attr('disabled', false);
-            $('#btn_edit_backup').attr('disabled', false);
+        if ($.type(row.backupedRuleId) !='undefined') {
+            $('#btn_delete_backup').removeAttr('disabled')
+            $('#btn_edit_backup').removeAttr('disabled')
         }else{
-            $('#btn_delete_backup').attr('disabled', true);
-            $('#btn_edit_backup').attr('disabled', true);
+            $('#btn_delete_backup').attr('disabled', 'disabled');
+            $('#btn_edit_backup').attr('disabled', 'disabled');
         }
     });
 
