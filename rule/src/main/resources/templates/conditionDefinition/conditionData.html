@@ -161,6 +161,7 @@
                 $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + ele + '"><td>' + conditionData.checkedData.textList[k] + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
             }
         });
+        $('.query-condition input').unbind("keypress"); //移除keypress
     });
 
     /**
