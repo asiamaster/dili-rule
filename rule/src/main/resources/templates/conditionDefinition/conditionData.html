@@ -17,12 +17,13 @@
     </div>
 </div>
 </#bs4Body>
+<script type="text/javascript" src="${contextPath}/resources/js/underscore-min.js"></script>
 <script>
     function addSelectedItem(key, text) {
         $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + key + '"><td>' + text + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
     }
     function removeSelectedItemByKey(key) {
-        alert('removeSelectedItem')
+        console.info('removeSelectedItem')
     }
     var choice = parent.window.choiceTarget;
     //debugger
@@ -59,9 +60,18 @@
      * @returns {undefined}
      */
     function addUnconfirmedListData(idList, textList) {
-        conditionData.unconfirmedBatchData.batched = true;
-        conditionData.unconfirmedBatchData.idList = idList;
-        conditionData.unconfirmedBatchData.textList = textList;
+        // conditionData.unconfirmedBatchData.batched = true;
+        // conditionData.unconfirmedBatchData.idList = idList;
+        // conditionData.unconfirmedBatchData.textList = textList;
+        if(_.isArray(idList)&&_.isArray(textList)&&idList.length===textList.length){
+            for(var i in idList){
+                var id=idList[i];
+                var text=textList[i];
+                addUnconfirmedData(id,text);
+            }
+        }else{
+            console.error("批量选择的数据长度或者类型错误")
+        }
     }
     /**
      * 增加未确认数据到列表
@@ -70,8 +80,24 @@
      * @returns {undefined}
      */
     function addUnconfirmedData(id, text) {
-        conditionData.unconfirmedData.idList.push($.trim(id+''))
-        conditionData.unconfirmedData.textList.push(text)
+        var index=conditionData.removableData.idList.indexOf(id);
+        if(_.isNumber(index)&&index>-1){
+            conditionData.removableData.idList=_.chain(conditionData.removableData.idList).filter((v,i)=>i!=index).value();
+            conditionData.removableData.textList=_.chain(conditionData.removableData.textList).filter((v,i)=>i!=index).value();
+        }
+        var indexInCheckedData=conditionData.checkedData.idList.indexOf(id);
+        var indexInUnconfirmedData=conditionData.unconfirmedData.idList.indexOf(id);
+        if(indexInCheckedData>-1&&indexInUnconfirmedData>-1){
+            conditionData.unconfirmedData.idList=_.chain(conditionData.unconfirmedData.idList).filter((v,i)=>i!=index).value();
+            conditionData.unconfirmedData.textList=_.chain(conditionData.unconfirmedData.textList).filter((v,i)=>i!=index).value();
+        }else if(indexInCheckedData==-1&&indexInUnconfirmedData==-1){
+            conditionData.unconfirmedData.idList.push($.trim(id+''))
+            conditionData.unconfirmedData.textList.push(text)
+        }else{
+
+        }
+        // console.info(conditionData);
+
     }
     /**
      * 增加要被删除数据到列表
@@ -80,8 +106,17 @@
      * @returns {undefined}
      */
     function addRemovableData(id, text) {
-        conditionData.removableData.idList.push($.trim(id+''))
-        conditionData.removableData.textList.push(text)
+        var index=conditionData.unconfirmedData.idList.indexOf(id);
+        if(index>-1){
+            conditionData.unconfirmedData.idList=_.chain(conditionData.unconfirmedData.idList).filter((v,i)=>i!=index).value();
+            conditionData.unconfirmedData.textList=_.chain(conditionData.unconfirmedData.textList).filter((v,i)=>i!=index).value();
+        }
+        var index=_.chain(conditionData.checkedData.idList).indexOf(id).value();
+        if(index!=-1){
+            conditionData.removableData.idList.push($.trim(id+''))
+            conditionData.removableData.textList.push(text)
+        }
+        // console.info(conditionData);
     }
 
 
@@ -90,11 +125,7 @@
      * @returns {conditionData.checkedData}
      */
     function confirmConditionData() {
-        if (conditionData.unconfirmedBatchData.batched === true) {
-            conditionData.checkedData.idList = conditionData.unconfirmedBatchData.idList;
-            conditionData.checkedData.textList = conditionData.unconfirmedBatchData.textList;
-            return conditionData.checkedData;
-        }
+
         $.each(conditionData.unconfirmedData.idList, function (i, id) {
             if ($.inArray(id, conditionData.checkedData.idList) < 0) {
                 conditionData.checkedData.idList.push(id);
@@ -116,7 +147,7 @@
             }
             return true;
         });
-
+        console.info(conditionData);
         return conditionData.checkedData;
     }
 
@@ -125,7 +156,7 @@
         let definitionId = $('#definitionId').val();
         loadAjaxTable(definitionId);
         $.each(conditionData.checkedData.idList, function (k, ele) {
-            $('body').find('.checkboxWrap [data-id="' + ele + '"]').find(':checkbox').click();
+            $('body').find('.checkboxWrap [data-id="' + ele + '"]').find(':checkbox').prop('checked',true);
             if (!$('.checkedShow .table [data-id="' + ele + '"]').length) {
                 $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + ele + '"><td>' + conditionData.checkedData.textList[k] + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
             }

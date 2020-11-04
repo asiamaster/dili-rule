@@ -227,7 +227,7 @@
             		logObj.content = "禁用规则:"+selectedRow.ruleName;
             	}
             	
-            	debugger
+            	//debugger
                 bui.loading.show('努力提交中，请稍候。。。');
                 $.ajax({
                     type: "POST",

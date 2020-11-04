@@ -162,14 +162,12 @@
 
                 // 选择项
                 $('.checkboxWrap td :checkbox').on('change', function () {
-                    debugger
+                    //debugger
                     let id = $(this).parents('tr').data('id')+'';
                     let text = $(this).parents('tr').find('.text').text();
                     if ($(this).is(':checked')) {
-                        if (conditionData.checkedData.idList.indexOf(id) < 0) {
-                            $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
-                            addUnconfirmedData(id, text);
-                        } else if (!$('.checkedShow .table [data-id="' + id + '"]').length) {
+                        addUnconfirmedData(id, text);
+                        if (!$('.checkedShow .table [data-id="' + id + '"]').length) {
                             $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + id + '"><td>' + text + '<i class="fa fa-times float-right" aria-hidden="true"></i></td></tr>');
                         }
 
