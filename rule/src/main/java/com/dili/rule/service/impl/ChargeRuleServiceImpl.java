@@ -54,6 +54,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import one.util.streamex.StreamEx;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -105,7 +106,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         long total = chargeRuleVoList instanceof Page ? ((Page) chargeRuleVoList).getTotal()
                 : (long) chargeRuleVoList.size();
         List results = true ? ValueProviderUtils.buildDataByProvider(chargeRule, chargeRuleVoList) : chargeRuleVoList;
-        return EasyuiPageOutputUtil.build( total, results);
+        return EasyuiPageOutputUtil.build(total, results);
     }
 
     @Override
@@ -210,7 +211,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         return result;
     }
 
-//    @Override
+    //    @Override
 //    @Transactional(rollbackFor = Exception.class)
 //    public BaseOutput<Object> approve(Long id, Boolean pass) {
 //        ChargeRule rule = this.get(id);
@@ -266,7 +267,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         return BaseOutput.success();
     }
 
-//    @Override
+    //    @Override
 //    @Transactional(rollbackFor = Exception.class)
 //    public Integer obsolete(Long id, OperatorUser operatorUser) {
 //        ChargeRule item = this.get(id);
@@ -291,6 +292,13 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         ruleInfo.setOriginalId(null);
 //        }
         super.updateSelective(ruleInfo);
+        int v = StreamEx.ofNullable(ruleInfo.getBackupedRuleId()).nonNull().map(this::get).nonNull().map(ChargeRule::getId).map(backupruleId -> {
+            ChargeRule backrule = new ChargeRule();
+            backrule.setState(ruleInfo.getState());
+            backrule.setId(backupruleId);
+            backrule.setOriginalId(null);
+            return this.updateSelective(backrule);
+        }).findFirst().orElse(0);
         chargeRuleExpiresScheduler.queryAndScheduleUpdateState(ruleInfo.getId());
         return 1;
     }
@@ -434,6 +442,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 //        }
 //        return input;
 //    }
+
     /**
      * 组装规则条件信息
      *
