@@ -27,10 +27,10 @@
     }
     var choice = parent.window.choiceTarget;
     //debugger
-    var checkedids = (choice.data('checkedids') ? choice.data('checkedids') : []).filter(function (v, i) {
+    var checkedids = (choice.data('checkedids') ? choice.data('checkedids') : []).map(function(v,i){return new String(v).toString();}).filter(function (v, i) {
         return $.trim(v) !== '';
     });
-    var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('input[name="checkedtexts"]').val().split(',') : []).filter(function (v, i) {
+    var checkedtexts = (choice.data('checkedids') ? choice.parents('.input-group').find('input[name="checkedtexts"]').val().split(',') : []).map(function(v,i){return new String(v).toString();}).filter(function (v, i) {
         return $.trim(v) !== '';
     });
 //    debugger
@@ -80,6 +80,9 @@
      * @returns {undefined}
      */
     function addUnconfirmedData(id, text) {
+        id=new String(id).toString();
+        text=new String(text).toString();
+
         var index=conditionData.removableData.idList.indexOf(id);
         if(_.isNumber(index)&&index>-1){
             conditionData.removableData.idList=_.chain(conditionData.removableData.idList).filter((v,i)=>i!=index).value();
@@ -91,7 +94,7 @@
             conditionData.unconfirmedData.idList=_.chain(conditionData.unconfirmedData.idList).filter((v,i)=>i!=index).value();
             conditionData.unconfirmedData.textList=_.chain(conditionData.unconfirmedData.textList).filter((v,i)=>i!=index).value();
         }else if(indexInCheckedData==-1&&indexInUnconfirmedData==-1){
-            conditionData.unconfirmedData.idList.push($.trim(id+''))
+            conditionData.unconfirmedData.idList.push($.trim(id))
             conditionData.unconfirmedData.textList.push(text)
         }else{
 
@@ -106,6 +109,8 @@
      * @returns {undefined}
      */
     function addRemovableData(id, text) {
+        id=new String(id).toString();
+        text=new String(text).toString();
         var index=conditionData.unconfirmedData.idList.indexOf(id);
         if(index>-1){
             conditionData.unconfirmedData.idList=_.chain(conditionData.unconfirmedData.idList).filter((v,i)=>i!=index).value();
@@ -113,7 +118,7 @@
         }
         var index=_.chain(conditionData.checkedData.idList).indexOf(id).value();
         if(index!=-1){
-            conditionData.removableData.idList.push($.trim(id+''))
+            conditionData.removableData.idList.push($.trim(id))
             conditionData.removableData.textList.push(text)
         }
         // console.info(conditionData);
@@ -161,7 +166,6 @@
                 $('.checkedShow .table').append('<tr class="remove-btn" data-id="' + ele + '"><td>' + conditionData.checkedData.textList[k] + '<i class="fa fa-times  float-right" aria-hidden="true"></i></td></tr>');
             }
         });
-        $('.query-condition input').unbind("keypress"); //移除keypress
     });
 
     /**
