@@ -149,6 +149,39 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         this.chargeRuleExpiresScheduler.queryAndScheduleUpdateState(rule.getId());
     }
 
+    public Optional<RuleStateEnum>calculateRuleState(Long ruleId){
+        if(ruleId==null){
+            return Optional.empty();
+        }
+        ChargeRule item=this.get(ruleId);
+        if(!YesOrNoEnum.NO.getCode().equals(item.getIsDeleted())){
+            return Optional.empty();
+        }
+        if(item.getExpireStart()==null){
+            return Optional.empty();
+        }
+        if(!RuleStateEnum.DISABLED.getCode().equals(item.getState())){
+            return Optional.empty();
+        }
+        LocalDateTime now = LocalDateTime.now();
+        if (item.getExpireEnd() != null ) {
+            if(item.getExpireEnd().isBefore(now) || item.getExpireEnd().isEqual(now)){
+                return Optional.of(RuleStateEnum.EXPIRED);
+            }else if((item.getExpireStart().isBefore(now)||item.getExpireStart().isEqual(now))&&item.getExpireEnd().isAfter(now)){
+                return Optional.of(RuleStateEnum.ENABLED);
+            }else{
+                return Optional.of(RuleStateEnum.UN_STARTED);
+            }
+        }else{
+              if((item.getExpireStart().isBefore(now)||item.getExpireStart().isEqual(now))){
+                return Optional.of(RuleStateEnum.ENABLED);
+            }else{
+                return Optional.of(RuleStateEnum.UN_STARTED);
+            }
+        }
+
+
+    }
     @Override
     public void updateStateByExpires(Long id, OperatorUser operatorUser) {
         ChargeRule item = this.get(id);
@@ -293,11 +326,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer updateRuleInfoWithExpire(ChargeRule ruleInfo, OperatorUser operatorUser) {
-//        if (ruleInfo.getState().equals(RuleStateEnum.ENABLED.getCode()) && null != ruleInfo.getOriginalId()) {
-        // 作废原规则
-//            obsolete(ruleInfo.getOriginalId(), operatorUser);
         ruleInfo.setOriginalId(null);
-//        }
+
         super.updateSelective(ruleInfo);
         int v = StreamEx.ofNullable(ruleInfo.getBackupedRuleId()).nonNull().map(this::get).nonNull().map(ChargeRule::getId).map(rid -> {
             ChargeRule backrule = new ChargeRule();
@@ -306,6 +336,9 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             backrule.setOriginalId(ruleInfo.getOriginalId());
             backrule.setOperatorName(ruleInfo.getOperatorName());
             backrule.setOperatorId(ruleInfo.getOperatorId());
+            this.calculateRuleState(rid).ifPresent(stateenum->{
+                backrule.setState(stateenum.getCode());
+            });
             return this.updateSelective(backrule);
         }).findFirst().orElse(0);
         chargeRuleExpiresScheduler.queryAndScheduleUpdateState(ruleInfo.getId());

@@ -63,9 +63,6 @@ public class ChargeRuleExpiresScheduler {
      * 接受并处理状态
      *
      * @param ruleId
-     * @param headers
-     * @param message
-     * @param session
      */
     @JmsListener(destination = "activemq.queue.chargerule")
     public void receiveAndHandleChargeRule(@Payload Long ruleId) {//, @Headers MessageHeaders headers, Message message, Session session) {
