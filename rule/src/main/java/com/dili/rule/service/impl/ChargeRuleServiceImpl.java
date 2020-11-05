@@ -239,16 +239,15 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public BaseOutput<Object> enable(Long id, Boolean enable) {
-        ChargeRule rule = this.get(id);
-        if (null == rule) {
+        ChargeRule item = this.get(id);
+        if (null == item) {
             return BaseOutput.failure("规则不存在");
         }
-        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        rule.setOperatorId(userTicket.getId());
-        rule.setOperatorName(userTicket.getRealName());
+        ChargeRule rule=new ChargeRule();
+
         if (enable) {
             List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.DISABLED.getCode());
-            if (!allowedStatus.contains(rule.getState())) {
+            if (!allowedStatus.contains(item.getState())) {
                 return BaseOutput.failure("状态已变更，不能进行此操作");
             }
 
@@ -256,11 +255,19 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         } else {
             List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.ENABLED.getCode(),
                     RuleStateEnum.UN_STARTED.getCode());
-            if (!allowedStatus.contains(rule.getState())) {
+            if (!allowedStatus.contains(item.getState())) {
                 return BaseOutput.failure("状态已变更，不能进行此操作");
             }
             rule.setState(RuleStateEnum.DISABLED.getCode());
         }
+
+        rule.setId(item.getId());
+
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        rule.setOperatorId(userTicket.getId());
+
+        rule.setOperatorName(userTicket.getRealName());
+        rule.setBackupedRuleId(item.getBackupedRuleId());
         this.updateRuleInfoWithExpire(rule, OperatorUser.fromSessionContext());
         this.checkAndUpdateRuleStatus(rule);
 
@@ -292,11 +299,13 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         ruleInfo.setOriginalId(null);
 //        }
         super.updateSelective(ruleInfo);
-        int v = StreamEx.ofNullable(ruleInfo.getBackupedRuleId()).nonNull().map(this::get).nonNull().map(ChargeRule::getId).map(backupruleId -> {
+        int v = StreamEx.ofNullable(ruleInfo.getBackupedRuleId()).nonNull().map(this::get).nonNull().map(ChargeRule::getId).map(rid -> {
             ChargeRule backrule = new ChargeRule();
+            backrule.setId(rid);
             backrule.setState(ruleInfo.getState());
-            backrule.setId(backupruleId);
-            backrule.setOriginalId(null);
+            backrule.setOriginalId(ruleInfo.getOriginalId());
+            backrule.setOperatorName(ruleInfo.getOperatorName());
+            backrule.setOperatorId(ruleInfo.getOperatorId());
             return this.updateSelective(backrule);
         }).findFirst().orElse(0);
         chargeRuleExpiresScheduler.queryAndScheduleUpdateState(ruleInfo.getId());
@@ -361,7 +370,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     /**
      * 根据id是否为空,分别进行插入或者其他操作
      *
-     * @param inputRuleInfo
+     * @param input
      * @return
      */
     private ChargeRule saveOrUpdateRuleInfo(ChargeRule input, OperatorUser operatorUser) {
