@@ -16,7 +16,7 @@ public class QueryFeeInput {
     /**
      * 请求数据ID
      */
-    private Long requestDataId;
+    private String requestDataId;
 
     /**
      * 规则所属于某个市场
@@ -43,10 +43,10 @@ public class QueryFeeInput {
      */
     private Map<String, Object> conditionParams = new HashMap<>();
 
-    public Long getRequestDataId() {
+    public String getRequestDataId() {
         return requestDataId;
     }
-    public void setRequestDataId(Long requestDataId) {
+    public void setRequestDataId(String requestDataId) {
         this.requestDataId = requestDataId;
     }
     public Long getMarketId() {
