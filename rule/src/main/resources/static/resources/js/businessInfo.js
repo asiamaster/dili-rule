@@ -32,11 +32,12 @@ function getBusinessType(marketId, _viewTargetId, _defaultValue, _enable, _tips)
         msg = "<option value=''>" + _tips + "</option>"
     }
     let datas = [msg];
-    if (typeof (marketId) != "undefined" && marketId) {
+    // if (typeof (marketId) != "undefined" && marketId) {
         $.ajax({
             type: 'post',
             url: getBusinessTypeUrl,
-            data: {marketId: marketId, enable: _enable},
+            // data: {marketId: marketId, enable: _enable},
+            data: {enable: _enable},
             async: false,
             success: function (ret) {
                 if (ret.success) {
@@ -50,7 +51,7 @@ function getBusinessType(marketId, _viewTargetId, _defaultValue, _enable, _tips)
                 }
             }
         });
-    }
+    // }
     targetId.html(datas.join(''));
 }
 

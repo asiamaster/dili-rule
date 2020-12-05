@@ -363,6 +363,6 @@ public class ChargeRuleController {
      * @return
      */
     private List<DataDictionaryValue> getBusinessType() {
-        return dataDictionaryRpcService.getBusinessType(SessionContext.getSessionContext().getUserTicket().getFirmId(), null);
+        return dataDictionaryRpcService.getBusinessType(null, true);
     }
 }
