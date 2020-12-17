@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
@@ -98,7 +99,7 @@ public class ChargeRuleApiController {
      * @param queryFeeInputList 批量获取的输入条件
      * @return 处理结果
      */
-    @RequestMapping("/batchQueryFeeWithoutShortcut")
+    @RequestMapping(value="/batchQueryFeeWithoutShortcut", method = RequestMethod.POST)
     public BaseOutput<List<QueryFeeOutput>> batchQueryFeeWithoutShortcut(@RequestBody List<QueryFeeInput> queryFeeInputList) {
         logger.info("queryFeeInputList: {}", JSONObject.toJSONString(queryFeeInputList));
         if (CollectionUtil.isEmpty(queryFeeInputList)) {
