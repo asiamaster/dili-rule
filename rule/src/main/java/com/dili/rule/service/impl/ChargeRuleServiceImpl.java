@@ -213,6 +213,13 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     result.setRuleId(ruleInfo.getId());
                     result.setRuleName(ruleInfo.getRuleName());
                     logger.info("条件匹配的规则: {}", ruleInfo);
+                    if(ActionExpressionTypeEnum.MATCH_CONDITION.equalsToCode(ruleInfo.getActionExpressionType())){
+                        result.setCode(ResultCode.OK);
+                        result.setSuccess(true);
+                        result.setTotalFee(BigDecimal.ZERO);
+                        result.setMatchedData(ruleInfo.getMatchedData());
+                        return result;
+                    }
                     try {
                         BigDecimal fee = this.calcFeeByRule(ruleInfo, queryFeeInput.getCalcParams());
                         if (fee.equals(new BigDecimal(Integer.MIN_VALUE))) {

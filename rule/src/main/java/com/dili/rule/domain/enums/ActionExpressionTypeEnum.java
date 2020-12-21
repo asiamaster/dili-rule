@@ -18,6 +18,7 @@ public enum ActionExpressionTypeEnum {
 
     SIMPLE(1, "简单计算"),
     COMPLEX(2, "阶梯计算"),
+    MATCH_CONDITION(3, "匹配条件"),
     // SELECT_MULTI(30, "下拉多选"),
     /*** 以下格式暂未支持 ***/
 //    TABLE_SINGLE(20, "表格单选"),

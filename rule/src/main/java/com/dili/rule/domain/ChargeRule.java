@@ -204,6 +204,14 @@ public class ChargeRule extends BaseDomain implements Serializable {
     @Column(name = "`is_deleted`")
     private Integer isDeleted;
 
+
+    /**
+     * 匹配到的数据
+     */
+    @Column(name = "`matched_data`")
+    private String matchedData;
+
+
 //    /**
 //     * 生效时间
 //     */
@@ -628,10 +636,48 @@ public class ChargeRule extends BaseDomain implements Serializable {
         this.sortSql = sortSql;
     }
 
-    @Override
-    public String toString() {
-        return "ChargeRule{" + "id=" + id + ", originalId=" + originalId + ", marketId=" + marketId + ", businessType=" + businessType + ", groupId=" + groupId + ", chargeItem=" + chargeItem + ", ruleName=" + ruleName + ", state=" + state + ", priority=" + priority + ", expireStart=" + expireStart + ", expireEnd=" + expireEnd + ", actionExpressionParams=" + actionExpressionParams + ", actionExpressionType=" + actionExpressionType + ", actionExpression=" + actionExpression + ", minPayment=" + minPayment + ", maxPayment=" + maxPayment + ", remark=" + remark + ", revisable=" + revisable + ", operatorId=" + operatorId + ", operatorName=" + operatorName + ", createTime=" + createTime + ", modifyTime=" + modifyTime + ", approverId=" + approverId + ", approverName=" + approverName + ", approvalTime=" + approvalTime + ", isBackup=" + isBackup + ", backupedRuleId=" + backupedRuleId + ", isDeleted=" + isDeleted + ", expireValue=" + expireValue + '}';
+    public String getMatchedData() {
+        return matchedData;
     }
 
+    public void setMatchedData(String matchedData) {
+        this.matchedData = matchedData;
+    }
 
+    @Override
+    public String toString() {
+        return "ChargeRule{" +
+                "id=" + id +
+                ", originalId=" + originalId +
+                ", marketId=" + marketId +
+                ", businessType='" + businessType + '\'' +
+                ", groupId=" + groupId +
+                ", chargeItem=" + chargeItem +
+                ", ruleName='" + ruleName + '\'' +
+                ", state=" + state +
+                ", priority=" + priority +
+                ", expireStart=" + expireStart +
+                ", expireEnd=" + expireEnd +
+                ", actionExpressionParams='" + actionExpressionParams + '\'' +
+                ", actionExpressionType=" + actionExpressionType +
+                ", actionExpression='" + actionExpression + '\'' +
+                ", minPayment=" + minPayment +
+                ", maxPayment=" + maxPayment +
+                ", remark='" + remark + '\'' +
+                ", revisable=" + revisable +
+                ", operatorId=" + operatorId +
+                ", operatorName='" + operatorName + '\'' +
+                ", createTime=" + createTime +
+                ", modifyTime=" + modifyTime +
+                ", approverId=" + approverId +
+                ", approverName='" + approverName + '\'' +
+                ", approvalTime=" + approvalTime +
+                ", isBackup=" + isBackup +
+                ", backupedRuleId=" + backupedRuleId +
+                ", isDeleted=" + isDeleted +
+                ", matchedData='" + matchedData + '\'' +
+                ", expireValue='" + expireValue + '\'' +
+                ", sortSql='" + sortSql + '\'' +
+                '}';
+    }
 }

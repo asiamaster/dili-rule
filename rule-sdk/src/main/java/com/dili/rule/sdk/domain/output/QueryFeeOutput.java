@@ -30,6 +30,13 @@ public class QueryFeeOutput extends QueryFeeInput {
     private BigDecimal totalFee;
 
     /**
+     * 匹配到的数据
+     */
+
+    private String matchedData;
+
+
+    /**
      * 查询结果消息
      */
     private String message;
@@ -44,41 +51,58 @@ public class QueryFeeOutput extends QueryFeeInput {
      */
     private Boolean success;
 
+    public String getMatchedData() {
+        return matchedData;
+    }
 
+    public void setMatchedData(String matchedData) {
+        this.matchedData = matchedData;
+    }
 
     public Long getRuleId() {
         return ruleId;
     }
+
     public void setRuleId(Long ruleId) {
         this.ruleId = ruleId;
     }
+
     public String getRuleName() {
         return ruleName;
     }
+
     public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
     }
+
     public BigDecimal getTotalFee() {
         return totalFee;
     }
+
     public void setTotalFee(BigDecimal totalFee) {
         this.totalFee = totalFee;
     }
+
     public String getMessage() {
         return message;
     }
+
     public void setMessage(String message) {
         this.message = message;
     }
+
     public Boolean getSuccess() {
         return success;
     }
+
     public void setSuccess(Boolean success) {
         this.success = success;
     }
+
     public String getCode() {
         return code;
     }
+
     public void setCode(String code) {
         this.code = code;
     }
