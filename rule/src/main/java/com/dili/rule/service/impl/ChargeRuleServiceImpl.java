@@ -218,7 +218,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                         result.setCode(ResultCode.OK);
                         result.setSuccess(true);
                         result.setTotalFee(BigDecimal.ZERO);
-                        result.setMatchedData(ruleInfo.getMatchedData());
+                        result.setMatchedData(ruleInfo.getActionExpressionParams());
                         return result;
                     }
                     try {

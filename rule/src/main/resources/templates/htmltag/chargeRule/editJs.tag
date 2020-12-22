@@ -290,7 +290,10 @@
 
             var expression = 'IF(' + _condExp + ',' + _firstExp + ',' + _secondExp + ')';
             $('input[name="actionExpression"]').val(expression);
+        }else if($('select[name="actionExpressionType"]').val()==='3'){
+
         }
+
 
         let formJson = $('#addForm').serializeJSON({
             useIntKeysAsArrayIndex: true,

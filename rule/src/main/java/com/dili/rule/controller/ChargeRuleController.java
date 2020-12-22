@@ -311,49 +311,8 @@ public class ChargeRuleController {
      * @return String
      */
     @RequestMapping(value = "/view.action", method = RequestMethod.GET)
-    public String view(ModelMap modelMap, Long id) {
-        ChargeRule chargeRule=new ChargeRule();
-        chargeRule.setId(id);
-         if (Objects.nonNull(chargeRule)) {
-            modelMap.addAttribute("action", "insert");
-            chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-            if (null != chargeRule.getId()) {
-                chargeRule = chargeRuleService.get(id);
-                if (Objects.nonNull(chargeRule)) {
-                    //转换获取计算参数
-                    String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), false);
-                    chargeRule.setActionExpression(actionExpression);
-                    modelMap.addAttribute("action", "update");
-                } else {
-                    chargeRule.setExpireStart(LocalDateTime.now());
-                }
-            } else {
-                chargeRule.setExpireStart(LocalDateTime.now());
-            }
-            List<DataDictionaryValue> businessTypeList = getBusinessType();
-            String businessType = chargeRule.getBusinessType();
-            Optional<DataDictionaryValue> dataDictionaryValue = businessTypeList.stream().filter(t -> businessType.equals(t.getCode())).findFirst();
-            if (dataDictionaryValue.isPresent()) {
-                modelMap.put("businessTypeName", dataDictionaryValue.get().getName());
-            }
-            Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
-            if (businessChargeItemDto.isPresent()) {
-                modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
-            }
-            if (StringUtils.isNotBlank(chargeRule.getActionExpressionParams())) {
-                modelMap.addAttribute("actionExpressionParams", JSON.parse(chargeRule.getActionExpressionParams()));
-            }
-            modelMap.addAttribute("chargeRule", chargeRule);
-        } else {
-            chargeRule = new ChargeRule();
-            chargeRule.setExpireStart(LocalDateTime.now());
-        }
-        if(chargeRule.getActionExpressionType()==null){
-            chargeRule.setActionExpressionType(ActionExpressionTypeEnum.SIMPLE.getCode());
-        }
-         
-        //modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-        modelMap.put("businessTypeList", getBusinessType());
+    public String view(HttpServletRequest req,ChargeRule chargeRule, ModelMap modelMap) {
+        this.preSave(req,chargeRule,modelMap);
         return "chargeRule/view";
     }
 

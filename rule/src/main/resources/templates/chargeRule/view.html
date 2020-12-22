@@ -77,16 +77,15 @@
             <input type="hidden" id="actionExpression" name="actionExpression"  autocomplete="off" value="${chargeRule.actionExpression!}" />
             <div class="form-group col-12">
                 <label for="">数学表达式<i class="red">*</i></label>
-                <select name="actionExpressionType">
-                    <option value="1" >简单计算</option>
-                    <option value="2" >按时间分段计算</option>
+                <select name="actionExpressionType" class="form-control">
+                    <%for (e in actionExpressionTypeMap){%>  <option value="${e.key}"  <%if(e.key==chargeRule.actionExpressionType){%>selected<%}%> >${e.value}</option><%}%>
                 </select>
                 <div class="row" style="display: block;" id="simpleExpressionDiv">
                     <div class="input-group col-6">
                         <div class="w-75 pr-0" id="expressionDiv">
                             <input type="text" id="expressionInput" name="expressionInput" data-target="#actionExpression" class="form-control expressionInput btn-variable" data-varialbe="${chargeRule.actionExpression!}"  value="${chargeRule.actionExpression!}" autocomplete="off" data-value-type="skip" required="required"/>
                         </div>
-                        <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>
+                        <span class="input-group-text text-primary clear col-auto"><a href="javascript:;"><i class="fa fa-times" aria-hidden="true"></i></a></span>
                     </div>
                 </div>
 
@@ -132,7 +131,8 @@
                 <div class="row" style="display: none;" id="matchConditionDiv">
                     <div class="input-group col-6">
                         <div class="w-75 pr-0">
-                            <input type="text" name="actionExpression"   class="form-control btn-variable" data-varialbe="${chargeRule.actionExpression!}"  value="${chargeRule.actionExpression!}" autocomplete="off" data-value-type="skip" required="required"/>
+                            <input type="text" name="actionExpressionParams[period]"   class="form-control btn-variable" value="${actionExpressionParams['period']!}"   autocomplete="off" required="required"/>
+                            <input type="text" name="actionExpressionParams[feeValue]"   class="form-control btn-variable" value="${actionExpressionParams['feeValue']!}" autocomplete="off" required="required"/>
                         </div>
                     </div>
                 </div>
@@ -191,36 +191,37 @@
                  }
                  }*/
 
-                $('select[name="actionExpressionType"]').change(function () {
+        $('select[name="actionExpressionType"]').change(function () {
 
-                    $('#simpleExpressionDiv').hide();
-                    $('#calcVariable').hide();
-                    $('#complexsimpleExpressionDiv').hide();
-                    $('select[name="actionExpressionParams[_start]"]').attr('required',false);
-                    $('#matchConditionDiv').hide();
-                    $('#matchConditionDiv').find("input").attr('disabled','disabled');
-                    $('#matchConditionDiv').find("input").attr('required',false);
 
-                    if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
-                        $('#simpleExpressionDiv').show();
-                        $('#calcVariable').show();
-                    } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
-                        $('input[name="expressionInput"]').val('');
-                        $('input[name="actionExpression"]').val('');
-                        $('#complexsimpleExpressionDiv').show();
-                        $('select[name="actionExpressionParams[_start]"]').attr('required',true);
+            $('#simpleExpressionDiv').hide();
+            $('#calcVariable').hide();
+            $('#complexsimpleExpressionDiv').hide();
+            $('select[name="actionExpressionParams[_start]"]').attr('required',false);
+            $('#matchConditionDiv').hide();
+            $('#matchConditionDiv').find("input").attr('disabled','disabled');
+            $('#matchConditionDiv').find("input").attr('required',false);
 
-                    } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.MATCH_CONDITION.getCode()}') {
-                        $('#matchConditionDiv').show();
-                        $('#matchConditionDiv').find("input").removeAttr('disabled');
-                        $('#matchConditionDiv').find("input").attr('required',true);
-                    }
-                })
-                var actionExpressionType = "${chargeRule.actionExpressionType!}";
-                $('select[name="actionExpressionType"] option[value=' + actionExpressionType + ']').attr("selected", "selected");
-                if($('select[name="actionExpressionType"]').val()=='2'){
-                    $('select[name="actionExpressionType"]').trigger('change');
-                }
+            if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
+                $('#simpleExpressionDiv').show();
+                $('#calcVariable').show();
+            } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
+                $('input[name="expressionInput"]').val('');
+                $('input[name="actionExpression"]').val('');
+                $('#complexsimpleExpressionDiv').show();
+                $('select[name="actionExpressionParams[_start]"]').attr('required',true);
+
+            } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.MATCH_CONDITION.getCode()}') {
+                $('#matchConditionDiv').show();
+                $('#matchConditionDiv').find("input").removeAttr('disabled');
+                $('#matchConditionDiv').find("input").attr('required',true);
+            }
+        })
+
+        if($("select[name='actionExpressionType']").find("option:selected").index()!=0){
+            $('select[name="actionExpressionType"]').trigger('change');
+        };
+
 
                 var _start = '${actionExpressionParams._start!}';
 
@@ -244,8 +245,8 @@
                         bs4pop.alert('获取计算指标失败', {type: 0});
                     }
                 })
-                
-                
+
+
         $("input").attr("disabled", true);
         $("select").addClass("select-no-down");
         $("select").attr("disabled", true);

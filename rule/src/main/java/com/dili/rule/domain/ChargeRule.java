@@ -636,14 +636,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
         this.sortSql = sortSql;
     }
 
-    public String getMatchedData() {
-        return matchedData;
-    }
-
-    public void setMatchedData(String matchedData) {
-        this.matchedData = matchedData;
-    }
-
     @Override
     public String toString() {
         return "ChargeRule{" +

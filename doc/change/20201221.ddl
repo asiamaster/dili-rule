@@ -1,1 +1,0 @@
-ALTER TABLE `charge_rule` ADD COLUMN    `matched_data`  varchar(500) comment '匹配到的数据';

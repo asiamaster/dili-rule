@@ -36,8 +36,7 @@ function getBusinessType(marketId, _viewTargetId, _defaultValue, _enable, _tips)
         $.ajax({
             type: 'post',
             url: getBusinessTypeUrl,
-            // data: {marketId: marketId, enable: _enable},
-            data: {enable: _enable},
+            data: {marketId: marketId, enable: _enable},
             async: false,
             success: function (ret) {
                 if (ret.success) {
