@@ -129,7 +129,13 @@
 <!--                    <span class="input-group-text text-primary clear col-auto"><a href="javascript:;""><i class="fa fa-times" aria-hidden="true"></i></a></span>-->
                 </div>
             </div>
-
+                <div class="row" style="display: none;" id="matchConditionDiv">
+                    <div class="input-group col-6">
+                        <div class="w-75 pr-0">
+                            <input type="text" name="actionExpression"   class="form-control btn-variable" data-varialbe="${chargeRule.actionExpression!}"  value="${chargeRule.actionExpression!}" autocomplete="off" data-value-type="skip" required="required"/>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -186,14 +192,28 @@
                  }*/
 
                 $('select[name="actionExpressionType"]').change(function () {
-                    $('input[name="actionExpression"]').val('');
-                    $('input[name="expressionInput"]').val('');
+
+                    $('#simpleExpressionDiv').hide();
+                    $('#calcVariable').hide();
+                    $('#complexsimpleExpressionDiv').hide();
+                    $('select[name="actionExpressionParams[_start]"]').attr('required',false);
+                    $('#matchConditionDiv').hide();
+                    $('#matchConditionDiv').find("input").attr('disabled','disabled');
+                    $('#matchConditionDiv').find("input").attr('required',false);
+
                     if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
                         $('#simpleExpressionDiv').show();
-                        $('#complexsimpleExpressionDiv').hide();
+                        $('#calcVariable').show();
                     } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
-                        $('#simpleExpressionDiv').hide();
+                        $('input[name="expressionInput"]').val('');
+                        $('input[name="actionExpression"]').val('');
                         $('#complexsimpleExpressionDiv').show();
+                        $('select[name="actionExpressionParams[_start]"]').attr('required',true);
+
+                    } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.MATCH_CONDITION.getCode()}') {
+                        $('#matchConditionDiv').show();
+                        $('#matchConditionDiv').find("input").removeAttr('disabled');
+                        $('#matchConditionDiv').find("input").attr('required',true);
                     }
                 })
                 var actionExpressionType = "${chargeRule.actionExpressionType!}";

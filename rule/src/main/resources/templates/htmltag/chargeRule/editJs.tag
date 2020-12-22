@@ -276,7 +276,7 @@
     function buildData() {
         if($('select[name="actionExpressionType"]').val()==='1'){
             $('input[name="actionExpression"]').val($('#expressionInput').val());
-        }else{
+        }else if($('select[name="actionExpressionType"]').val()==='2'){
              var _first_tiered_period_val = $('input[name="actionExpressionParams[_first_tiered_period]"]').val();
             var _first_tiered_fee_val = $('input[name="actionExpressionParams[_first_tiered_fee]"]').val();
 
