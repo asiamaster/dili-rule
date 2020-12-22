@@ -32,7 +32,7 @@ function getBusinessType(marketId, _viewTargetId, _defaultValue, _enable, _tips)
         msg = "<option value=''>" + _tips + "</option>"
     }
     let datas = [msg];
-    // if (typeof (marketId) != "undefined" && marketId) {
+    if (typeof (marketId) != "undefined" && marketId) {
         $.ajax({
             type: 'post',
             url: getBusinessTypeUrl,
@@ -51,7 +51,7 @@ function getBusinessType(marketId, _viewTargetId, _defaultValue, _enable, _tips)
                 }
             }
         });
-    // }
+    }
     targetId.html(datas.join(''));
 }
 

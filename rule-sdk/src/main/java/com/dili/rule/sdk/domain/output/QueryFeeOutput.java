@@ -2,6 +2,7 @@ package com.dili.rule.sdk.domain.output;
 
 import com.dili.rule.sdk.domain.input.QueryFeeInput;
 
+import javax.persistence.Column;
 import java.math.BigDecimal;
 
 /**
@@ -28,6 +29,11 @@ public class QueryFeeOutput extends QueryFeeInput {
      * 计费金额
      */
     private BigDecimal totalFee;
+
+    /**
+     * 计算指标类型
+     */
+    private Integer actionExpressionType;
 
     /**
      * 匹配到的数据
@@ -105,5 +111,13 @@ public class QueryFeeOutput extends QueryFeeInput {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Integer getActionExpressionType() {
+        return actionExpressionType;
+    }
+
+    public void setActionExpressionType(Integer actionExpressionType) {
+        this.actionExpressionType = actionExpressionType;
     }
 }

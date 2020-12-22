@@ -212,6 +212,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 if (checkRuleResult) {
                     result.setRuleId(ruleInfo.getId());
                     result.setRuleName(ruleInfo.getRuleName());
+                    result.setActionExpressionType(ruleInfo.getActionExpressionType());
                     logger.info("条件匹配的规则: {}", ruleInfo);
                     if(ActionExpressionTypeEnum.MATCH_CONDITION.equalsToCode(ruleInfo.getActionExpressionType())){
                         result.setCode(ResultCode.OK);
