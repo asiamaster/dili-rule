@@ -162,12 +162,20 @@
             </div>
 
             <div class="row" style="display: none;" id="matchConditionDiv">
-                <div class="input-group col-6">
-                    <div class="w-75 pr-0">
-                        <input type="text" name="actionExpressionParams[period]"   class="form-control btn-variable" value="${actionExpressionParams['period']!}"   autocomplete="off" required="required"/>
-                        <input type="text" name="actionExpressionParams[feeValue]"   class="form-control btn-variable" value="${actionExpressionParams['feeValue']!}" autocomplete="off" required="required"/>
+                <div class="form-group col-auto">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" >时间周期</span>
+                        </div>
+                        <input class="form-control" _log="时间周期" name="actionExpressionParams[period]"  value="${actionExpressionParams['period']!}" />
+                        <div class="input-group-append">
+                            <span class="input-group-text">计算参数</span>
+                        </div>
+                        <input class="form-control" _log="计算参数" name="actionExpressionParams[feeValue]"  value="${actionExpressionParams['feeValue']!}" />
+
                     </div>
                 </div>
+
             </div>
 
         </div>

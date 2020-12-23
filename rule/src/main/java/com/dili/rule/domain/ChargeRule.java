@@ -205,13 +205,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
     private Integer isDeleted;
 
 
-    /**
-     * 匹配到的数据
-     */
-    @Column(name = "`matched_data`")
-    private String matchedData;
-
-
 //    /**
 //     * 生效时间
 //     */
@@ -667,7 +660,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
                 ", isBackup=" + isBackup +
                 ", backupedRuleId=" + backupedRuleId +
                 ", isDeleted=" + isDeleted +
-                ", matchedData='" + matchedData + '\'' +
                 ", expireValue='" + expireValue + '\'' +
                 ", sortSql='" + sortSql + '\'' +
                 '}';
