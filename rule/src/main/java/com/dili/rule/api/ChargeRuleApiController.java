@@ -1,10 +1,12 @@
 package com.dili.rule.api;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
+import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.dili.rule.sdk.domain.input.QueryFeeInput;
+import com.dili.rule.sdk.domain.output.QueryFeeOutput;
+import com.dili.rule.service.ChargeRuleService;
+import com.dili.ss.constant.ResultCode;
+import com.dili.ss.domain.BaseOutput;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,14 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONObject;
-import com.dili.rule.sdk.domain.input.QueryFeeInput;
-import com.dili.rule.sdk.domain.output.QueryFeeOutput;
-import com.dili.rule.service.ChargeRuleService;
-import com.dili.ss.constant.ResultCode;
-import com.dili.ss.domain.BaseOutput;
-
-import cn.hutool.core.collection.CollectionUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 计费规则服务
@@ -68,6 +66,7 @@ public class ChargeRuleApiController {
 
     /**
      * 批量获取费用信息
+     * 此方法逻辑为:当前条件遇到规则匹配不到或者计算不出费用时，立即返回失败
      * <resultCode>
      *     200-找到并匹配到规则，正常返回计算出的费用;
      *     404-根据业务费用项未找到可用（有效）的规则;
@@ -90,6 +89,7 @@ public class ChargeRuleApiController {
 
     /**
      * 批量获取费用信息
+     * 此方法逻辑为:当前条件遇到规则匹配不到或者计算不出费用时，会处理下一个条件匹配
      * <resultCode>
      *     200-找到并匹配到规则，正常返回计算出的费用;
      *     404-根据业务费用项未找到可用（有效）的规则;
@@ -164,17 +164,16 @@ public class ChargeRuleApiController {
      * @param queryFeeInputList 规则计算输入值
      * @return 批量处理结果
      */
-    private BaseOutput<List<QueryFeeOutput>> queryRules(List<QueryFeeInput> queryFeeInputList,boolean shortcut) {
+    private BaseOutput<List<QueryFeeOutput>> queryRules(List<QueryFeeInput> queryFeeInputList, boolean shortcut) {
         List<QueryFeeOutput> resultList = new ArrayList<>();
         for (QueryFeeInput queryFeeInput : queryFeeInputList) {
             QueryFeeOutput output = this.queryRule(queryFeeInput);
-            if(shortcut){
+            if (shortcut) {
                 if (StringUtils.isNotBlank(output.getMessage())) {
                     return BaseOutput.failure(output.getMessage()).setCode(output.getCode());
                 }
-            }else{
-                resultList.add(output);
             }
+            resultList.add(output);
         }
         return BaseOutput.successData(resultList);
     }
