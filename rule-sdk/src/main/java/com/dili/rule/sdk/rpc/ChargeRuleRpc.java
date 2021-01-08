@@ -58,5 +58,5 @@ public interface ChargeRuleRpc {
      * @return 处理结果
      */
     @RequestMapping(value="/api/chargeRule/batchQueryFeeWithoutShortcut", method = RequestMethod.POST)
-    public BaseOutput<List<QueryFeeOutput>> batchQueryFeeWithoutShortcut(@RequestBody List<QueryFeeInput> queryFeeInputList);
+    BaseOutput<List<QueryFeeOutput>> batchQueryFeeWithoutShortcut(@RequestBody List<QueryFeeInput> queryFeeInputList);
 }
