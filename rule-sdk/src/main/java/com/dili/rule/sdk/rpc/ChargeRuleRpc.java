@@ -30,7 +30,14 @@ public interface ChargeRuleRpc {
     BaseOutput<QueryFeeOutput> queryFee(QueryFeeInput queryFeeInput);
 
     /**
-     * 批量获取费用信息
+     * 批量获取费用信息,遇错即返回
+     * 此方法逻辑为:当前条件遇到规则匹配不到或者计算不出费用时，立即返回失败
+     * <resultCode>
+     *     200-找到并匹配到规则，正常返回计算出的费用;
+     *     404-根据业务费用项未找到可用（有效）的规则;
+     *     2000-根据传入的匹配条件未匹配到规则;
+     *     5000-其它错误信息;
+     * </resultCode>
      * @param queryFeeInputList 批量获取的输入条件
      * @return 处理结果
      */
@@ -39,7 +46,8 @@ public interface ChargeRuleRpc {
 
 
     /**
-     * 批量获取费用信息
+     * 批量获取费用信息，依次计算每一个
+     * 此方法逻辑为:当前条件遇到规则匹配不到或者计算不出费用时，会处理下一个条件匹配
      * <resultCode>
      *     200-找到并匹配到规则，正常返回计算出的费用;
      *     404-根据业务费用项未找到可用（有效）的规则;
