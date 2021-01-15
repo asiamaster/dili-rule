@@ -15,7 +15,7 @@
     </parent>
 
     <modules>
-<!--        <module>rule</module>-->
+        <module>rule</module>
         <module>rule-sdk</module>
     </modules>
 
