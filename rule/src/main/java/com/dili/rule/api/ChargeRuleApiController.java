@@ -171,9 +171,13 @@ public class ChargeRuleApiController {
             if (shortcut) {
                 if (StringUtils.isNotBlank(output.getMessage())) {
                     return BaseOutput.failure(output.getMessage()).setCode(output.getCode());
+                }else{
+                    resultList.add(output);
                 }
+            }else{
+                resultList.add(output);
             }
-            resultList.add(output);
+
         }
         return BaseOutput.successData(resultList);
     }
