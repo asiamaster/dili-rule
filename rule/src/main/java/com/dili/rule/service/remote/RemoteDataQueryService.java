@@ -39,12 +39,10 @@ public class RemoteDataQueryService {
      * 通过url请求远程接口(http+json)
      *
      * @param url
-     * @param page
-     * @param rows
      * @return
      */
-    public PageOutput<List> queryData(String url, Integer page, Integer rows) {
-        return this.queryData(url, Collections.emptyMap(), Collections.emptyMap(), page, rows);
+    public PageOutput<List> queryData(String url) {
+        return this.queryData(url, Collections.emptyMap(), Collections.emptyMap());
     }
 
     /**
@@ -57,8 +55,8 @@ public class RemoteDataQueryService {
      * @param rows
      * @return
      */
-    public PageOutput<List> queryData(String url, Map<String, Object> params, Map<String, String> header, Integer page, Integer rows) {
-        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params), header, page, rows);
+    public PageOutput<List> queryData(String url, Map<String, Object> params, Map<String, String> header) {
+        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params), header);
         PageOutput<List> pageout = this.parseJson(jsonDataOpt, false);
         return pageout;
     }
@@ -69,13 +67,11 @@ public class RemoteDataQueryService {
      * @param dataSourceDefinition
      * @param params
      * @param sessionId
-     * @param page
-     * @param rows
      * @return
      */
-    public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId, Integer page, Integer rows) {
+    public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId) {
 
-        Optional<String> jsonDataOpt = this.queryJsonData(dataSourceDefinition, params, sessionId, page, rows);
+        Optional<String> jsonDataOpt = this.queryJsonData(dataSourceDefinition, params, sessionId);
         PageOutput<List> pageout = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(dataSourceDefinition.getPaged()));
         return pageout;
     }
@@ -101,7 +97,7 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    private Optional<String> queryJsonData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId, Integer page, Integer rows) {
+    private Optional<String> queryJsonData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId) {
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(dataSourceDefinition.getDataSourceType());
         if (StrUtil.isNotBlank(dataSourceDefinition.getQueryCondition())) {
             params.putAll(JSONObject.parseObject(dataSourceDefinition.getQueryCondition()));
@@ -110,7 +106,7 @@ public class RemoteDataQueryService {
             String localJsonData = dataSourceDefinition.getDataJson();
             return Optional.ofNullable(localJsonData);
         } else {
-            return this.remoteQuery(dataSourceDefinition.getQueryUrl(), params, this.buildHeaderMap(sessionId), page, rows);
+            return this.remoteQuery(dataSourceDefinition.getQueryUrl(), params, this.buildHeaderMap(sessionId));
         }
     }
 
@@ -119,7 +115,6 @@ public class RemoteDataQueryService {
      *
      * @param dataSourceDefinition
      * @param keys
-     * @param header
      * @return
      */
     public List<Map<String, Object>> queryKeys(DataSourceDefinition dataSourceDefinition, List<Object> keys, String sessionId) {
@@ -188,10 +183,8 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap, Integer page, Integer rows) {
+    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap) {
 
-        params.put("page", page);
-        params.put("rows", rows);
         //强制内置两个参数，根据当前用户的市场隔离
         params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
         params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());

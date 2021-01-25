@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 由MyBatis Generator工具自动生成 This file was generated on 2020-05-13 11:23:41.
@@ -212,6 +209,25 @@ public class ConditionDefinitionController {
     }
 
     /**
+     * SB
+     * @param dataSourceDefinition
+     * @param params
+     * @return
+     */
+    private Map<String, Object> addPageParams(DataSourceDefinition dataSourceDefinition,Map<String, Object> params){
+        if(YesOrNoEnum.YES.getCode().equals(dataSourceDefinition.getPaged())){
+            Integer page=this.getPageNumber(params);
+            Integer rows=this.getRows(params);
+            params.put("page", page);
+            params.put("rows", rows);
+
+        }else{
+            params.put("page", 1);
+            params.put("rows", Integer.MAX_VALUE);
+        }
+        return params;
+    }
+    /**
      * 获取动态条件数据
      *
      * @param params
@@ -223,6 +239,7 @@ public class ConditionDefinitionController {
         ConditionDefinition conditionDefinition = this.conditionDefinitionService.get(definitionId);
         Long dataSourceId = conditionDefinition.getDataSourceId();
         DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(dataSourceId);
+        this.addPageParams(dataSourceDefinition,params);
 
         ViewModeEnum viewMode = ViewModeEnum.fromCode(conditionDefinition.getViewMode()).orElse(ViewModeEnum.TABLE_MULTI);
 
@@ -248,18 +265,14 @@ public class ConditionDefinitionController {
             case TABLE_MULTI:
 
                 List<DatasourceQueryConfig> queryConfigList = datasourceQueryConfigService.findByDataSourceId(dataSourceId);
-                Integer page=this.getPageNumber(params);
-                Integer rows=this.getRows(params);
-                params.put("page", page);
-                params.put("rows", rows);
-                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId, page, rows);
+                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId);
                 modelMap.put("pagedData", pagedData);
                 modelMap.put("queryConfigList", queryConfigList);
                 return "conditionDefinition/dynamic/table";
             case TREE_MULTI:
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId, 1, Integer.MAX_VALUE);
+                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId);
                     modelMap.put("nodes", mapper.writeValueAsString(treeData.getData()));
                     DataSourceColumn displayColumn = StreamEx.of(dataSourceColumns).filter(item -> YesOrNoEnum.YES.getCode().equals(item.getDisplay())).findFirst().orElse(new DataSourceColumn());
                     modelMap.put("displayColumn", mapper.writeValueAsString(displayColumn));
