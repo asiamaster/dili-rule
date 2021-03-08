@@ -60,15 +60,14 @@
      * @returns {undefined}
      */
     function addUnconfirmedListData(idList, textList) {
-        // conditionData.unconfirmedBatchData.batched = true;
-        // conditionData.unconfirmedBatchData.idList = idList;
-        // conditionData.unconfirmedBatchData.textList = textList;
+
         if(_.isArray(idList)&&_.isArray(textList)&&idList.length===textList.length){
-            for(var i=0;i<idList.length;i++){
-                var id=idList[i];
-                var text=textList[i];
-                addUnconfirmedData(id,text);
-            }
+            conditionData.removableData.idList= _.difference(conditionData.checkedData.idList.map(v=>new String(v).toString()),idList);
+            conditionData.removableData.textList= _.difference(conditionData.checkedData.textList.map(v=>new String(v).toString()),textList);
+
+            conditionData.unconfirmedData.idList= _.difference(idList,conditionData.checkedData.idList.map(v=>new String(v).toString()));
+            conditionData.unconfirmedData.textList= _.difference(textList,conditionData.checkedData.textList.map(v=>new String(v).toString()));
+
         }else{
             console.error("批量选择的数据长度或者类型错误")
         }
@@ -99,7 +98,6 @@
         }else{
 
         }
-        // console.info(conditionData);
 
     }
     /**

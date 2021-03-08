@@ -84,10 +84,10 @@
             handleCheckChange(data, checked, indeterminate) {
                 let checkedNodes = this.$refs.tree.getCheckedNodes();
                 var idList = checkedNodes.map(item => {
-                    return item[matchColumn];
+                    return new String(item[matchColumn]).toString();
                 });
                 var textList = checkedNodes.map(item => {
-                    return item[displayColumnCode];
+                    return new String(item[displayColumnCode]).toString();
                 });
                 addUnconfirmedListData(idList,textList)
             }
