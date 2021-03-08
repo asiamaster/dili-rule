@@ -61,9 +61,6 @@
 
     var app = new Vue({
         el: '#app',
-        mounted: function () {
-            this.$refs.tree.setCheckedKeys(conditionData.checkedData.idList);
-        },
         data() {
             return {
                 filterText: '',
@@ -105,11 +102,12 @@
             type: 'post',
             url: "${contextPath}/conditionDefinition/queryRemoteData.action",
             contentType: "application/json",
-            data: JSON.stringify({params: JSON.parse('${params}'), dataSourceId: '${dataSourceId}'})
+            data: JSON.stringify({params: JSON.parse('${jsonParams}'), dataSourceId: '${dataSourceId}'})
         }
         $.ajax(ajaxSettings).done((ret)=>{
             if (ret.success) {
                 app.data = toEleTree(ret.data, {label: displayColumnCode, pid: parentColumnCode});
+                app.$refs.tree.setCheckedKeys(conditionData.checkedData.idList);
             } else {
                 bs4pop.alert(ret.result, {width: 400, type: 'error'});
             }

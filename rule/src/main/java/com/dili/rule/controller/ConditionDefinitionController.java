@@ -264,7 +264,8 @@ public class ConditionDefinitionController {
         modelMap.put("conditionDefinition", conditionDefinition);
         modelMap.put("dataSourceDefinition", dataSourceDefinition);
         modelMap.put("dataSourceColumns", dataSourceColumns);
-        modelMap.put("params", JSON.toJSONString(params));
+        modelMap.put("params", params);
+        modelMap.put("jsonParams", JSON.toJSONString(params));
         modelMap.put("dataSourceId", dataSourceId);
         String uapSessionId = CookieUtil.getUapSessionId(request);
         switch (viewMode) {
