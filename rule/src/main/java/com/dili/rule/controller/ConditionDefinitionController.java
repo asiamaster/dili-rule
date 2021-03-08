@@ -1,10 +1,12 @@
 package com.dili.rule.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.DataSourceColumn;
 import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.rule.domain.DatasourceQueryConfig;
+import com.dili.rule.domain.dto.RemoteAjaxInputDto;
 import com.dili.rule.domain.enums.ViewModeEnum;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.DataSourceColumnService;
@@ -52,7 +54,6 @@ public class ConditionDefinitionController {
     private RemoteDataQueryService remoteDataQueryService;
     @Autowired
     DatasourceQueryConfigService datasourceQueryConfigService;
-
 
 
     /**
@@ -165,44 +166,46 @@ public class ConditionDefinitionController {
     }
 
 
-
     /**
      * 返回当前分页参数
+     *
      * @param params
-     * @return 
+     * @return
      */
     private Integer getPageNumber(Map<String, Object> params) {
         Object pageObj = params.get("page");
         if (pageObj == null) {
             return 1;
         }
-        if(!NumberUtils.isCreatable(String.valueOf(pageObj))){
-         return 1;
+        if (!NumberUtils.isCreatable(String.valueOf(pageObj))) {
+            return 1;
         }
-        Integer page=NumberUtils.createBigInteger(String.valueOf(pageObj)).intValue();
-        if(page<=0){
+        Integer page = NumberUtils.createBigInteger(String.valueOf(pageObj)).intValue();
+        if (page <= 0) {
             return 1;
         }
         return page;
     }
+
     /**
      * 返回当前分页参数
+     *
      * @param params
-     * @return 
+     * @return
      */
     private Integer getRows(Map<String, Object> params) {
         Object rowsObj = params.get("rows");
         if (rowsObj == null) {
             return 10;
         }
-        if(!NumberUtils.isCreatable(String.valueOf(rowsObj))){
+        if (!NumberUtils.isCreatable(String.valueOf(rowsObj))) {
             return 10;
         }
-        Integer rows=NumberUtils.createBigInteger(String.valueOf(rowsObj)).intValue();
-        if(rows<=0){
+        Integer rows = NumberUtils.createBigInteger(String.valueOf(rowsObj)).intValue();
+        if (rows <= 0) {
             return 10;
         }
-        if(rows>=100){
+        if (rows >= 100) {
             return 100;
         }
         return rows;
@@ -210,23 +213,25 @@ public class ConditionDefinitionController {
 
     /**
      * SB
+     *
      * @param dataSourceDefinition
      * @param params
      * @return
      */
-    private Map<String, Object> addPageParams(DataSourceDefinition dataSourceDefinition,Map<String, Object> params){
-        if(YesOrNoEnum.YES.getCode().equals(dataSourceDefinition.getPaged())){
-            Integer page=this.getPageNumber(params);
-            Integer rows=this.getRows(params);
+    private Map<String, Object> addPageParams(DataSourceDefinition dataSourceDefinition, Map<String, Object> params) {
+        if (YesOrNoEnum.YES.getCode().equals(dataSourceDefinition.getPaged())) {
+            Integer page = this.getPageNumber(params);
+            Integer rows = this.getRows(params);
             params.put("page", page);
             params.put("rows", rows);
 
-        }else{
+        } else {
             params.put("page", 1);
             params.put("rows", Integer.MAX_VALUE);
         }
         return params;
     }
+
     /**
      * 获取动态条件数据
      *
@@ -239,7 +244,7 @@ public class ConditionDefinitionController {
         ConditionDefinition conditionDefinition = this.conditionDefinitionService.get(definitionId);
         Long dataSourceId = conditionDefinition.getDataSourceId();
         DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(dataSourceId);
-        this.addPageParams(dataSourceDefinition,params);
+        this.addPageParams(dataSourceDefinition, params);
 
         ViewModeEnum viewMode = ViewModeEnum.fromCode(conditionDefinition.getViewMode()).orElse(ViewModeEnum.TABLE_MULTI);
 
@@ -249,7 +254,7 @@ public class ConditionDefinitionController {
         columnCondition.setOrder("ASC");
         columnCondition.setSort("column_index");
         List<DataSourceColumn> dataSourceColumns = dataSourceColumnService.listByExample(columnCondition);
-       
+
 
         ConditionDefinition condition = new ConditionDefinition();
         condition.setDataTargetId(dataSourceId);
@@ -259,8 +264,9 @@ public class ConditionDefinitionController {
         modelMap.put("conditionDefinition", conditionDefinition);
         modelMap.put("dataSourceDefinition", dataSourceDefinition);
         modelMap.put("dataSourceColumns", dataSourceColumns);
-        modelMap.put("params", params);
-        String uapSessionId=CookieUtil.getUapSessionId(request);
+        modelMap.put("params", JSON.toJSONString(params));
+        modelMap.put("dataSourceId", dataSourceId);
+        String uapSessionId = CookieUtil.getUapSessionId(request);
         switch (viewMode) {
             case TABLE_MULTI:
 
@@ -272,13 +278,13 @@ public class ConditionDefinitionController {
             case TREE_MULTI:
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId);
-                    modelMap.put("nodes", mapper.writeValueAsString(treeData.getData()));
+//                    PageOutput<List> treeData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId);
+//                    modelMap.put("nodes", mapper.writeValueAsString(treeData.getData()));
                     DataSourceColumn displayColumn = StreamEx.of(dataSourceColumns).filter(item -> YesOrNoEnum.YES.getCode().equals(item.getDisplay())).findFirst().orElse(new DataSourceColumn());
                     modelMap.put("displayColumn", mapper.writeValueAsString(displayColumn));
-                    modelMap.put("parentColumn",  conditionDefinition.getParentColumn());
+                    modelMap.put("parentColumn", conditionDefinition.getParentColumn());
                 } catch (JsonProcessingException e) {
-                    modelMap.put("nodes", "[]");
+//                    modelMap.put("nodes", "[]");
                     modelMap.put("displayColumn", "{}");
                 }
 
@@ -290,5 +296,26 @@ public class ConditionDefinitionController {
 
         // return "conditionDefinition/ajaxTable";
         //return "conditionDefinition/dynamic/tree";
+    }
+
+    /**
+     * SB
+     * @param inputDto
+     * @param request
+     * @return
+     */
+    @RequestMapping("/queryRemoteData.action")
+    @ResponseBody
+    public BaseOutput queryRemoteData(@RequestBody RemoteAjaxInputDto inputDto, HttpServletRequest request) {
+        try {
+            String uapSessionId = CookieUtil.getUapSessionId(request);
+            DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(inputDto.getDataSourceId());
+            PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, inputDto.getParams(), uapSessionId);
+            return pagedData;
+        } catch (Exception e) {
+            return BaseOutput.failure("远程查询错误");
+
+        }
+
     }
 }

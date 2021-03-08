@@ -40,13 +40,12 @@
 </div>
 
 <script>
+
+
     var displayColumnCode=JSON.parse('${displayColumn}').columnCode;
     var parentColumnCode='${parentColumn!}';
     var matchColumn='${conditionDefinition.matchColumn}';
-    var nodeArray=JSON.parse('${nodes}');
-    if(nodeArray=='null'){
-        nodeArray=[];
-    }
+
     $('#selectedItem').hide()
 
     /**
@@ -62,9 +61,6 @@
 
     var app = new Vue({
         el: '#app',
-        created: function () {
-            this.data = toEleTree(nodeArray, {label: displayColumnCode, pid: parentColumnCode});
-        },
         mounted: function () {
             this.$refs.tree.setCheckedKeys(conditionData.checkedData.idList);
         },
@@ -78,15 +74,15 @@
                 }
             };
         },
-          watch: {
-      filterText(val) {
-        this.$refs.tree.filter(val);
-      }
+        watch: {
+            filterText(val) {
+            this.$refs.tree.filter(val);
+        }
     },
         methods: {
              filterNode(value, data) {
-        if (!value) return true;
-        return data.label.indexOf(value) !== -1;
+                if (!value) return true;
+                return data.label.indexOf(value) !== -1;
       },
             handleCheckChange(data, checked, indeterminate) {
                 let checkedNodes = this.$refs.tree.getCheckedNodes();
@@ -101,4 +97,27 @@
         }
     })
 
+    //
+
+    function loadTreeData(){
+        bui.loading.show('数据加载中...');
+        var ajaxSettings= {
+            type: 'post',
+            url: "${contextPath}/conditionDefinition/queryRemoteData.action",
+            contentType: "application/json",
+            data: JSON.stringify({params: JSON.parse('${params}'), dataSourceId: '${dataSourceId}'})
+        }
+        $.ajax(ajaxSettings).done((ret)=>{
+            if (ret.success) {
+                app.data = toEleTree(ret.data, {label: displayColumnCode, pid: parentColumnCode});
+            } else {
+                bs4pop.alert(ret.result, {width: 400, type: 'error'});
+            }
+        }).fail((e)=>{
+            bs4pop.alert('远程访问出错', {width: 400, type: 'error'}, function () {});
+        }).always(()=>{
+            bui.loading.hide();
+        })
+    }
+    loadTreeData();
 </script>
