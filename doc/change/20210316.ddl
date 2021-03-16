@@ -1,0 +1,1 @@
+ALTER TABLE `dili_rule`.`data_source_query_config` MODIFY COLUMN query_key varchar(40)  NULL COMMENT '匹配Key值';
