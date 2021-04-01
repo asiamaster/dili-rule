@@ -194,7 +194,7 @@
         <dependency>
             <groupId>com.dili</groupId>
             <artifactId>uap-sdk</artifactId>
-            <version>2.11.0-SNAPSHOT</version>
+            <version>3.1.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <artifactId>ss-core</artifactId>
@@ -266,7 +266,7 @@
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.5</version>
+                <version>4.0.0</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
@@ -287,8 +287,10 @@
                 <configuration>
                     <dotGitDirectory>${project.parent.basedir}/.git</dotGitDirectory>
                     <generateGitPropertiesFilename>${project.build.outputDirectory}\git.properties</generateGitPropertiesFilename>
-                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <failOnNoGitDirectory>true</failOnNoGitDirectory>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <offline>true</offline>
+                    <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
                 </configuration>
             </plugin>
         </plugins>
