@@ -5,8 +5,10 @@
  */
 package com.dili.rule.utils;
 
-import javax.servlet.http.HttpServletRequest;
+import com.dili.uap.sdk.constant.SessionConstants;
 import one.util.streamex.StreamEx;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -15,7 +17,7 @@ import one.util.streamex.StreamEx;
 public class CookieUtil {
 
     public static String getUapSessionId(HttpServletRequest request) {
-        String uapSessionId = StreamEx.of(request.getCookies()).nonNull().findAny(c -> c.getName().equals("UAP_SessionId")).map(c -> c.getValue()).orElse("");
+        String uapSessionId = StreamEx.of(request.getCookies()).nonNull().findAny(c -> c.getName().equals(SessionConstants.ACCESS_TOKEN_KEY)).map(c -> c.getValue()).orElse("");
         return uapSessionId;
     }
 

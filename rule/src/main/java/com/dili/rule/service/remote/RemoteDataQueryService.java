@@ -9,13 +9,13 @@ import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.rule.domain.enums.DataSourceTypeEnum;
 import com.dili.ss.domain.PageOutput;
+import com.dili.uap.sdk.constant.SessionConstants;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -83,10 +83,8 @@ public class RemoteDataQueryService {
      * @return
      */
     private Map<String, String> buildHeaderMap(String sessionId) {
-
         Map<String, String> header = new HashMap<>();
-        header.put("sessionId", sessionId);
-        header.put("UAP_SessionId", sessionId);
+        header.put(SessionConstants.ACCESS_TOKEN_KEY, sessionId);
         return header;
     }
 
