@@ -88,6 +88,30 @@
             btns: []
         });
     }
+
+    function openCopyHandler(){
+        //获取选中行的数据
+        let rows = _dataGrid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        //table选择模式是单选时可用
+        let selectedRow = rows[0];
+        let url = "/chargeRule/preCopy.html?id=" + selectedRow.id;
+        dia = bs4pop.dialog({
+            title: '复制规则',
+            content: url,
+            isIframe: true,
+            closeBtn: true,
+            backdrop: 'static',
+            width: '98%',
+            height: '98%',
+            btns: []
+        });
+
+
+    }
     function doModifyBackupHandler(){
          //获取选中行的数据
         let rows = _dataGrid.bootstrapTable('getSelections');

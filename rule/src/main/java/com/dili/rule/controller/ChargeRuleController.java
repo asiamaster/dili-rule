@@ -153,6 +153,62 @@ public class ChargeRuleController {
     }
 
     /**
+     * 计费规则预编辑
+     *
+     * @param chargeRule 计费规则信息
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/preCopy.html", method = {RequestMethod.GET, RequestMethod.POST})
+    public String preCopy(HttpServletRequest req,ChargeRule chargeRule, ModelMap modelMap) {
+        if (Objects.nonNull(chargeRule)) {
+            modelMap.addAttribute("action", "insert");
+            chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+            if (null != chargeRule.getId()) {
+                ChargeRule  chargeRuleItem = chargeRuleService.get(chargeRule.getId());
+                if (Objects.nonNull(chargeRuleItem)) {
+                    chargeRule=chargeRuleItem;
+                    //转换获取计算参数
+                    String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), false);
+                    chargeRule.setActionExpression(actionExpression);
+                    modelMap.addAttribute("action", "update");
+                } else {
+                    chargeRule.setExpireStart(LocalDateTime.now());
+                }
+            } else {
+                chargeRule.setExpireStart(LocalDateTime.now());
+            }
+            List<DataDictionaryValue> businessTypeList = getBusinessType();
+            String businessType = chargeRule.getBusinessType();
+            Optional<DataDictionaryValue> dataDictionaryValue = businessTypeList.stream().filter(t -> businessType.equals(t.getCode())).findFirst();
+            if (dataDictionaryValue.isPresent()) {
+                modelMap.put("businessTypeName", dataDictionaryValue.get().getName());
+            }
+            Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
+            if (businessChargeItemDto.isPresent()) {
+                modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
+            }
+            if (StringUtils.isNotBlank(chargeRule.getActionExpressionParams())) {
+                modelMap.addAttribute("actionExpressionParams", JSON.parse(chargeRule.getActionExpressionParams()));
+            }
+            modelMap.addAttribute("chargeRule", chargeRule);
+        } else {
+            chargeRule = new ChargeRule();
+            chargeRule.setExpireStart(LocalDateTime.now());
+        }
+        if(chargeRule.getActionExpressionType()==null){
+            chargeRule.setActionExpressionType(ActionExpressionTypeEnum.SIMPLE.getCode());
+        }
+        Map<Integer,String>actionExpressionTypeMap=StreamEx.of(ActionExpressionTypeEnum.values()).toMap(ActionExpressionTypeEnum::getCode, ActionExpressionTypeEnum::getDesc);
+        modelMap.addAttribute("actionExpressionTypeMap",actionExpressionTypeMap);
+
+
+        modelMap.addAttribute("operator",SessionContext.getSessionContext().getUserTicket());
+        modelMap.addAttribute("serverIp",req.getLocalAddr());
+        return "chargeRule/copy";
+    }
+
+    /**
      * 获取对应的规则条件值
      *
      * @param chargeRule
