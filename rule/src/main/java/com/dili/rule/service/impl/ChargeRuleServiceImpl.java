@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.commons.glossary.YesOrNoEnum;
+import com.dili.rule.ActionEnum;
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
@@ -111,7 +112,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo, OperatorUser operatorUser) {
+    public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo, ActionEnum actionEnum, OperatorUser operatorUser) {
+
         ChargeRule inputRuleInfo = new ChargeRule();
         BeanUtils.copyProperties(chargeRuleVo, inputRuleInfo);
         inputRuleInfo.setState(RuleStateEnum.UN_STARTED.getCode());
@@ -123,25 +125,25 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             inputRuleInfo.setIsBackup(YesOrNoEnum.NO.getCode());
         }
 
-        ChargeRule temp = this.saveOrUpdateRuleInfo(inputRuleInfo, operatorUser);
-        List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(temp, chargeRuleVo);
+        ChargeRule ruleItem = this.saveOrUpdateRuleInfo(inputRuleInfo, actionEnum);
+        List<ChargeConditionVal> ruleConditionValList = this.parseRuleConditionVal(ruleItem, chargeRuleVo.getConditionList());
         // 如果是更新,则先删除原来的设置(如果是插入,下面的delByRuleId将导致死锁)
         if (CollectionUtil.isNotEmpty(ruleConditionValList)) {
-            if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(temp.getId())) {
+            if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(ruleItem.getId())) {
                 // 更新规则(先批量删除原有的,再增加新提交的)
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
             }
             chargeConditionValService.batchInsert(ruleConditionValList);
         } else {
-            if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(temp.getId())) {
+            if (Objects.nonNull(chargeRuleVo.getId()) && chargeRuleVo.getId().equals(ruleItem.getId())) {
                 // 更新规则(先批量删除原有的,再增加新提交的)
                 chargeConditionValService.deleteByRuleId(chargeRuleVo.getId());
             }
         }
 
-        this.checkAndUpdateRuleStatus(temp);
+        this.checkAndUpdateRuleStatus(ruleItem);
 
-        return BaseOutput.success().setData(temp);
+        return BaseOutput.success().setData(ruleItem);
     }
 
     private void checkAndUpdateRuleStatus(ChargeRule rule) {
@@ -149,39 +151,40 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         this.chargeRuleExpiresScheduler.queryAndScheduleUpdateState(rule.getId());
     }
 
-    public Optional<RuleStateEnum>calculateRuleState(Long ruleId){
-        if(ruleId==null){
+    public Optional<RuleStateEnum> calculateRuleState(Long ruleId) {
+        if (ruleId == null) {
             return Optional.empty();
         }
-        ChargeRule item=this.get(ruleId);
-        if(!YesOrNoEnum.NO.getCode().equals(item.getIsDeleted())){
+        ChargeRule item = this.get(ruleId);
+        if (!YesOrNoEnum.NO.getCode().equals(item.getIsDeleted())) {
             return Optional.empty();
         }
-        if(item.getExpireStart()==null){
+        if (item.getExpireStart() == null) {
             return Optional.empty();
         }
-        if(!RuleStateEnum.DISABLED.getCode().equals(item.getState())){
+        if (!RuleStateEnum.DISABLED.getCode().equals(item.getState())) {
             return Optional.empty();
         }
         LocalDateTime now = LocalDateTime.now();
-        if (item.getExpireEnd() != null ) {
-            if(item.getExpireEnd().isBefore(now) || item.getExpireEnd().isEqual(now)){
+        if (item.getExpireEnd() != null) {
+            if (item.getExpireEnd().isBefore(now) || item.getExpireEnd().isEqual(now)) {
                 return Optional.of(RuleStateEnum.EXPIRED);
-            }else if((item.getExpireStart().isBefore(now)||item.getExpireStart().isEqual(now))&&item.getExpireEnd().isAfter(now)){
+            } else if ((item.getExpireStart().isBefore(now) || item.getExpireStart().isEqual(now)) && item.getExpireEnd().isAfter(now)) {
                 return Optional.of(RuleStateEnum.ENABLED);
-            }else{
+            } else {
                 return Optional.of(RuleStateEnum.UN_STARTED);
             }
-        }else{
-              if((item.getExpireStart().isBefore(now)||item.getExpireStart().isEqual(now))){
+        } else {
+            if ((item.getExpireStart().isBefore(now) || item.getExpireStart().isEqual(now))) {
                 return Optional.of(RuleStateEnum.ENABLED);
-            }else{
+            } else {
                 return Optional.of(RuleStateEnum.UN_STARTED);
             }
         }
 
 
     }
+
     @Override
     public void updateStateByExpires(Long id, OperatorUser operatorUser) {
         ChargeRule item = this.get(id);
@@ -214,7 +217,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     result.setRuleName(ruleInfo.getRuleName());
                     result.setActionExpressionType(ruleInfo.getActionExpressionType());
                     logger.info("条件匹配的规则: {}", ruleInfo);
-                    if(ActionExpressionTypeEnum.MATCH_CONDITION.equalsToCode(ruleInfo.getActionExpressionType())){
+                    if (ActionExpressionTypeEnum.MATCH_CONDITION.equalsToCode(ruleInfo.getActionExpressionType())) {
                         result.setCode(ResultCode.OK);
                         result.setSuccess(true);
                         result.setTotalFee(BigDecimal.ZERO);
@@ -284,7 +287,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         if (null == item) {
             return BaseOutput.failure("规则不存在");
         }
-        ChargeRule rule=new ChargeRule();
+        ChargeRule rule = new ChargeRule();
 
         if (enable) {
             List<Integer> allowedStatus = Arrays.asList(RuleStateEnum.DISABLED.getCode());
@@ -344,7 +347,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
             backrule.setOriginalId(ruleInfo.getOriginalId());
             backrule.setOperatorName(ruleInfo.getOperatorName());
             backrule.setOperatorId(ruleInfo.getOperatorId());
-            this.calculateRuleState(rid).ifPresent(stateenum->{
+            this.calculateRuleState(rid).ifPresent(stateenum -> {
                 backrule.setState(stateenum.getCode());
             });
             return this.updateSelective(backrule);
@@ -414,15 +417,18 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param input
      * @return
      */
-    private ChargeRule saveOrUpdateRuleInfo(ChargeRule input, OperatorUser operatorUser) {
-        if (null == input.getId()) {
+    private ChargeRule saveOrUpdateRuleInfo(ChargeRule input, ActionEnum actionEnum) {
+        if (ActionEnum.INSERT == actionEnum || ActionEnum.COPY == actionEnum) {
+            input.setId(null);
+            input.setIsBackup(YesOrNoEnum.NO.getCode());
             if (this.isExistsSameRuleName(input)) {
                 throw new IllegalArgumentException("已存在规则名称相同的记录");
             }
             // 插入新的记录
             getActualMapper().insertBy(input);
             return input;
-        } else {
+        } else if (ActionEnum.UPDATE == actionEnum) {
+
             ChargeRule item = this.get(input.getId());
 //            if (YesOrNoEnum.NO.getCode().equals(item.getRevisable())) {
 //                throw new IllegalArgumentException("此规则已存在被修改的记录，暂时不能修改");
@@ -458,53 +464,25 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 this.update(input);
             }
             return input;
+        } else {
+            throw new IllegalArgumentException("参数错误");
         }
+
+
     }
 
-    /**
-     * 根据Revisable的值,创建新的规则并更新原有数据的状态
-     *
-     * @param inputRuleInfo
-     * @param old
-     * @return
-     */
-//    private ChargeRule createRuleForRevisable(ChargeRule input, ChargeRule item, OperatorUser operatorUser) {
-//
-//        if (item.getIsBackup().equals(YesOrNoEnum.NO.getCode())) {
-//            if (YesOrNoEnum.YES.getCode().equals(input.getIsBackup())) {
-//
-//                input.setId(null);
-//                input.setCreateTime(LocalDateTime.now());
-//                input.setModifyTime(LocalDateTime.now());
-//                this.insert(input);
-//                item.setBackupedRuleId(input.getId());
-//                this.update(item);
-//            } else {
-//                //                inputRuleInfo.setModifyTime(old.getModifyTime());
-//                input.setIsBackup(item.getIsBackup());
-//                this.update(input);
-//            }
-//
-//        } else if (YesOrNoEnum.YES.getCode().equals(item.getIsBackup())) {
-////            inputRuleInfo.setModifyTime(old.getModifyTime());
-//            input.setIsBackup(item.getIsBackup());
-//            this.update(input);
-//        }
-//        return input;
-//    }
 
     /**
      * 组装规则条件信息
      *
-     * @param rule
-     * @param vo
+     * @param ruleItem
+     * @param conditionList
      * @return
      */
-    private List<ChargeConditionVal> parseRuleConditionVal(ChargeRule rule, ChargeRuleVo vo) {
-        if (CollectionUtil.isEmpty(vo.getConditionList())) {
+    private List<ChargeConditionVal> parseRuleConditionVal(ChargeRule ruleItem, List<ConditionVo> conditionList) {
+        if (CollectionUtil.isEmpty(conditionList)) {
             return Collections.emptyList();
         }
-        List<ConditionVo> conditionList = vo.getConditionList();
         // 需要保存的规则条件信息
         List<ChargeConditionVal> ruleConditionVals = conditionList.stream().map((c) -> {
             // 获得对应的ConditionDefinition并进行数据格式校验
@@ -524,7 +502,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 val = JSONObject.toJSONString(c.getMatchValues());
             }
             ChargeConditionVal conditionValItem = new ChargeConditionVal();
-            conditionValItem.setRuleId(rule.getId());
+            conditionValItem.setRuleId(ruleItem.getId());
             conditionValItem.setLabel(definition.getLabel());
             conditionValItem.setMatchKey(definition.getMatchKey());
             conditionValItem.setMatchType(definition.getMatchType());

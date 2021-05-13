@@ -24,7 +24,12 @@ public class ChargeRuleVo extends ChargeRule implements Serializable {
      * 规则条件标签值
      */
     private String conditionLabel;
-
+    /**
+     * 规则条件设置项
+     * json格式
+     */
+    @Transient
+    private Integer action;
     /**
      * 规则条件设置项
      * json格式
@@ -36,13 +41,24 @@ public class ChargeRuleVo extends ChargeRule implements Serializable {
     public String getConditionLabel() {
         return conditionLabel;
     }
+
     public void setConditionLabel(String conditionLabel) {
         this.conditionLabel = conditionLabel;
     }
-	public List<ConditionVo> getConditionList() {
-		return conditionList;
-	}
-	public void setConditionList(List<ConditionVo> conditionList) {
-		this.conditionList = conditionList;
-	}
+
+    public List<ConditionVo> getConditionList() {
+        return conditionList;
+    }
+
+    public void setConditionList(List<ConditionVo> conditionList) {
+        this.conditionList = conditionList;
+    }
+
+    public Integer getAction() {
+        return action;
+    }
+
+    public void setAction(Integer action) {
+        this.action = action;
+    }
 }

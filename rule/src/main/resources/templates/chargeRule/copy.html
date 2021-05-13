@@ -7,6 +7,8 @@
 <div class="container-fluid">
     <%if (has(chargeRule)){%>
     <form id="addForm" role="form" novalidate>
+        <input type="hidden" id="id" name="id" value="${chargeRule.id!}">
+        <input type="hidden"  name="action" value="${action}">
         <div class="breadcrumb" >
             基础信息
             <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true"
@@ -207,101 +209,100 @@
 <#chargeRule_editJs />
 
 <script>
-	var logger =null;
-	let logObj = {};
-	
-	logObj.businessCode = $("#id").val();
-	logObj.businessId = $("#id").val();
-	
-	logObj.systemCode = "RULE";
-	logObj.businessType = "dili-rule";
-	
-	logObj.operationType = "edit";
-	if($.trim(logObj.businessCode)==''){
-		logObj.operationType = "add";	
-	}
-	logObj.marketId = '${operator.firmId}';
-	logObj.operatorId = '${operator.id}';
-	logObj.operatorName = '${operator.realName}';
-	logObj.serverIp = '${serverIp}';
-	
-  $.prototype.tooltip = (function (tooltip) {
-      return function (config) {
-          try {
-              return tooltip.call(this, config);
-          } catch (ex) {
-              if (ex instanceof TypeError && config === "destroy") {
-                  return tooltip.call(this, "dispose");
-              } else if (ex instanceof TypeError && config === "fixTitle") {
-                  var $e = this
-                  if ($e.attr('title') || typeof ($e.attr('data-original-title')) != 'string') {
-                      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
-                  }
-                  return this;
-              }
-          }
-      };
-  })($.prototype.tooltip);
-   /*
-    Tooltip.prototype.fixTitle = function () {
-    var $e = this.$element
-    if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
-    $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+    var logger =null;
+    let logObj = {};
+
+    logObj.businessCode = $("#id").val();
+    logObj.businessId = $("#id").val();
+
+    logObj.systemCode = "RULE";
+    logObj.businessType = "dili-rule";
+
+    logObj.operationType = "edit";
+    if($.trim(logObj.businessCode)==''){
+        logObj.operationType = "add";
     }
-    }*/
+    logObj.marketId = '${operator.firmId}';
+    logObj.operatorId = '${operator.id}';
+    logObj.operatorName = '${operator.realName}';
+    logObj.serverIp = '${serverIp}';
 
-   $('select[name="actionExpressionType"]').change(function () {
+    $.prototype.tooltip = (function (tooltip) {
+        return function (config) {
+            try {
+                return tooltip.call(this, config);
+            } catch (ex) {
+                if (ex instanceof TypeError && config === "destroy") {
+                    return tooltip.call(this, "dispose");
+                } else if (ex instanceof TypeError && config === "fixTitle") {
+                    var $e = this
+                    if ($e.attr('title') || typeof ($e.attr('data-original-title')) != 'string') {
+                        $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+                    }
+                    return this;
+                }
+            }
+        };
+    })($.prototype.tooltip);
+    /*
+     Tooltip.prototype.fixTitle = function () {
+     var $e = this.$element
+     if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
+     $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+     }
+     }*/
+
+    $('select[name="actionExpressionType"]').change(function () {
 
 
-       $('#simpleExpressionDiv').hide();
-       $('#calcVariable').hide();
-       $('#complexsimpleExpressionDiv').hide();
-       $('select[name="actionExpressionParams[_start]"]').attr('required',false);
-       $('#matchConditionDiv').hide();
-       $('#matchConditionDiv').find("input").attr('disabled','disabled');
-       $('#matchConditionDiv').find("input").attr('required',false);
+        $('#simpleExpressionDiv').hide();
+        $('#calcVariable').hide();
+        $('#complexsimpleExpressionDiv').hide();
+        $('select[name="actionExpressionParams[_start]"]').attr('required',false);
+        $('#matchConditionDiv').hide();
+        $('#matchConditionDiv').find("input").attr('disabled','disabled');
+        $('#matchConditionDiv').find("input").attr('required',false);
 
-       if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
-           $('#simpleExpressionDiv').show();
-           $('#calcVariable').show();
-       } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
-           $('input[name="expressionInput"]').val('');
-           $('input[name="actionExpression"]').val('');
-           $('#complexsimpleExpressionDiv').show();
-           $('select[name="actionExpressionParams[_start]"]').attr('required',true);
-           
-       } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.MATCH_CONDITION.getCode()}') {
-           $('#matchConditionDiv').show();
-           $('#matchConditionDiv').find("input").removeAttr('disabled');
-           $('#matchConditionDiv').find("input").attr('required',true);
-       }
-   })
-   
-   if($("select[name='actionExpressionType']").find("option:selected").index()!=0){
-       $('select[name="actionExpressionType"]').trigger('change');
-   };
-   var _start = '${actionExpressionParams._start!}';
+        if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.SIMPLE.getCode()}') {
+            $('#simpleExpressionDiv').show();
+            $('#calcVariable').show();
+        } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.COMPLEX.getCode()}') {
+            $('input[name="expressionInput"]').val('');
+            $('input[name="actionExpression"]').val('');
+            $('#complexsimpleExpressionDiv').show();
+            $('select[name="actionExpressionParams[_start]"]').attr('required',true);
 
-   $('select[name="actionExpressionParams[_start]"]').empty();
-   $('select[name="actionExpressionParams[_start]"]').append('<option value="">请选择</option>')
-   $.ajax({
-       type: "POST",
-       url: "${contextPath}/chargeRule/getRuleVariable.action",
-       async: true,
-       data: {id: '${chargeRule.id!}', marketId: '${chargeRule.marketId!}', businessType: '${chargeRule.businessType!}', dataType: '${@com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()}'},
-       success: function (ret) {
-           $.each(ret, function (i, v) {
-               if (_start == v.matchKey) {
-                   $('select[name="actionExpressionParams[_start]"]').append('<option selected value="' + v.matchKey + '">' + v.label + '</option>')
-               } else {
-                   $('select[name="actionExpressionParams[_start]"]').append('<option value="' + v.matchKey + '">' + v.label + '</option>')
-               }
-           });
-       },
-       error: function (XMLHttpRequest, textStatus, errorThrown) {
-           bs4pop.alert('获取计算指标失败', {type: 0});
-       }
-   })
+        } else if ($(this).val() === '${@com.dili.rule.domain.enums.ActionExpressionTypeEnum.MATCH_CONDITION.getCode()}') {
+            $('#matchConditionDiv').show();
+            $('#matchConditionDiv').find("input").removeAttr('disabled');
+            $('#matchConditionDiv').find("input").attr('required',true);
+        }
+    })
 
+    if($("select[name='actionExpressionType']").find("option:selected").index()!=0){
+        $('select[name="actionExpressionType"]').trigger('change');
+    };
+    var _start = '${actionExpressionParams._start!}';
+
+    $('select[name="actionExpressionParams[_start]"]').empty();
+    $('select[name="actionExpressionParams[_start]"]').append('<option value="">请选择</option>')
+    $.ajax({
+        type: "POST",
+        url: "${contextPath}/chargeRule/getRuleVariable.action",
+        async: true,
+        data: {id: '${chargeRule.id!}', marketId: '${chargeRule.marketId!}', businessType: '${chargeRule.businessType!}', dataType: '${@com.dili.rule.domain.enums.ValueDataTypeEnum.DATE.getCode()}'},
+        success: function (ret) {
+            $.each(ret, function (i, v) {
+                if (_start == v.matchKey) {
+                    $('select[name="actionExpressionParams[_start]"]').append('<option selected value="' + v.matchKey + '">' + v.label + '</option>')
+                } else {
+                    $('select[name="actionExpressionParams[_start]"]').append('<option value="' + v.matchKey + '">' + v.label + '</option>')
+                }
+            });
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            bs4pop.alert('获取计算指标失败', {type: 0});
+        }
+    })
 
 </script>

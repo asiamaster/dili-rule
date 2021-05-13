@@ -8,6 +8,7 @@
     <%if (has(chargeRule)){%>
     <form id="addForm" role="form" novalidate>
         <input type="hidden" id="id" name="id" value="${chargeRule.id!}">
+        <input type="hidden"  name="action" value="${action}">
         <div class="breadcrumb" >
             基础信息
             <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true"

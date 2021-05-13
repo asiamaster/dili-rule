@@ -1,5 +1,6 @@
 package com.dili.rule.service;
 
+import com.dili.rule.ActionEnum;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.vo.ChargeRuleVo;
@@ -33,7 +34,7 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * @param chargeRuleVo
      * @return
      */
-    BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo, OperatorUser operatorUser);
+    BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo, ActionEnum actionEnum, OperatorUser operatorUser);
 
     /**
      * 根据有效期时间，变更规则的状态

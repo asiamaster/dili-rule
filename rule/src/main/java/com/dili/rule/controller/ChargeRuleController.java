@@ -3,6 +3,7 @@ package com.dili.rule.controller;
 import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.BusinessChargeItemDto;
 import com.dili.commons.glossary.YesOrNoEnum;
+import com.dili.rule.ActionEnum;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.dto.OperatorUser;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
+
 import one.util.streamex.StreamEx;
 
 /**
@@ -69,13 +71,13 @@ public class ChargeRuleController {
      * @return String
      */
     @RequestMapping(value = "/index.html", method = RequestMethod.GET)
-    public String index(HttpServletRequest req,ModelMap modelMap) {
+    public String index(HttpServletRequest req, ModelMap modelMap) {
         modelMap.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
         modelMap.put("businessTypeList", getBusinessType());
         modelMap.put("state", RuleStateEnum.ENABLED.getCode());
-        modelMap.addAttribute("operator",SessionContext.getSessionContext().getUserTicket());
-        modelMap.addAttribute("serverIp",req.getLocalAddr());
-        
+        modelMap.addAttribute("operator", SessionContext.getSessionContext().getUserTicket());
+        modelMap.addAttribute("serverIp", req.getLocalAddr());
+
         return "chargeRule/list";
     }
 
@@ -105,50 +107,14 @@ public class ChargeRuleController {
      * @return
      */
     @RequestMapping(value = "/preSave.html", method = {RequestMethod.GET, RequestMethod.POST})
-    public String preSave(HttpServletRequest req,ChargeRule chargeRule, ModelMap modelMap) {
-        if (Objects.nonNull(chargeRule)) {
-            modelMap.addAttribute("action", "insert");
-            chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-            if (null != chargeRule.getId()) {
-                chargeRule = chargeRuleService.get(chargeRule.getId());
-                if (Objects.nonNull(chargeRule)) {
-                    //转换获取计算参数
-                    String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), false);
-                    chargeRule.setActionExpression(actionExpression);
-                    modelMap.addAttribute("action", "update");
-                } else {
-                    chargeRule.setExpireStart(LocalDateTime.now());
-                }
-            } else {
-                chargeRule.setExpireStart(LocalDateTime.now());
-            }
-            List<DataDictionaryValue> businessTypeList = getBusinessType();
-            String businessType = chargeRule.getBusinessType();
-            Optional<DataDictionaryValue> dataDictionaryValue = businessTypeList.stream().filter(t -> businessType.equals(t.getCode())).findFirst();
-            if (dataDictionaryValue.isPresent()) {
-                modelMap.put("businessTypeName", dataDictionaryValue.get().getName());
-            }
-            Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
-            if (businessChargeItemDto.isPresent()) {
-                modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
-            }
-            if (StringUtils.isNotBlank(chargeRule.getActionExpressionParams())) {
-                modelMap.addAttribute("actionExpressionParams", JSON.parse(chargeRule.getActionExpressionParams()));
-            }
-            modelMap.addAttribute("chargeRule", chargeRule);
+    public String preSave(HttpServletRequest req, ChargeRule chargeRule, ModelMap modelMap) {
+        Long ruleId = this.buildViewModelData(req, chargeRule, modelMap).orElse(null);
+        if (Objects.isNull(ruleId)) {
+            modelMap.addAttribute("action", ActionEnum.INSERT.getCode());
         } else {
-            chargeRule = new ChargeRule();
-            chargeRule.setExpireStart(LocalDateTime.now());
+            modelMap.addAttribute("action", ActionEnum.UPDATE.getCode());
         }
-        if(chargeRule.getActionExpressionType()==null){
-            chargeRule.setActionExpressionType(ActionExpressionTypeEnum.SIMPLE.getCode());
-        }
-        Map<Integer,String>actionExpressionTypeMap=StreamEx.of(ActionExpressionTypeEnum.values()).toMap(ActionExpressionTypeEnum::getCode, ActionExpressionTypeEnum::getDesc);
-         modelMap.addAttribute("actionExpressionTypeMap",actionExpressionTypeMap);
-         
-         
-         modelMap.addAttribute("operator",SessionContext.getSessionContext().getUserTicket());
-         modelMap.addAttribute("serverIp",req.getLocalAddr());
+
         return "chargeRule/edit";
     }
 
@@ -160,51 +126,9 @@ public class ChargeRuleController {
      * @return
      */
     @RequestMapping(value = "/preCopy.html", method = {RequestMethod.GET, RequestMethod.POST})
-    public String preCopy(HttpServletRequest req,ChargeRule chargeRule, ModelMap modelMap) {
-        if (Objects.nonNull(chargeRule)) {
-            modelMap.addAttribute("action", "insert");
-            chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-            if (null != chargeRule.getId()) {
-                ChargeRule  chargeRuleItem = chargeRuleService.get(chargeRule.getId());
-                if (Objects.nonNull(chargeRuleItem)) {
-                    chargeRule=chargeRuleItem;
-                    //转换获取计算参数
-                    String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), false);
-                    chargeRule.setActionExpression(actionExpression);
-                    modelMap.addAttribute("action", "update");
-                } else {
-                    chargeRule.setExpireStart(LocalDateTime.now());
-                }
-            } else {
-                chargeRule.setExpireStart(LocalDateTime.now());
-            }
-            List<DataDictionaryValue> businessTypeList = getBusinessType();
-            String businessType = chargeRule.getBusinessType();
-            Optional<DataDictionaryValue> dataDictionaryValue = businessTypeList.stream().filter(t -> businessType.equals(t.getCode())).findFirst();
-            if (dataDictionaryValue.isPresent()) {
-                modelMap.put("businessTypeName", dataDictionaryValue.get().getName());
-            }
-            Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
-            if (businessChargeItemDto.isPresent()) {
-                modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
-            }
-            if (StringUtils.isNotBlank(chargeRule.getActionExpressionParams())) {
-                modelMap.addAttribute("actionExpressionParams", JSON.parse(chargeRule.getActionExpressionParams()));
-            }
-            modelMap.addAttribute("chargeRule", chargeRule);
-        } else {
-            chargeRule = new ChargeRule();
-            chargeRule.setExpireStart(LocalDateTime.now());
-        }
-        if(chargeRule.getActionExpressionType()==null){
-            chargeRule.setActionExpressionType(ActionExpressionTypeEnum.SIMPLE.getCode());
-        }
-        Map<Integer,String>actionExpressionTypeMap=StreamEx.of(ActionExpressionTypeEnum.values()).toMap(ActionExpressionTypeEnum::getCode, ActionExpressionTypeEnum::getDesc);
-        modelMap.addAttribute("actionExpressionTypeMap",actionExpressionTypeMap);
-
-
-        modelMap.addAttribute("operator",SessionContext.getSessionContext().getUserTicket());
-        modelMap.addAttribute("serverIp",req.getLocalAddr());
+    public String preCopy(HttpServletRequest req, ChargeRule chargeRule, ModelMap modelMap) {
+        this.buildViewModelData(req, chargeRule, modelMap).orElse(null);
+        modelMap.addAttribute("action", ActionEnum.COPY.getCode());
         return "chargeRule/copy";
     }
 
@@ -217,7 +141,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/getRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-        String uapSessionId=CookieUtil.getUapSessionId(request);
+        String uapSessionId = CookieUtil.getUapSessionId(request);
         Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
@@ -247,7 +171,10 @@ public class ChargeRuleController {
     @ResponseBody
     public BaseOutput<ChargeRule> save(@RequestBody ChargeRuleVo chargeRuleVo) {
         try {
-            return chargeRuleService.save(chargeRuleVo, OperatorUser.fromSessionContext());
+            ActionEnum actionEnum = ActionEnum.fromCode(chargeRuleVo.getAction()).orElseThrow(() -> {
+                return new IllegalArgumentException("参数错误");
+            });
+            return chargeRuleService.save(chargeRuleVo, actionEnum, OperatorUser.fromSessionContext());
         } catch (IllegalArgumentException ex) {
             return BaseOutput.failure(ex.getMessage());
         } catch (Exception e) {
@@ -259,7 +186,7 @@ public class ChargeRuleController {
     /**
      * 规则审核
      *
-     * @param id 需要审核的规则ID
+     * @param id   需要审核的规则ID
      * @param pass 是否通过 true-是
      * @return
      */
@@ -273,7 +200,7 @@ public class ChargeRuleController {
     /**
      * 规则禁启用
      *
-     * @param id 需要禁启用的规则ID
+     * @param id     需要禁启用的规则ID
      * @param enable 是否启用 true-是
      * @return
      */
@@ -286,7 +213,7 @@ public class ChargeRuleController {
     /**
      * 计费规则详情查看
      *
-     * @param id 规则ID
+     * @param id       规则ID
      * @param modelMap
      * @return
      */
@@ -323,7 +250,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/viewRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
-        String uapSessionId=CookieUtil.getUapSessionId(request);
+        String uapSessionId = CookieUtil.getUapSessionId(request);
         Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
         modelMap.addAllAttributes(map);
         return "chargeRule/viewCondition";
@@ -332,7 +259,7 @@ public class ChargeRuleController {
     /**
      * 规则优先级调整
      *
-     * @param id 需要调整的规则ID
+     * @param id      需要调整的规则ID
      * @param enlarge 是否调升 true-是
      * @return
      */
@@ -367,8 +294,8 @@ public class ChargeRuleController {
      * @return String
      */
     @RequestMapping(value = "/view.action", method = RequestMethod.GET)
-    public String view(HttpServletRequest req,ChargeRule chargeRule, ModelMap modelMap) {
-        this.preSave(req,chargeRule,modelMap);
+    public String view(HttpServletRequest req, ChargeRule chargeRule, ModelMap modelMap) {
+        this.preSave(req, chargeRule, modelMap);
         return "chargeRule/view";
     }
 
@@ -379,5 +306,60 @@ public class ChargeRuleController {
      */
     private List<DataDictionaryValue> getBusinessType() {
         return dataDictionaryRpcService.getBusinessType(SessionContext.getSessionContext().getUserTicket().getFirmId(), null);
+    }
+
+    /**
+     * 构造视图所需数据
+     *
+     * @param req
+     * @param chargeRule
+     * @param modelMap
+     */
+    private Optional<Long> buildViewModelData(HttpServletRequest req, ChargeRule chargeRule, ModelMap modelMap) {
+        Long ruleId = null;
+        if (Objects.nonNull(chargeRule)) {
+            chargeRule.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+            if (null != chargeRule.getId()) {
+                chargeRule = chargeRuleService.get(chargeRule.getId());
+                if (Objects.nonNull(chargeRule)) {
+                    //转换获取计算参数
+                    String actionExpression = conditionDefinitionService.convertTargetValDefinition(chargeRule.getActionExpression(), false);
+                    chargeRule.setActionExpression(actionExpression);
+                    ruleId = chargeRule.getId();
+                } else {
+                    chargeRule.setExpireStart(LocalDateTime.now());
+                }
+            } else {
+                chargeRule.setExpireStart(LocalDateTime.now());
+            }
+            List<DataDictionaryValue> businessTypeList = getBusinessType();
+            String businessType = chargeRule.getBusinessType();
+            Optional<DataDictionaryValue> dataDictionaryValue = businessTypeList.stream().filter(t -> businessType.equals(t.getCode())).findFirst();
+            if (dataDictionaryValue.isPresent()) {
+                modelMap.put("businessTypeName", dataDictionaryValue.get().getName());
+            }
+            Optional<BusinessChargeItemDto> businessChargeItemDto = businessChargeItemRpcService.get(chargeRule.getChargeItem());
+            if (businessChargeItemDto.isPresent()) {
+                modelMap.put("chargeItemName", businessChargeItemDto.get().getChargeItem());
+            }
+            if (StringUtils.isNotBlank(chargeRule.getActionExpressionParams())) {
+                modelMap.addAttribute("actionExpressionParams", JSON.parse(chargeRule.getActionExpressionParams()));
+            }
+            modelMap.addAttribute("chargeRule", chargeRule);
+        } else {
+            chargeRule = new ChargeRule();
+            chargeRule.setExpireStart(LocalDateTime.now());
+        }
+        if (chargeRule.getActionExpressionType() == null) {
+            chargeRule.setActionExpressionType(ActionExpressionTypeEnum.SIMPLE.getCode());
+        }
+        Map<Integer, String> actionExpressionTypeMap = StreamEx.of(ActionExpressionTypeEnum.values()).toMap(ActionExpressionTypeEnum::getCode, ActionExpressionTypeEnum::getDesc);
+        modelMap.addAttribute("actionExpressionTypeMap", actionExpressionTypeMap);
+
+
+        modelMap.addAttribute("operator", SessionContext.getSessionContext().getUserTicket());
+        modelMap.addAttribute("serverIp", req.getLocalAddr());
+
+        return Optional.ofNullable(ruleId);
     }
 }
