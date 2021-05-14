@@ -146,9 +146,8 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                                         for (DataSourceColumn column : columns) {
                                             if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
                                                 Object obj = row.get(column.getColumnCode());
-//                                                logger.info("displayedText={}",obj);
-                                                if (obj != null) {
-                                                    displayedText.add(String.valueOf(obj));
+                                                if (obj != null&&StringUtils.isNotBlank(String.valueOf(obj))) {
+                                                    displayedText.add(String.valueOf(obj).trim());
                                                 }
 
                                             }
@@ -156,18 +155,24 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
 
                                     }
                                 }
-                                vo.getTexts().add(String.join("#", displayedText));
+
+                                if(displayedText.isEmpty()){
+                                    vo.getTexts().add("(未知)");
+                                }else{
+                                    vo.getTexts().add(String.join("#", displayedText));
+                                }
+
                             }
                         } else {
                             vo.getTexts().addAll(StreamEx.of(objects).map(o -> {
-                                return o == null ? "" : String.valueOf(o);
-                            }).map(StringUtils::trimToEmpty).toList());
+                                return "(未知)";
+                            }).toList());
                         }
 
                     } else {
                         vo.getTexts().addAll(StreamEx.of(objects).map(o -> {
-                            return o == null ? "" : String.valueOf(o);
-                        }).map(StringUtils::trimToEmpty).toList());
+                            return "(未知)";
+                        }).toList());
                     }
 
                 }
