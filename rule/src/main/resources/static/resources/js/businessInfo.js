@@ -71,7 +71,7 @@ function getChargeItem(marketId, businessType, _viewTargetId, _defaultValue, _ti
     }
     let datas = [msg];
     if (typeof (marketId) != "undefined" && typeof (businessType) != "undefined" && marketId && businessType) {
-        var selectedChargeItem=null;
+        createAndBuildQuery(marketId,businessType);
         $.ajax({
             type: 'post',
             url: getChargeItemUrl,
@@ -82,7 +82,6 @@ function getChargeItem(marketId, businessType, _viewTargetId, _defaultValue, _ti
                     $.each(ret.data, function (i, item) {
                         if (typeof (_defaultValue) != "undefined" && null != _defaultValue && '' != _defaultValue && _defaultValue == item.id) {
                             datas.push('<option selected value="' + item.id + '">' + item.chargeItem + '</option>');
-                            selectedChargeItem=item.id;
                         } else {
                             datas.push('<option value="' + item.id + '">' + item.chargeItem + '</option>');
                         }
@@ -91,7 +90,7 @@ function getChargeItem(marketId, businessType, _viewTargetId, _defaultValue, _ti
             }
         });
         targetId.html(datas.join(''));
-        createAndBuildQuery(marketId,businessType,selectedChargeItem);
+
 
     }
 }
@@ -107,15 +106,15 @@ function queryStringToJSON(queryString) {
     });
     return result;
 }
-function createAndBuildQuery(marketId,businessType,selectedChargeItem){
-    console.info('marketId='+marketId)
-    console.info('businessType='+businessType)
-    console.info('selectedChargeItem='+selectedChargeItem)
+function createAndBuildQuery(marketId,businessType){
+    // console.info('marketId='+marketId)
+    // console.info('businessType='+businessType)
 
     //获取收费项信息
     let url = '/conditionDefinition/queryConditionDefinitionList.action';
-    let queryItemListDiv=$('#queryItemListDiv');
-    queryItemListDiv.html('')
+    $('.auto_complete').remove();
+    //chargeItem
+    let chargeItem=$('#chargeItem').parent(".form-group");
     $.ajax({url:url,data:JSON.stringify({marketId:marketId,businessType:businessType}),     contentType: 'application/json',method:'post'}).done((ret) => {
         if(ret.success==true&&ret.data){
             let autocompleteConfigList=ret.data.map(item=>{
@@ -123,7 +122,7 @@ function createAndBuildQuery(marketId,businessType,selectedChargeItem){
                 let dataSourceDefinition=item.dataSourceDefinition;
                 let displayColumnCodeList=item.displayColumnCodeList;
                 let tempHtml=template('queryItem', conditionDefinition);
-                $('#queryItemListDiv').append(tempHtml)
+                $(tempHtml).insertAfter(chargeItem);
                 let selectorId=$(tempHtml).children('input').attr('id');
                 return {selectorId:selectorId
                     ,matchColumn:conditionDefinition.matchColumn
@@ -181,8 +180,8 @@ function createAndBuildQuery(marketId,businessType,selectedChargeItem){
                         var self = this;
 
                         $(self).val(suggestion.value.trim());
-                        console.info('onSelect')
-                        console.info(suggestion)
+                        //console.info('onSelect')
+                        //console.info(suggestion)
                     }
                 });
             })

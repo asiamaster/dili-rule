@@ -29,7 +29,6 @@
                     <select class="form-control" id="state" name="state"></select>
                     <#bcomboProvider _id="state" _provider="ruleStateProvider" _valueField="value" _textField="text" _value="${state}" _queryParams='{emptyText:"-- 全部 --"}' />
                 </div>
-                <div id="queryItemListDiv"></div>
                 <div class="form-group col">
                     <label for="ruleName">规则名称</label>
                     <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="60">
@@ -148,8 +147,8 @@
 </#bs4Body>
 
 <script id="queryItem" type="text/html">
-    <div class="form-group">
-        <label for="chargeItem">{{label}}<i class="red">*</i></label>
+    <div class="form-group auto_complete">
+        <label>{{label}}<i class="red">*</i></label>
         <input class="form-control" id="conditionMap[{{id}}]" data-value-type="skip">
         <input class="form-control" name="conditionMap[{{id}}]" type="hidden">
         </input>
@@ -157,25 +156,5 @@
 </script>
 
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
-<script>
 
-    $('#ssss').devbridgeAutocomplete({
-        noCache: 1,
-        serviceUrl: '/abc.action',  // 数据地址
-        // lookup: countries, 本地测试模拟数据使用结合上面的var countries
-        dataType: 'json',
-        onSearchComplete: function (query, suggestions) {
-            // console.info(2)
-        },
-        showNoSuggestionNotice: true,
-        noSuggestionNotice: "不存在，请重输！",
-        autoSelectFirst:true,
-        autoFocus: true,
-        onSelect: function (suggestion) {
-            console.info('onSelect')
-            console.info(suggestion)
-
-        }
-    });
-</script>
 <#chargeRule_listJs />
