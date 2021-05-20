@@ -71,4 +71,9 @@ public enum DataSourceTypeEnum {
         return desc;
     }
 
+    public boolean equalsToCode(Integer code){
+
+        return this.getCode().equals(code);
+    }
+
 }

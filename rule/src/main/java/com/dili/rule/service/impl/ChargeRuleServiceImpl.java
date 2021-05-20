@@ -9,6 +9,7 @@ import com.dili.rule.ActionEnum;
 import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.dto.ChargeRuleQueryDto;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.enums.ActionExpressionTypeEnum;
 import com.dili.rule.domain.enums.RuleStateEnum;
@@ -38,6 +39,7 @@ import com.udojava.evalex.AbstractLazyFunction;
 import com.udojava.evalex.Expression;
 import com.udojava.evalex.Expression.LazyNumber;
 
+import one.util.streamex.EntryStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +87,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
     private RuleEngineService ruleEngineService;
 
     @Override
-    public EasyuiPageOutput listForEasyuiPage(ChargeRule chargeRule) throws Exception {
+    public EasyuiPageOutput listForEasyuiPage(ChargeRuleQueryDto chargeRule) throws Exception {
         if (chargeRule.getRows() != null && chargeRule.getRows() >= 1) {
             PageHelper.startPage(chargeRule.getPage(), chargeRule.getRows());
         }
@@ -99,9 +101,12 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         } else {
             sortSql.append(",group_id desc").append(",priority desc");
         }
+
         chargeRule.setSortSql(sortSql.toString());
         chargeRule.setIsBackup(YesOrNoEnum.NO.getCode());
         chargeRule.setIsDeleted(YesOrNoEnum.NO.getCode());
+        chargeRule.setExtSql(this.buildExtSql(chargeRule));
+
 
         List<ChargeRuleVo> chargeRuleVoList = getActualMapper().listForPage(chargeRule);
         long total = chargeRuleVoList instanceof Page ? ((Page) chargeRuleVoList).getTotal()
@@ -109,7 +114,27 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         List results = true ? ValueProviderUtils.buildDataByProvider(chargeRule, chargeRuleVoList) : chargeRuleVoList;
         return EasyuiPageOutputUtil.build(total, results);
     }
+    private String buildExtSql(ChargeRuleQueryDto query){
+        if(query.getConditionMap()!=null){
+            return EntryStream.of(query.getConditionMap()).filterValues(StringUtils::isNotBlank)
+                    .filterKeys(Objects::nonNull).mapKeyValue((key,value)->{
+                        String v=value.trim();
 
+
+                        StringBuilder reg=new StringBuilder();
+                        reg.append("(ccv.definition_id=").append(key);
+                        reg.append("AND JSON_CONTAINS(ccv.val,'\""+v+"\"') )");
+//                        reg.append("'^\\\\[(");
+//                        reg.append("(\""+v+"\",.*)|") .append("(.*,\""+v+"\",.*)|") .append("(.*,\""+v+"\")|");
+//                        reg.append(")\\\\]$'");
+                        return reg.toString();
+
+            }).joining(" AND ");
+
+        }
+        return "";
+
+    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public BaseOutput<ChargeRule> save(ChargeRuleVo chargeRuleVo, ActionEnum actionEnum, OperatorUser operatorUser) {

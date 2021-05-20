@@ -6,7 +6,10 @@ import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.DataSourceColumn;
 import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.rule.domain.DatasourceQueryConfig;
+import com.dili.rule.domain.dto.ConditionAndDataSourceDefinitionDto;
+import com.dili.rule.domain.dto.DataSourceDefinitionDto;
 import com.dili.rule.domain.dto.RemoteAjaxInputDto;
+import com.dili.rule.domain.enums.MatchTypeEnum;
 import com.dili.rule.domain.enums.ViewModeEnum;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.rule.service.DataSourceColumnService;
@@ -21,7 +24,9 @@ import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import one.util.streamex.StreamEx;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * 由MyBatis Generator工具自动生成 This file was generated on 2020-05-13 11:23:41.
@@ -301,6 +307,7 @@ public class ConditionDefinitionController {
 
     /**
      * SB
+     *
      * @param inputDto
      * @param request
      * @return
@@ -318,5 +325,67 @@ public class ConditionDefinitionController {
 
         }
 
+    }
+
+    /**
+     * 查询所有IN的条件定义
+     *
+     * @param query
+     * @return
+     */
+    @RequestMapping("/queryConditionDefinitionList.action")
+    @ResponseBody
+    public BaseOutput<Object> queryInConditionDefinitionList(@RequestBody ConditionDefinition query) {
+        if (query == null || query.getMarketId() == null || StringUtils.isBlank(query.getBusinessType())) {
+            return BaseOutput.success();
+        }
+
+        ConditionDefinition q = new ConditionDefinition();
+        q.setMarketId(query.getMarketId());
+        q.setBusinessType(query.getBusinessType().trim());
+        q.setMatchType(MatchTypeEnum.IN.getCode());
+        List<ConditionDefinition> list = this.conditionDefinitionService.listByExample(q);
+        Map<Long, DataSourceDefinition> dataSourceDefinitionMap = this.findDataSourceDefinitionByIdList(list);
+        List<ConditionAndDataSourceDefinitionDto> retList = StreamEx.of(list).filter(conditionDefinition -> {
+            return dataSourceDefinitionMap.containsKey(conditionDefinition.getDataSourceId());
+        }).map(conditionDefinition -> {
+            ConditionAndDataSourceDefinitionDto dto = new ConditionAndDataSourceDefinitionDto();
+            dto.setConditionDefinition(conditionDefinition);
+            dto.setDataSourceDefinition(dataSourceDefinitionMap.get(conditionDefinition.getDataSourceId()));
+            DataSourceColumn dcq=new DataSourceColumn();
+            dcq.setDataSourceId(conditionDefinition.getDataSourceId());
+            dcq.setDisplay(YesOrNoEnum.YES.getCode());
+            List<String>displayColumnCodeList=StreamEx.of(this.dataSourceColumnService.listByExample(dcq)).map(DataSourceColumn::getColumnCode).toList();
+            dto.setDisplayColumnCodeList(displayColumnCodeList);
+            if(displayColumnCodeList.isEmpty()){
+                return null;
+            }
+            return dto;
+
+        }).nonNull().toList();
+
+
+        return BaseOutput.successData(retList);
+
+    }
+
+    /**
+     * 查询数据源定义
+     *
+     * @param list
+     * @return
+     */
+    private Map<Long, DataSourceDefinition> findDataSourceDefinitionByIdList(List<ConditionDefinition> list) {
+        List<Long> dataSourceIdList = StreamEx.of(list).map(item -> item.getDataSourceId()).nonNull().toList();
+        if (dataSourceIdList.isEmpty()) {
+            return Maps.newHashMap();
+        }
+        DataSourceDefinitionDto query = new DataSourceDefinitionDto();
+        query.setIdList(dataSourceIdList);
+        List<DataSourceDefinition> dataSourceDefinitionList = this.dataSourceDefinitionService.listByExample(query);
+
+        return StreamEx.of(dataSourceDefinitionList).filter(ds -> {
+            return StringUtils.isNotBlank(ds.getAutoCompleteQueryKey());
+        }).toMap(DataSourceDefinition::getId, Function.identity());
     }
 }

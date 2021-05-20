@@ -218,27 +218,8 @@ public class ChargeRule extends BaseDomain implements Serializable {
 //     */
 //    @Column(name = "`target_activate_rule_id`")
 //    private Long targetActivateRuleId;
-    /**
-     * 有效期文本
-     */
-    @Transient
-    private String expireValue;
 
-    
-    @Transient
-    private String sortSql;
         
-    public String getExpireValue() {
-        StringBuilder str = new StringBuilder();
-        if (Objects.nonNull(getExpireStart())) {
-            str.append(DateUtil.formatLocalDateTime(getExpireStart()));
-        }
-        str.append(" 至 ");
-        if (Objects.nonNull(getExpireEnd())) {
-            str.append(DateUtil.formatLocalDateTime(getExpireEnd()));
-        }
-        return str.toString();
-    }
 
     /**
      * @return Long return the id
@@ -534,12 +515,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
         this.approvalTime = approvalTime;
     }
 
-    /**
-     * @param expireValue the expireValue to set
-     */
-    public void setExpireValue(String expireValue) {
-        this.expireValue = expireValue;
-    }
 
     /**
      * @return the expireStart
@@ -621,13 +596,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
         this.isDeleted = isDeleted;
     }
 
-    public String getSortSql() {
-        return sortSql;
-    }
-
-    public void setSortSql(String sortSql) {
-        this.sortSql = sortSql;
-    }
 
     @Override
     public String toString() {
@@ -660,8 +628,6 @@ public class ChargeRule extends BaseDomain implements Serializable {
                 ", isBackup=" + isBackup +
                 ", backupedRuleId=" + backupedRuleId +
                 ", isDeleted=" + isDeleted +
-                ", expireValue='" + expireValue + '\'' +
-                ", sortSql='" + sortSql + '\'' +
                 '}';
     }
 }

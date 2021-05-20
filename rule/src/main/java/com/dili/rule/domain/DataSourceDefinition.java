@@ -37,11 +37,11 @@ public class DataSourceDefinition extends BaseDomain {
     @Column(name = "`query_url`")
     private String queryUrl;
 
-	/**
-	 * 查询数据时的固定查询条件
-	 */
-	@Column(name = "`query_condition`")
-	private String queryCondition;
+    /**
+     * 查询数据时的固定查询条件
+     */
+    @Column(name = "`query_condition`")
+    private String queryCondition;
 
     /**
      * 通过ids/keys输入查询url
@@ -61,6 +61,13 @@ public class DataSourceDefinition extends BaseDomain {
     @Column(name = "`data_source_type`")
     private String dataSourceType;
 
+
+    /**
+     * 联想查询规则时的key值
+     */
+    @Column(name = "`autocomplete_query_key`")
+    private String autoCompleteQueryKey;
+
     /**
      * 是否分页
      */
@@ -70,7 +77,7 @@ public class DataSourceDefinition extends BaseDomain {
     /**
      * 创建时间
      */
-    @Column(name = "`create_time`",updatable = false)
+    @Column(name = "`create_time`", updatable = false)
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
@@ -93,68 +100,97 @@ public class DataSourceDefinition extends BaseDomain {
     public Long getId() {
         return id;
     }
+
     @Override
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public String getQueryUrl() {
         return queryUrl;
     }
+
     public void setQueryUrl(String queryUrl) {
         this.queryUrl = queryUrl;
     }
+
     public String getQueryCondition() {
         return queryCondition;
     }
+
     public void setQueryCondition(String queryCondition) {
         this.queryCondition = queryCondition;
     }
+
     public String getKeysUrl() {
         return keysUrl;
     }
+
     public void setKeysUrl(String keysUrl) {
         this.keysUrl = keysUrl;
     }
+
     public String getKeysField() {
         return keysField;
     }
+
     public void setKeysField(String keysField) {
         this.keysField = keysField;
     }
+
     public String getDataSourceType() {
         return dataSourceType;
     }
+
     public void setDataSourceType(String dataSourceType) {
         this.dataSourceType = dataSourceType;
     }
+
     public Integer getPaged() {
         return paged;
     }
+
     public void setPaged(Integer paged) {
         this.paged = paged;
     }
+
     public LocalDateTime getCreateTime() {
         return createTime;
     }
+
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
+
     public LocalDateTime getModifyTime() {
         return modifyTime;
     }
+
     public void setModifyTime(LocalDateTime modifyTime) {
         this.modifyTime = modifyTime;
     }
+
     public String getDataJson() {
         return dataJson;
     }
+
     public void setDataJson(String dataJson) {
         this.dataJson = dataJson;
+    }
+
+    public String getAutoCompleteQueryKey() {
+        return autoCompleteQueryKey;
+    }
+
+    public void setAutoCompleteQueryKey(String autoCompleteQueryKey) {
+        this.autoCompleteQueryKey = autoCompleteQueryKey;
     }
 }

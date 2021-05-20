@@ -6,6 +6,7 @@ import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.ActionEnum;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
+import com.dili.rule.domain.dto.ChargeRuleQueryDto;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.enums.ActionExpressionTypeEnum;
 import com.dili.rule.domain.enums.RuleStateEnum;
@@ -90,7 +91,7 @@ public class ChargeRuleController {
      */
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String listPage(ChargeRule chargeRule) {
+    public String listPage(ChargeRuleQueryDto chargeRule) {
         try {
             return chargeRuleService.listForEasyuiPage(chargeRule).toString();
         } catch (Exception e) {

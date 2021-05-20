@@ -2,6 +2,7 @@ package com.dili.rule.service;
 
 import com.dili.rule.ActionEnum;
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.dto.ChargeRuleQueryDto;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.rule.sdk.domain.input.QueryFeeInput;
@@ -26,7 +27,7 @@ public interface ChargeRuleService extends BaseService<ChargeRule, Long> {
      * @param chargeRule
      * @return
      */
-    EasyuiPageOutput listForEasyuiPage(ChargeRule chargeRule) throws Exception;
+    EasyuiPageOutput listForEasyuiPage(ChargeRuleQueryDto chargeRule) throws Exception;
 
     /**
      * 保存规则数据信息

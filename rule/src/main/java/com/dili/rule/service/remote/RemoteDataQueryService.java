@@ -7,11 +7,13 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.DataSourceDefinition;
+import com.dili.rule.domain.dto.AutoCompleteQueryDto;
 import com.dili.rule.domain.enums.DataSourceTypeEnum;
 import com.dili.ss.domain.PageOutput;
 import com.dili.uap.sdk.constant.SessionConstants;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Maps;
+import one.util.streamex.StreamEx;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
@@ -35,31 +37,7 @@ public class RemoteDataQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteDataQueryService.class);
 
-    /**
-     * 通过url请求远程接口(http+json)
-     *
-     * @param url
-     * @return
-     */
-    public PageOutput<List> queryData(String url) {
-        return this.queryData(url, Collections.emptyMap(), Collections.emptyMap());
-    }
 
-    /**
-     * 通过url和params请求远程接口(http+json)
-     *
-     * @param url
-     * @param params
-     * @param header
-     * @param page
-     * @param rows
-     * @return
-     */
-    public PageOutput<List> queryData(String url, Map<String, Object> params, Map<String, String> header) {
-        Optional<String> jsonDataOpt = this.remoteQuery(url, this.trimParamsMap(params), header);
-        PageOutput<List> pageout = this.parseJson(jsonDataOpt, false);
-        return pageout;
-    }
 
     /**
      * 通过DataSourceDefinition.queeryUrl对应的的url和params请求远程接口(http+json)
@@ -72,7 +50,29 @@ public class RemoteDataQueryService {
     public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId) {
 
         Optional<String> jsonDataOpt = this.queryJsonData(dataSourceDefinition, params, sessionId);
-        PageOutput<List> pageout = this.parseJson(jsonDataOpt, YesOrNoEnum.YES.getCode().equals(dataSourceDefinition.getPaged()));
+        PageOutput<List> pageout = this.parseJson(jsonDataOpt);
+        return pageout;
+    }
+
+    /**
+     * 联想输入
+     * @param queryDto
+     * @param localJsonData
+     * @param params
+     * @param sessionId
+     * @return
+     */
+    public  PageOutput<List> autoCompleteQueryData(DataSourceTypeEnum dataSourceTypeEnum,AutoCompleteQueryDto queryDto,Optional<String> dataJson, Map<String, Object> params, String sessionId) {
+
+        Optional<String> jsonDataOpt=StreamEx.ofNullable(queryDto).map(dto->{
+            if (DataSourceTypeEnum.LOCAL==dataSourceTypeEnum) {
+                return dataJson;
+            } else {
+                return this.remoteQuery(queryDto.getQueryUrl(), params, this.buildHeaderMap(sessionId));
+            }
+        }).filter(Optional::isPresent).map(Optional::get).findFirst();
+
+        PageOutput<List> pageout = this.parseJson(jsonDataOpt);
         return pageout;
     }
 
@@ -122,7 +122,7 @@ public class RemoteDataQueryService {
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(dataSourceDefinition.getDataSourceType());
         if (DataSourceTypeEnum.LOCAL == dataSourceType) {
             String localJsonData = dataSourceDefinition.getDataJson();
-            return this.parseJson(Optional.ofNullable(localJsonData), false).getData();
+            return this.parseJson(Optional.ofNullable(localJsonData)).getData();
         } else {
             //构建查询参数
             Map<String, Object> params = Maps.newHashMap();
@@ -141,7 +141,7 @@ public class RemoteDataQueryService {
             logger.info("keyUrl={},data={}", keyUrl, jsonBody);
             try (HttpResponse response = HttpUtil.createPost(keyUrl).addHeaders(this.buildHeaderMap(sessionId)).body(jsonBody).execute();) {
                 if (response.isOk()) {
-                    return this.parseJson(Optional.ofNullable(response.body()), false).getData();
+                    return this.parseJson(Optional.ofNullable(response.body())).getData();
                 }
             }catch (Exception e) {
             	logger.error(e.getMessage(),e);
@@ -204,10 +204,9 @@ public class RemoteDataQueryService {
      * 转换结果对象
      *
      * @param jsonDataOpt
-     * @param paged
      * @return
      */
-    private PageOutput<List> parseJson(Optional<String> jsonDataOpt, Boolean paged) {
+    private PageOutput<List> parseJson(Optional<String> jsonDataOpt) {
         PageOutput<List> output = PageOutput.failure();
         if (jsonDataOpt.isPresent()) {
             String json = jsonDataOpt.get();
