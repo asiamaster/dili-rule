@@ -112,8 +112,13 @@ function createAndBuildQuery(marketId,businessType){
 
     //获取收费项信息
     let url = '/conditionDefinition/queryConditionDefinitionList.action';
+    $.each($('.auto_complete'),function (item) {
+        let id=$(this).find('input[id]').attr('id');
+        $("input[id='"+id+"']").autocomplete().dispose();
+    })
     $('.auto_complete').remove();
-    //chargeItem
+
+
     let chargeItem=$('#chargeItem').parent(".form-group");
     $.ajax({url:url,data:JSON.stringify({marketId:marketId,businessType:businessType}),     contentType: 'application/json',method:'post'}).done((ret) => {
         if(ret.success==true&&ret.data){
@@ -141,6 +146,9 @@ function createAndBuildQuery(marketId,businessType){
                 let displayColumnCodeList=conf.displayColumnCodeList;
 
                 let matchColumn=conf.matchColumn;
+                autoInput.on('input',function () {
+                    autoValueInput.val('');
+                });
                 autoInput.devbridgeAutocomplete({
                     noCache: 1,
                     serviceUrl: '/autoCompleteQuery/autoQuery.action',  // 数据地址
