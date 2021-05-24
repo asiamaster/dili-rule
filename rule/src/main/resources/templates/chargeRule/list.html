@@ -31,7 +31,7 @@
                 </div>
                 <div class="form-group col">
                     <label for="ruleName">规则名称</label>
-                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="25" data-rule-reg="^[\u4e00-\u9fa5_a-zA-Z0-9_]{0,25}$">
+                    <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="60" data-rule-reg="^[\u4e00-\u9fa5_a-zA-Z0-9_]{0,60}$">
                 </div>
                 <div class="col align-self-center mt-3">
                     <button type="button" class="btn btn-outline-primary mr-2" onclick="clearForm()"><i class="fa fa-refresh"></i> 清空
@@ -145,7 +145,7 @@
     </div>
 </div>
 </#bs4Body>
-
+<script type="text/javascript" src="${contextPath}/resources/js/jquery.validator.reg.js"></script>
 <script id="queryItem" type="text/html">
     <div class="form-group auto_complete">
         <label>{{label}}<i class="red">*</i></label>
