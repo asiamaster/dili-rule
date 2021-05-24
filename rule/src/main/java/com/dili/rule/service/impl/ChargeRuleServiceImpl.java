@@ -123,7 +123,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 
                         StringBuilder reg=new StringBuilder();
                         reg.append(" (ccv.definition_id=").append(key);
-                        reg.append(" AND JSON_CONTAINS(ccv.val,'\""+v+"\"') ) ");
+                        reg.append(" ( AND JSON_CONTAINS(ccv.val,'\""+v+"\"')  OR JSON_LENGTH(ccv.val)=0)) ");
 //                        reg.append("'^\\\\[(");
 //                        reg.append("(\""+v+"\",.*)|") .append("(.*,\""+v+"\",.*)|") .append("(.*,\""+v+"\")|");
 //                        reg.append(")\\\\]$'");
