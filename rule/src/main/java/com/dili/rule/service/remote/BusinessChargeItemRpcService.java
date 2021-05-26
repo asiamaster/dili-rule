@@ -25,15 +25,16 @@ import java.util.Optional;
  */
 @Service
 public class BusinessChargeItemRpcService {
-	private static final Logger log=LoggerFactory.getLogger(BusinessChargeItemRpcService.class);
+    private static final Logger log = LoggerFactory.getLogger(BusinessChargeItemRpcService.class);
     @Autowired
     private BusinessChargeItemRpc businessChargeItemRpc;
 
     /**
      * 获取业务收费项数据集
-     * @param marketId 市场ID
+     *
+     * @param marketId     市场ID
      * @param businessType 业务类型
-     * @param isEnable 是否启用
+     * @param isEnable     是否启用
      * @return
      */
     public List<BusinessChargeItemDto> list(Long marketId, String businessType, Boolean isEnable) {
@@ -54,6 +55,7 @@ public class BusinessChargeItemRpcService {
 
     /**
      * 根据ID获取收费项信息
+     *
      * @param id 费用项id
      * @return
      */
@@ -61,7 +63,22 @@ public class BusinessChargeItemRpcService {
         if (Objects.isNull(id)) {
             return Optional.empty();
         }
-        BaseOutput<BusinessChargeItemDto> byId = businessChargeItemRpc.getById(id);
-        return Optional.ofNullable(byId.getData());
+        try {
+            BaseOutput<BusinessChargeItemDto> out = businessChargeItemRpc.getById(id);
+            if (out == null) {
+                log.error("BaseOutput为Null");
+                return Optional.empty();
+            }
+            if (!out.isSuccess()) {
+                log.error("BaseOutput.message={}", out.getMessage());
+                return Optional.empty();
+            }
+
+            return Optional.ofNullable(out.getData());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Optional.empty();
+        }
+
     }
 }

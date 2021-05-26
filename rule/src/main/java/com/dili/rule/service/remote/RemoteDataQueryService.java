@@ -84,6 +84,7 @@ public class RemoteDataQueryService {
      */
     private Map<String, String> buildHeaderMap(String sessionId) {
         Map<String, String> header = new HashMap<>();
+        logger.info("sessionId={}",sessionId);
         header.put(SessionConstants.ACCESS_TOKEN_KEY, sessionId);
         return header;
     }

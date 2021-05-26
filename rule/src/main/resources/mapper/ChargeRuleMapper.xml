@@ -39,23 +39,24 @@
     remark, revisable, operator_id, operator_name, create_time, modify_time, approver_id, 
     approver_name, approval_time
   </sql>
-    <select id="listForPage" parameterType="com.dili.rule.domain.ChargeRule" resultType="com.dili.rule.domain.dto.ChargeRuleResultDto">
-        select tmp_data.* from (
-        SELECT cr.*,
-        IFNULL(group_concat(
-        CASE  when  json_length(ccv.val)>0 THEN  ccv.label ELSE null END
-        ), '--') AS conditionLabel
-        FROM
-        charge_rule cr
-        LEFT JOIN charge_condition_val ccv ON cr.id = ccv.rule_id
-        <include refid="QUERY_WHERE_CLAUSE" />
-        GROUP BY  cr.id
-        )tmp_data
-        <if test="extSql != null and extSql!=''">
-            WHERE ${extSql}
-        </if>
-        order by ${sortSql}
-    </select>
+
+  <select id="listForPage" parameterType="com.dili.rule.domain.ChargeRule" resultType="com.dili.rule.domain.dto.ChargeRuleResultDto">
+    SELECT cr.*,
+    IFNULL(group_concat(
+            CASE  when  json_length(ccv.val)>0 THEN  ccv.label ELSE null END
+            ), '--') AS conditionLabel
+    FROM
+    charge_rule cr
+    LEFT JOIN charge_condition_val ccv ON cr.id = ccv.rule_id
+    <include refid="QUERY_WHERE_CLAUSE" />
+      <if test="extSql != null and extSql!=''">
+       AND cr.id in(
+            SELECT rule_id FROM charge_condition_val where ${extSql}
+       )
+      </if>
+    GROUP BY  cr.id
+    order by ${sortSql}
+  </select>
 
   <!-- 联合查询计费规则列表  -->
   <sql id="QUERY_WHERE_CLAUSE">
