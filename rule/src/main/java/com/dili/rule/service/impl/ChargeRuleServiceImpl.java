@@ -102,6 +102,11 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         } else {
             sortSql.append(",group_id desc").append(",priority desc");
         }
+        String ruleName=StringUtils.trimToNull(chargeRule.getRuleName());
+        if(ruleName!=null){
+            ruleName=ruleName.replace(".","\\.").replace("_","\\_");
+        }
+        chargeRule.setRuleName(ruleName);
 
         chargeRule.setSortSql(sortSql.toString());
         chargeRule.setIsBackup(YesOrNoEnum.NO.getCode());

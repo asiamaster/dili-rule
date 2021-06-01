@@ -153,7 +153,7 @@
         <dependency>
             <groupId>com.dili</groupId>
             <artifactId>logger-sdk</artifactId>
-            <version>${logger.version}</version>
+            <version>1.0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.dili</groupId>
