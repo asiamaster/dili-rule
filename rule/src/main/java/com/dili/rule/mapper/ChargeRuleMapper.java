@@ -1,6 +1,7 @@
 package com.dili.rule.mapper;
 
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.dto.ChargeRuleResultDto;
 import com.dili.rule.domain.vo.ChargeRuleVo;
 import com.dili.ss.base.MyMapper;
 
@@ -14,7 +15,7 @@ public interface ChargeRuleMapper extends MyMapper<ChargeRule> {
      * @param user
      * @return
      */
-    List<ChargeRuleVo> listForPage(ChargeRule user);
+    List<ChargeRuleResultDto> listForPage(ChargeRule user);
 
     /**
      * 保存计费规则信息

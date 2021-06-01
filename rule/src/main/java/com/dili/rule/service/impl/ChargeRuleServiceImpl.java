@@ -10,6 +10,7 @@ import com.dili.rule.domain.ChargeConditionVal;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.dto.ChargeRuleQueryDto;
+import com.dili.rule.domain.dto.ChargeRuleResultDto;
 import com.dili.rule.domain.dto.OperatorUser;
 import com.dili.rule.domain.enums.ActionExpressionTypeEnum;
 import com.dili.rule.domain.enums.RuleStateEnum;
@@ -108,7 +109,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         chargeRule.setExtSql(this.buildExtSql(chargeRule));
 
 
-        List<ChargeRuleVo> chargeRuleVoList = getActualMapper().listForPage(chargeRule);
+        List<ChargeRuleResultDto> chargeRuleVoList = getActualMapper().listForPage(chargeRule);
         long total = chargeRuleVoList instanceof Page ? ((Page) chargeRuleVoList).getTotal()
                 : (long) chargeRuleVoList.size();
         List results = true ? ValueProviderUtils.buildDataByProvider(chargeRule, chargeRuleVoList) : chargeRuleVoList;

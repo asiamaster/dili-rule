@@ -2,6 +2,7 @@ package com.dili.rule.domain.dto;
 
 import cn.hutool.core.date.DateUtil;
 import com.dili.rule.domain.ChargeRule;
+import com.dili.rule.domain.enums.ActionExpressionTypeEnum;
 
 import javax.persistence.Transient;
 import java.util.Objects;
@@ -29,6 +30,14 @@ public class ChargeRuleResultDto extends ChargeRule {
             str.append(DateUtil.formatLocalDateTime(getExpireEnd()));
         }
         return str.toString();
+    }
+
+    @Override
+    public String getActionExpression() {
+        if (ActionExpressionTypeEnum.SIMPLE.equalsToCode(this.getActionExpressionType())) {
+            return super.getActionExpression();
+        }
+        return "见详情";
     }
 
 }
