@@ -28,7 +28,7 @@
             </div>
             <div class="form-group col">
                 <label for="ruleName" _log>规则名称<i class="red">*</i></label>
-                <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="60" data-rule-reg="^[\u4e00-\u9fa5_a-zA-Z0-9_]{0,60}$" value="${chargeRule.ruleName!}" required>
+                <input type="" class="form-control" id="ruleName" name="ruleName" placeholder="" maxlength="60" data-rule-reg="^[\u4e00-\u9fa5_a-zA-Z0-9_/\-\.\(\)]{0,60}$^[\u4e00-\u9fa5_a-zA-Z0-9_/\-\.\(\)]{0,60}$" value="${chargeRule.ruleName!}" required>
             </div>
             <div class="form-group col">
                 <label for="groupId" _log>分组<i class="red">*</i></label>
