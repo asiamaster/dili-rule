@@ -3,11 +3,13 @@ package com.dili.rule.service.impl;
 import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.mapper.ConditionDefinitionMapper;
+import com.dili.rule.service.ChargeConditionValService;
 import com.dili.rule.service.ConditionDefinitionService;
 import com.dili.ss.base.BaseServiceImpl;
 import com.dili.ss.domain.BaseOutput;
 import one.util.streamex.StreamEx;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,9 +26,12 @@ import java.util.regex.Pattern;
  */
 @Service
 public class ConditionDefinitionServiceImpl extends BaseServiceImpl<ConditionDefinition, Long> implements ConditionDefinitionService {
+    @Autowired
+    private ChargeConditionValService chargeConditionValService;
+
 
     public ConditionDefinitionMapper getActualDao() {
-        return (ConditionDefinitionMapper)getDao();
+        return (ConditionDefinitionMapper) getDao();
     }
 
     @Override
@@ -54,6 +59,7 @@ public class ConditionDefinitionServiceImpl extends BaseServiceImpl<ConditionDef
     @Override
     public BaseOutput save(ConditionDefinition conditionDefinition) {
         if (Objects.nonNull(conditionDefinition)) {
+            String oldMatchKey = StreamEx.ofNullable(conditionDefinition.getId()).map(this::get).map(ConditionDefinition::getMatchKey).findFirst().orElse(null);
             conditionDefinition.setModifyTime(LocalDateTime.now());
             if (Objects.isNull(conditionDefinition.getId())) {
                 conditionDefinition.setCreateTime(conditionDefinition.getModifyTime());
@@ -62,6 +68,7 @@ public class ConditionDefinitionServiceImpl extends BaseServiceImpl<ConditionDef
                 return BaseOutput.failure("在本业务对应的规则定义中，已存在相同指标的相同匹配key");
             }
             super.saveOrUpdate(conditionDefinition);
+            this.chargeConditionValService.updateMatchKey(conditionDefinition.getId(), oldMatchKey);
             return BaseOutput.success();
         }
         return BaseOutput.failure("参数丢失");
@@ -70,6 +77,7 @@ public class ConditionDefinitionServiceImpl extends BaseServiceImpl<ConditionDef
 
     /**
      * 获取表达式中的关联定义ID
+     *
      * @param text 表达式文本
      * @return 关联的计算ID集
      */
@@ -87,6 +95,7 @@ public class ConditionDefinitionServiceImpl extends BaseServiceImpl<ConditionDef
      * 判断是否以及存在相同的匹配key
      * 根据 所属市场、业务、指标类型，判断是否已存在相同的匹配key
      * 如果存在重复相同的key，则无法正常匹配字段信息：如 匹配客户和部门，，key 都叫id，传入参数后，无法区分到底是哪一个的id
+     *
      * @param conditionDefinition
      * @return
      */

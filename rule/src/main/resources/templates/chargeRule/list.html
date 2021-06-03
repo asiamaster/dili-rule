@@ -3,7 +3,7 @@
 
 
 <div class="container-fluid">
-    
+
         <form id="chargeRuleQueryForm" role="form">
             <input type="hidden" id="marketId" name="marketId" value="${marketId!}">
             <div class="row  row-cols-6">
@@ -41,7 +41,7 @@
                 </div>
             </div>
         </form>
-    
+
     <hr>
     <div class="">
         <div class="row">
@@ -77,7 +77,7 @@
                         <i class="fa fa-trash-o"></i> 修改定时
                     </button>
                     </#resource>
-                    
+
                     <#resource code="passChargeRule">
                     <!--button id="btn_check_pass" type="button" class="btn btn-primary control-btn" onclick="doCheckHandler(true)">
                         <i class="fa fa-trash-o"></i> 通过
@@ -131,10 +131,10 @@
                         <th data-width-unit="%" data-width="10" data-field="actionExpressionType" data-align="center"  data-provider="actionExpressionTypeProvider">
                             计算类型
                         </th>
-                        <th data-width-unit="%" data-width="10" data-field="minPayment" data-align="center">
+                        <th data-width-unit="%" data-width="10" data-field="minPayment" data-align="center"  data-formatter="formatMoney">
                             最低支付金额
                         </th>
-                        <th data-width-unit="%" data-width="10" data-field="maxPayment" data-align="center">
+                        <th data-width-unit="%" data-width="10" data-field="maxPayment" data-align="center"  data-formatter="formatMoney">
                             最高支付金额
                         </th>
                         </th>
@@ -166,5 +166,27 @@
 </script>
 
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
+<script type="text/javascript">
 
+    function Money(money){
+        return parseFloat(money)
+            .toFixed(2)
+            .toString()
+            .split('')
+            .reverse()
+            .join('')
+            .replace(/(\d{3})/g, '$1,')
+            .replace(/\,$/, '')
+            .split('')
+            .reverse()
+            .join('')
+    }
+    function formatMoney(val){
+        if(typeof(val)=='undefined'){
+            return val;
+        }
+        return Money(val)
+    }
+
+</script>
 <#chargeRule_listJs />

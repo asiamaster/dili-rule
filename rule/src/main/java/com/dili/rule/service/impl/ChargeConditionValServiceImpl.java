@@ -20,10 +20,9 @@ import com.dili.rule.domain.enums.MatchTypeEnum;
 import com.dili.rule.domain.enums.TargetTypeEnum;
 import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.rule.domain.vo.ConditionDefinitionVo;
+import com.dili.rule.dto.ChargeConditionValQueryDto;
 import com.dili.rule.mapper.ChargeConditionValMapper;
-import com.dili.rule.service.ChargeConditionValService;
-import com.dili.rule.service.ConditionDefinitionService;
-import com.dili.rule.service.DataSourceColumnService;
+import com.dili.rule.service.*;
 import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.ss.base.BaseServiceImpl;
 import com.google.common.collect.Lists;
@@ -33,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.dili.rule.service.DataSourceDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +59,8 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
     private DataSourceColumnService dataSourceColumnService;
     @Autowired
     private RemoteDataQueryService remoteDataQueryService;
+    @Autowired
+    private ChargeRuleService chargeRuleService;
 
     @Override
     public Map<String, Object> getRuleCondition(ChargeRule chargeRule, String sessionId) {
@@ -146,7 +146,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                                         for (DataSourceColumn column : columns) {
                                             if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
                                                 Object obj = row.get(column.getColumnCode());
-                                                if (obj != null&&StringUtils.isNotBlank(String.valueOf(obj))) {
+                                                if (obj != null && StringUtils.isNotBlank(String.valueOf(obj))) {
                                                     displayedText.add(String.valueOf(obj).trim());
                                                 }
 
@@ -156,9 +156,9 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                                     }
                                 }
 
-                                if(displayedText.isEmpty()){
+                                if (displayedText.isEmpty()) {
                                     vo.getTexts().add("(未知)");
-                                }else{
+                                } else {
                                     vo.getTexts().add(String.join("#", displayedText));
                                 }
 
@@ -202,4 +202,25 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
         return conditionDefinitionList;
     }
 
+    public int updateMatchKey(Long conditionDefinitionId, String oldMatchKey) {
+        if (StringUtils.isBlank(oldMatchKey)) {
+            return 0;
+        }
+        ConditionDefinition definitionItem = this.conditionDefinitionService.get(conditionDefinitionId);
+        if (oldMatchKey.trim().equals(definitionItem.getMatchKey().trim())) {
+            return 0;
+        }
+        String newMatchKey = definitionItem.getMatchKey().trim();
+        ChargeRule ruleQuery = new ChargeRule();
+        ruleQuery.setMarketId(definitionItem.getMarketId());
+        ruleQuery.setBusinessType(definitionItem.getBusinessType());
+        List<Long> chargeRuleIdList = StreamEx.of(this.chargeRuleService.listByExample(ruleQuery)).map(ChargeRule::getId).toList();
+        if (chargeRuleIdList.isEmpty()) {
+            return 0;
+        }
+        ChargeConditionValQueryDto valQueryDto = new ChargeConditionValQueryDto();
+        valQueryDto.setRuleIdList(chargeRuleIdList);
+        StreamEx.of(this.listByExample(valQueryDto));
+        return 0;
+    }
 }
