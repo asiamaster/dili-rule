@@ -9,10 +9,14 @@ import com.dili.commons.glossary.YesOrNoEnum;
 import com.dili.rule.domain.DataSourceDefinition;
 import com.dili.rule.domain.dto.AutoCompleteQueryDto;
 import com.dili.rule.domain.enums.DataSourceTypeEnum;
+import com.dili.rule.utils.RxUtils;
+import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.uap.sdk.constant.SessionConstants;
+import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Maps;
+import okhttp3.*;
 import one.util.streamex.StreamEx;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -21,7 +25,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +46,6 @@ public class RemoteDataQueryService {
     private static final Logger logger = LoggerFactory.getLogger(RemoteDataQueryService.class);
 
 
-
     /**
      * 通过DataSourceDefinition.queeryUrl对应的的url和params请求远程接口(http+json)
      *
@@ -47,28 +54,29 @@ public class RemoteDataQueryService {
      * @param sessionId
      * @return
      */
-    public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId) {
+    public PageOutput<List> queryData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId, Firm firm) {
 
-        Optional<String> jsonDataOpt = this.queryJsonData(dataSourceDefinition, params, sessionId);
+        Optional<String> jsonDataOpt = this.queryJsonData(dataSourceDefinition, params, sessionId, firm);
         PageOutput<List> pageout = this.parseJson(jsonDataOpt);
         return pageout;
     }
 
     /**
      * 联想输入
+     *
      * @param queryDto
-     * @param localJsonData
+     * @param dataSourceTypeEnum
      * @param params
      * @param sessionId
      * @return
      */
-    public  PageOutput<List> autoCompleteQueryData(DataSourceTypeEnum dataSourceTypeEnum,AutoCompleteQueryDto queryDto,Optional<String> dataJson, Map<String, Object> params, String sessionId) {
+    public PageOutput<List> autoCompleteQueryData(DataSourceTypeEnum dataSourceTypeEnum, AutoCompleteQueryDto queryDto, Optional<String> dataJson, Map<String, Object> params, String sessionId, Firm firm) {
 
-        Optional<String> jsonDataOpt=StreamEx.ofNullable(queryDto).map(dto->{
-            if (DataSourceTypeEnum.LOCAL==dataSourceTypeEnum) {
+        Optional<String> jsonDataOpt = StreamEx.ofNullable(queryDto).map(dto -> {
+            if (DataSourceTypeEnum.LOCAL == dataSourceTypeEnum) {
                 return dataJson;
             } else {
-                return this.remoteQuery(queryDto.getQueryUrl(), params, this.buildHeaderMap(sessionId));
+                return this.remoteQuery(queryDto.getQueryUrl(), params, this.buildHeaderMap(sessionId), firm);
             }
         }).filter(Optional::isPresent).map(Optional::get).findFirst();
 
@@ -84,7 +92,7 @@ public class RemoteDataQueryService {
      */
     private Map<String, String> buildHeaderMap(String sessionId) {
         Map<String, String> header = new HashMap<>();
-        logger.info("sessionId={}",sessionId);
+        logger.info("sessionId={}", sessionId);
         header.put(SessionConstants.ACCESS_TOKEN_KEY, sessionId);
         return header;
     }
@@ -96,7 +104,7 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    private Optional<String> queryJsonData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId) {
+    private Optional<String> queryJsonData(DataSourceDefinition dataSourceDefinition, Map<String, Object> params, String sessionId, Firm firm) {
         DataSourceTypeEnum dataSourceType = DataSourceTypeEnum.getInitDataMaps().get(dataSourceDefinition.getDataSourceType());
         if (StrUtil.isNotBlank(dataSourceDefinition.getQueryCondition())) {
             params.putAll(JSONObject.parseObject(dataSourceDefinition.getQueryCondition()));
@@ -105,7 +113,7 @@ public class RemoteDataQueryService {
             String localJsonData = dataSourceDefinition.getDataJson();
             return Optional.ofNullable(localJsonData);
         } else {
-            return this.remoteQuery(dataSourceDefinition.getQueryUrl(), params, this.buildHeaderMap(sessionId));
+            return this.remoteQuery(dataSourceDefinition.getQueryUrl(), params, this.buildHeaderMap(sessionId), firm);
         }
     }
 
@@ -116,7 +124,7 @@ public class RemoteDataQueryService {
      * @param keys
      * @return
      */
-    public List<Map<String, Object>> queryKeys(DataSourceDefinition dataSourceDefinition, List<Object> keys, String sessionId) {
+    public List<Map<String, Object>> queryKeys(DataSourceDefinition dataSourceDefinition, List<Object> keys, String sessionId, Firm firm) {
         if (CollectionUtil.isEmpty(keys)) {
             return Collections.emptyList();
         }
@@ -134,22 +142,22 @@ public class RemoteDataQueryService {
                 params.put(dataSourceDefinition.getKeysField(), keys);
             }
             //强制内置两个参数，根据当前用户的市场隔离
-            params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
-            params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-            params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
+            params.put("firmCode", firm.getCode());
+            params.put("marketId", firm.getId());
+            params.put("firmId", firm.getId());
             String keyUrl = dataSourceDefinition.getKeysUrl();
             String jsonBody = JSONObject.toJSONString(params);
             logger.info("keyUrl={},data={}", keyUrl, jsonBody);
-            try (HttpResponse response = HttpUtil.createPost(keyUrl).addHeaders(this.buildHeaderMap(sessionId)).body(jsonBody).execute();) {
-                if (response.isOk()) {
-                    return this.parseJson(Optional.ofNullable(response.body())).getData();
-                }
-            }catch (Exception e) {
-            	logger.error(e.getMessage(),e);
-            	return Collections.emptyList();
-			}
+
+
+            try {
+                String responseText = this.postJson(keyUrl, this.buildHeaderMap(sessionId), jsonBody);
+                return this.parseJson(Optional.ofNullable(responseText)).getData();
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                return Collections.emptyList();
+            }
         }
-        return Collections.emptyList();
     }
 
     /**
@@ -182,23 +190,18 @@ public class RemoteDataQueryService {
      * @param params
      * @return
      */
-    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap) {
+    private Optional<String> remoteQuery(String url, Map<String, Object> params, Map<String, String> headerMap, Firm firm) {
 
         //强制内置两个参数，根据当前用户的市场隔离
-        params.put("firmCode", SessionContext.getSessionContext().getUserTicket().getFirmCode());
-        params.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-        params.put("firmId", SessionContext.getSessionContext().getUserTicket().getFirmId());
+        params.put("firmCode", firm.getCode());
+        params.put("marketId", firm.getId());
+        params.put("firmId", firm.getId());
 
         String jsonBody = JSONObject.toJSONString(params);
         logger.info("url={},  data={},  headerMap={}", url, jsonBody, headerMap);
-        try (HttpResponse response = HttpUtil.createPost(url).addHeaders(headerMap).body(jsonBody).execute();) {
-            if (response.isOk()) {
-                return Optional.ofNullable(response.body());
-            } else {
-                logger.error("远程请求出错,status: {}", response.getStatus());
-            }
-        }
-        return Optional.empty();
+
+        return Optional.ofNullable(this.postJson(url, headerMap, jsonBody));
+
     }
 
     /**
@@ -219,4 +222,65 @@ public class RemoteDataQueryService {
         }
         return output;
     }
+
+    /**
+     * 远程请求
+     *
+     * @param url
+     * @param headeMap
+     * @param jsonString
+     * @return
+     */
+    private String postJson(String url, Map<String, String> headeMap, String jsonString
+    ) {
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonString);
+        final Request request = new Request.Builder()
+                .url(url)
+                .headers(Headers.of(headeMap))
+                .post(body)
+                .build();
+        try {
+            Call call = this.getOkHttpClient().newCall(request);
+
+            Response resp = call.execute();
+            if (resp.isSuccessful()) {
+                byte[] bodyBytes = resp.body().bytes();
+
+                String responseText = new String(bodyBytes, StandardCharsets.UTF_8);
+                return responseText;
+            } else {
+                logger.error("url={},resp code={},{}", url, resp.code(), resp.isRedirect());
+
+            }
+        } catch (Exception e) {
+            logger.error("url=" + url, e);
+
+        }
+        return null;
+    }
+
+    /**
+     * 获得httpclient
+     *
+     * @return
+     */
+    private synchronized OkHttpClient getOkHttpClient() {
+        if (this.okHttpClient != null) {
+            return this.okHttpClient;
+        }
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        clientBuilder.followRedirects(true).followSslRedirects(true);
+        clientBuilder.connectTimeout(Duration.ofSeconds(10));
+        clientBuilder.readTimeout(Duration.ofSeconds(30));
+        clientBuilder.writeTimeout(Duration.ofSeconds(10));
+        clientBuilder.sslSocketFactory(RxUtils.createSSLSocketFactory(), new RxUtils.TrustAllManager());
+        clientBuilder.hostnameVerifier(new RxUtils.TrustAllHostnameVerifier());
+        // 连接池实例
+        ConnectionPool connectionPool = new ConnectionPool(5, 100, TimeUnit.SECONDS);
+        clientBuilder.connectionPool(connectionPool);
+        this.okHttpClient = clientBuilder.build();
+        return this.okHttpClient;
+    }
+
+    private OkHttpClient okHttpClient;
 }

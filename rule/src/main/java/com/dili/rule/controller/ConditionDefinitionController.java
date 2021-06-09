@@ -18,10 +18,13 @@ import com.dili.rule.service.DatasourceQueryConfigService;
 import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.rule.utils.CookieUtil;
 import com.dili.rule.utils.EasyuiPageOutputUtil;
+import com.dili.rule.utils.FirmUtil;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
+import com.dili.uap.sdk.domain.Firm;
+import com.dili.uap.sdk.session.SessionContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
@@ -246,6 +249,8 @@ public class ConditionDefinitionController {
      */
     @RequestMapping(value = "/popupPage.action", method = {RequestMethod.POST})
     public String popupPage(@RequestBody Map<String, Object> params, ModelMap modelMap, HttpServletRequest request) {
+
+        Firm firm= FirmUtil.from(SessionContext.getSessionContext().getUserTicket());
         Long definitionId = Long.parseLong(params.remove("definitionId").toString());
         ConditionDefinition conditionDefinition = this.conditionDefinitionService.get(definitionId);
         Long dataSourceId = conditionDefinition.getDataSourceId();
@@ -278,7 +283,7 @@ public class ConditionDefinitionController {
             case TABLE_MULTI:
 
                 List<DatasourceQueryConfig> queryConfigList = datasourceQueryConfigService.findByDataSourceId(dataSourceId);
-                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId);
+                PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, params, uapSessionId,firm);
                 modelMap.put("pagedData", pagedData);
                 modelMap.put("queryConfigList", queryConfigList);
                 return "conditionDefinition/dynamic/table";
@@ -317,8 +322,9 @@ public class ConditionDefinitionController {
     public BaseOutput queryRemoteData(@RequestBody RemoteAjaxInputDto inputDto, HttpServletRequest request) {
         try {
             String uapSessionId = CookieUtil.getUapSessionId(request);
+            Firm firm= FirmUtil.from(SessionContext.getSessionContext().getUserTicket());
             DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(inputDto.getDataSourceId());
-            PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, inputDto.getParams(), uapSessionId);
+            PageOutput<List> pagedData = this.remoteDataQueryService.queryData(dataSourceDefinition, inputDto.getParams(), uapSessionId,firm);
             return pagedData;
         } catch (Exception e) {
             return BaseOutput.failure("远程查询错误");

@@ -8,8 +8,11 @@ import com.dili.rule.domain.enums.DataSourceTypeEnum;
 import com.dili.rule.service.DataSourceDefinitionService;
 import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.rule.utils.CookieUtil;
+import com.dili.rule.utils.FirmUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
+import com.dili.uap.sdk.domain.Firm;
+import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Maps;
 import one.util.streamex.StreamEx;
 import org.slf4j.Logger;
@@ -49,6 +52,7 @@ public class AutoCompleteQueryController {
     @ResponseBody
     public BaseOutput autoQuery(@RequestBody AutoCompleteQueryDto query, HttpServletRequest request) {
         String uapSessionId = CookieUtil.getUapSessionId(request);
+        Firm firm= FirmUtil.from(SessionContext.getSessionContext().getUserTicket());
         DataSourceTypeEnum dataSourceTypeEnum = DataSourceTypeEnum.getInstance(query.getDataSourceType());
         if (dataSourceTypeEnum == null) {
             return BaseOutput.success();
@@ -71,7 +75,7 @@ public class AutoCompleteQueryController {
             params.put("page", 1);
             params.put("rows", 20);
             params.put(query.getAutoCompleteQueryKey(), query.getQuery());
-            PageOutput<List> listPageOutput = this.remoteDataQueryService.autoCompleteQueryData(dataSourceTypeEnum, query, dataJson, params, uapSessionId);
+            PageOutput<List> listPageOutput = this.remoteDataQueryService.autoCompleteQueryData(dataSourceTypeEnum, query, dataJson, params, uapSessionId,firm);
             return listPageOutput;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

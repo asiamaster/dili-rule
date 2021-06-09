@@ -126,6 +126,7 @@ function createAndBuildQuery(marketId,businessType){
                 let conditionDefinition=item.conditionDefinition;
                 let dataSourceDefinition=item.dataSourceDefinition;
                 let displayColumnCodeList=item.displayColumnCodeList;
+
                 let tempHtml=template('queryItem', conditionDefinition);
                 $(tempHtml).insertAfter(chargeItem);
                 let selectorId=$(tempHtml).children('input').attr('id');
@@ -201,13 +202,7 @@ function createAndBuildQuery(marketId,businessType){
 
     })
 }
-function buildQueryFormGroup(conditionDefinition){
-    let tempHtml=template('queryItem', conditionDefinition);
-    $('#queryItemListDiv').append(tempHtml)
-    let id=$(tempHtml).children('input').attr('id');
-    return tempHtml;
 
-}
 /**
  * 默认实现的获取收费项的方法
  * @param _defaultValue 默认值

@@ -9,6 +9,7 @@ import com.dili.rule.domain.ChargeRule;
 import com.dili.rule.domain.ConditionDefinition;
 import com.dili.rule.domain.enums.ValueDataTypeEnum;
 import com.dili.ss.base.BaseService;
+import com.dili.uap.sdk.domain.Firm;
 
 /**
  * <B></B> <B>Copyright:本软件源代码版权归农丰时代科技有限公司及其研发团队所有,未经许可不得任意复制与传播.</B>
@@ -24,7 +25,7 @@ public interface ChargeConditionValService extends BaseService<ChargeConditionVa
      *
      * @param chargeRule 规则对象
      */
-    Map<String, Object> getRuleCondition(ChargeRule chargeRule, String sessionId);
+    Map<String, Object> getRuleCondition(ChargeRule chargeRule, String sessionId, Firm firm);
 
     /**
      * 根据规则ID获取计算条件(变量)指标详细信息

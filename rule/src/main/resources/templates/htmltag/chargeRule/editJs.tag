@@ -107,7 +107,7 @@
                             $(this).val('');
                         }
                     });
-                    if(logger==null){
+                    if(typeof (logger)=='undefined'||logger==null){
                     	logger = new Logger(); //option参数对象可作为实例对象属性，可覆盖defaults属性	
                     }
                 	

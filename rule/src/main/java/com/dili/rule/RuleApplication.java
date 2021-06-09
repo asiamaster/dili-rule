@@ -9,6 +9,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 import tk.mybatis.spring.annotation.MapperScan;
 
@@ -21,11 +22,12 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @date 2020/5/7 14:12
  */
 @SpringBootApplication
-@EnableFeignClients(basePackages = {"com.dili.logger.sdk.rpc","com.dili.assets.sdk.rpc"})
+@EnableFeignClients(basePackages = {"com.dili.logger.sdk.rpc", "com.dili.assets.sdk.rpc"})
 @MapperScan(basePackages = {"com.dili.rule.mapper", "com.dili.ss.dao"})
-@ComponentScan(basePackages={"com.dili.ss","com.dili.rule","com.dili.uap.sdk","com.dili.logger.sdk"})
+@ComponentScan(basePackages = {"com.dili.ss", "com.dili.rule", "com.dili.uap.sdk", "com.dili.logger.sdk"})
 @RestfulScan({"com.dili.uap.sdk.rpc"})
-@DTOScan(value={"com.dili.ss", "com.dili.rule.domain"})
+@DTOScan(value = {"com.dili.ss", "com.dili.rule.domain"})
+@EnableAsync
 public class RuleApplication extends SpringBootServletInitializer {
 
     @LoadBalanced
@@ -35,7 +37,7 @@ public class RuleApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
-        
+
         SpringApplication.run(RuleApplication.class, args);
     }
 

@@ -167,6 +167,14 @@
     <%}%>
 </div>
 </#bs4Body>
+<script id="queryItem" type="text/html">
+    <div class="form-group auto_complete">
+        <label>{{label}}<i class="red">*</i></label>
+        <input class="form-control" id="conditionMap[{{id}}]" data-value-type="skip">
+        <input class="form-control" name="conditionMap[{{id}}]" type="hidden">
+        </input>
+    </div>
+</script>
 <link rel="stylesheet" href="${contextPath}/resources/jquery-expression-builder/expression-builder.css" />
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
 <script type="text/javascript" src="${contextPath}/resources/jquery-expression-builder/expression-builder-v2-exd.js"></script>

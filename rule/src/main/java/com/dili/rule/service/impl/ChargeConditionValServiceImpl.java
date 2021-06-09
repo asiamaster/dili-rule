@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
@@ -25,6 +27,10 @@ import com.dili.rule.mapper.ChargeConditionValMapper;
 import com.dili.rule.service.*;
 import com.dili.rule.service.remote.RemoteDataQueryService;
 import com.dili.ss.base.BaseServiceImpl;
+import com.dili.ss.dto.DTOUtils;
+import com.dili.uap.sdk.domain.Firm;
+import com.dili.uap.sdk.domain.UserTicket;
+import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
 
 import one.util.streamex.StreamEx;
@@ -61,9 +67,11 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
     private RemoteDataQueryService remoteDataQueryService;
     @Autowired
     private ChargeRuleService chargeRuleService;
+    @Autowired
+    private AsyncService asyncService;
 
     @Override
-    public Map<String, Object> getRuleCondition(ChargeRule chargeRule, String sessionId) {
+    public Map<String, Object> getRuleCondition(ChargeRule chargeRule, String sessionId,Firm firm) {
         Map<String, Object> resultMap = new HashMap<>();
         List<ChargeConditionVal> chargeConditionValList = Lists.newArrayList();
         if (Objects.nonNull(chargeRule.getId())) {
@@ -85,7 +93,7 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
 
         List<ConditionDefinition> conditionDefinitionList = conditionDefinitionService.listByExample(conditionDefinition);
         //组装已选条件与预定义的条件值
-        List<ConditionDefinitionVo> conditionDefinitions = generate(chargeConditionValList, conditionDefinitionList, sessionId);
+        List<ConditionDefinitionVo> conditionDefinitions = generate(chargeConditionValList, conditionDefinitionList, sessionId,firm);
         resultMap.put("conditionDefinitions", conditionDefinitions);
 
         return resultMap;
@@ -110,10 +118,14 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
      * @param chargeConditionValList  已设置的规则条件
      * @param conditionDefinitionList 已设置的预定义条件
      */
-    private List<ConditionDefinitionVo> generate(List<ChargeConditionVal> chargeConditionValList, List<ConditionDefinition> conditionDefinitionList, String sessionId) {
+    private List<ConditionDefinitionVo> generate(List<ChargeConditionVal> chargeConditionValList, List<ConditionDefinition> conditionDefinitionList, String sessionId,Firm firm) {
+
+
         Map<Long, ChargeConditionVal> conditionValMap = chargeConditionValList.stream().collect(Collectors.toMap(ChargeConditionVal::getDefinitionId, RuleConditionVal -> RuleConditionVal));
-        List<ConditionDefinitionVo> voList = Lists.newArrayList();
-        conditionDefinitionList.stream().unordered().forEach(conditionDefinition -> {
+
+        List<CompletableFuture> completableFutureList = Lists.newArrayList();
+
+        List<ConditionDefinitionVo> voList = StreamEx.of(conditionDefinitionList).unordered().map(conditionDefinition -> {
             ConditionDefinitionVo vo = new ConditionDefinitionVo();
             BeanUtils.copyProperties(conditionDefinition, vo);
             if (conditionValMap.containsKey(vo.getId())) {
@@ -129,46 +141,17 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
                     DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(conditionDefinition.getDataSourceId());
                     logger.info("objects={}", objects);
                     if (Objects.nonNull(dataSourceDefinition)) {
-                        String matchColumn = conditionDefinition.getMatchColumn();
-                        List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(dataSourceDefinition, objects, sessionId);
-//                        logger.info("keyTextMap={}",keyTextMap);
-                        if (keyTextMap != null && !keyTextMap.isEmpty()) {
-                            DataSourceColumn condition = new DataSourceColumn();
-                            condition.setDataSourceId(conditionDefinition.getDataSourceId());
-                            List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
-                            for (Object value : objects) {
-                                List<String> displayedText = new ArrayList<>();
-                                for (Map<String, Object> row : keyTextMap) {
-                                    Object matchValue = row.get(matchColumn);
-                                    if (String.valueOf(value).equals(String.valueOf(matchValue))) {
-//                                        logger.info("value={},matchColumn={}，matchValue={}",value,matchColumn,matchValue);
-
-                                        for (DataSourceColumn column : columns) {
-                                            if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
-                                                Object obj = row.get(column.getColumnCode());
-                                                if (obj != null && StringUtils.isNotBlank(String.valueOf(obj))) {
-                                                    displayedText.add(String.valueOf(obj).trim());
-                                                }
-
-                                            }
-                                        }
-
-                                    }
-                                }
-
-                                if (displayedText.isEmpty()) {
-                                    vo.getTexts().add("(未知)");
-                                } else {
-                                    vo.getTexts().add(String.join("#", displayedText));
-                                }
+                        CompletableFuture<?> future = this.asyncService.asyncCall(() -> {
+                            try{
+                                List<String> buildDisplayText = this.queryDisplayText(conditionDefinition, dataSourceDefinition, objects, sessionId,firm);
+                                vo.getTexts().addAll(buildDisplayText);
+                            }catch (Exception e){
 
                             }
-                        } else {
-                            vo.getTexts().addAll(StreamEx.of(objects).map(o -> {
-                                return "(未知)";
-                            }).toList());
-                        }
 
+                            return null;
+                        });
+                        completableFutureList.add(future);
                     } else {
                         vo.getTexts().addAll(StreamEx.of(objects).map(o -> {
                             return "(未知)";
@@ -177,9 +160,56 @@ public class ChargeConditionValServiceImpl extends BaseServiceImpl<ChargeConditi
 
                 }
             }
-            voList.add(vo);
-        });
+            //voList.add(vo);
+            return vo;
+        }).toList();
+        logger.info("start join");
+        CompletableFuture.allOf(completableFutureList.toArray(new CompletableFuture[0])).join();
+        logger.info("end join");
         return voList;
+    }
+
+    private List<String> queryDisplayText(ConditionDefinition conditionDefinition, DataSourceDefinition dataSourceDefinition, JSONArray objects, String sessionId, Firm firm) {
+        List<String> displayTextList = new ArrayList<>();
+        String matchColumn = conditionDefinition.getMatchColumn();
+        List<Map<String, Object>> keyTextMap = remoteDataQueryService.queryKeys(dataSourceDefinition, objects, sessionId,firm);
+        if (keyTextMap != null && !keyTextMap.isEmpty()) {
+            DataSourceColumn condition = new DataSourceColumn();
+            condition.setDataSourceId(conditionDefinition.getDataSourceId());
+            List<DataSourceColumn> columns = dataSourceColumnService.list(condition);
+            for (Object value : objects) {
+                List<String> displayedText = new ArrayList<>();
+                for (Map<String, Object> row : keyTextMap) {
+                    Object matchValue = row.get(matchColumn);
+                    if (String.valueOf(value).equals(String.valueOf(matchValue))) {
+//                                        logger.info("value={},matchColumn={}，matchValue={}",value,matchColumn,matchValue);
+
+                        for (DataSourceColumn column : columns) {
+                            if (YesOrNoEnum.YES.getCode().equals(column.getDisplay())) {
+                                Object obj = row.get(column.getColumnCode());
+                                if (obj != null && StringUtils.isNotBlank(String.valueOf(obj))) {
+                                    displayedText.add(String.valueOf(obj).trim());
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+
+                if (displayedText.isEmpty()) {
+                    displayTextList.add("(未知)");
+                } else {
+                    displayTextList.add(String.join("#", displayedText));
+                }
+
+            }
+        } else {
+            displayTextList.addAll(StreamEx.of(objects).map(o -> {
+                return "(未知)";
+            }).toList());
+        }
+        return displayTextList;
     }
 
     @Override

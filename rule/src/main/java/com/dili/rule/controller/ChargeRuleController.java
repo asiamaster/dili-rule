@@ -19,9 +19,11 @@ import com.dili.rule.service.remote.BusinessChargeItemRpcService;
 import com.dili.rule.service.remote.DataDictionaryRpcService;
 import com.dili.rule.utils.CookieUtil;
 import com.dili.rule.utils.EasyuiPageOutputUtil;
+import com.dili.rule.utils.FirmUtil;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
+import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -143,7 +145,8 @@ public class ChargeRuleController {
     @RequestMapping(value = "/getRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String getRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
         String uapSessionId = CookieUtil.getUapSessionId(request);
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
+        Firm firm=FirmUtil.from(SessionContext.getSessionContext().getUserTicket());
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId,firm);
         modelMap.addAllAttributes(map);
         return "chargeRule/ruleCondition";
     }
@@ -252,7 +255,8 @@ public class ChargeRuleController {
     @RequestMapping(value = "/viewRuleCondition.action", method = {RequestMethod.GET, RequestMethod.POST})
     public String viewRuleCondition(ChargeRule chargeRule, ModelMap modelMap, HttpServletRequest request) {
         String uapSessionId = CookieUtil.getUapSessionId(request);
-        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId);
+        Firm firm=FirmUtil.from(SessionContext.getSessionContext().getUserTicket());
+        Map<String, Object> map = chargeConditionValService.getRuleCondition(chargeRule, uapSessionId,firm);
         modelMap.addAllAttributes(map);
         return "chargeRule/viewCondition";
     }
