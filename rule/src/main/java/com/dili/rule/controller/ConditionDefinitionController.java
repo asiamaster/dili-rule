@@ -89,7 +89,7 @@ public class ConditionDefinitionController {
     @ResponseBody
     public String listPage(ConditionDefinition conditionDefinition, HttpServletRequest request) {
         try {
-            if(conditionDefinition.getMarketId()==null||StringUtils.isBlank(conditionDefinition.getBusinessType())){
+            if(conditionDefinition.getMarketId()==null){
                 return EasyuiPageOutputUtil.build(0, Lists.newArrayList()).toString();
             }
             return conditionDefinitionService.listEasyuiPageByExample(conditionDefinition, true).toString();

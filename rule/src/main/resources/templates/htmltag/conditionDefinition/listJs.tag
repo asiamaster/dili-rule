@@ -11,7 +11,7 @@
 
     /******************************驱动执行区 begin***************************/
     $(function () {
-        defaultGetBizTypeInfo();
+        defaultGetBizTypeInfo(null,null,'--全部--');
         $(window).resize(function () {
             _dataGrid.bootstrapTable('resetView')
         });
