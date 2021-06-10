@@ -452,9 +452,8 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         if (ActionEnum.INSERT == actionEnum || ActionEnum.COPY == actionEnum) {
             input.setId(null);
             input.setIsBackup(YesOrNoEnum.NO.getCode());
-            if (this.isExistsSameRuleName(input)) {
-                throw new IllegalArgumentException("已存在规则名称相同的记录");
-            }
+
+            this.checkRuleNameOrEx(input);
             // 插入新的记录
             getActualMapper().insertBy(input);
             return input;
@@ -473,7 +472,9 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     input.setId(null);
                     input.setCreateTime(LocalDateTime.now());
                     input.setModifyTime(LocalDateTime.now());
+                    this.checkRuleNameOrEx(input);
                     this.insert(input);
+
                     item.setBackupedRuleId(input.getId());
                     this.update(item);
                 } else {
@@ -482,7 +483,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                     input.setBackupedRuleId(item.getBackupedRuleId());
                     input.setIsDeleted(item.getIsDeleted());
                     input.setPriority(item.getPriority());
-
+                    this.checkRuleNameOrEx(input);
                     this.update(input);
                 }
 
@@ -492,6 +493,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
                 input.setBackupedRuleId(item.getBackupedRuleId());
                 input.setIsDeleted(item.getIsDeleted());
                 input.setPriority(item.getPriority());
+                this.checkRuleNameOrEx(input);
                 this.update(input);
             }
             return input;
@@ -553,7 +555,7 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param chargeRule
      * @return
      */
-    private boolean isExistsSameRuleName(ChargeRule chargeRule) {
+    private void checkRuleNameOrEx(ChargeRule chargeRule) {
         ChargeRule condition = new ChargeRule();
         condition.setRuleName(chargeRule.getRuleName());
         condition.setMarketId(chargeRule.getMarketId());
@@ -561,7 +563,10 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
         condition.setChargeItem(chargeRule.getChargeItem());
         long sameNameCount = this.listByExample(condition).stream().filter((r) -> !r.getId().equals(chargeRule.getId()))
                 .count();
-        return sameNameCount > 0;
+
+        if (sameNameCount>0) {
+            throw new IllegalArgumentException("已存在规则名称相同的记录");
+        }
     }
 
     /**
