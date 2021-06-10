@@ -30,10 +30,10 @@
             </div>
             <div class="form-group col">
                 <label for="matchType" class="">条件类型<i class="red">*</i></label>
-                <select id="matchType" name="matchType" class="form-control" required>
+                <select id="matchType" name="matchType" class="form-control" value="${conditionDefinition.matchType!}" required>
                     <option value="">---请选择---</option>
                     <%for(matchType in matchTypeEnumList){%>
-                    <option value="${matchType.code}">${matchType.desc}</option>
+                    <option value="${matchType.code}" <%if(matchType.code==conditionDefinition.matchType){%>selected<%}%>>${matchType.desc}</option>
                     <%}%>
                 </select>
             </div>
@@ -114,8 +114,8 @@
             //$('select[name="matchType"] option').filter('[value!='+value+'][value!=""]').hide();
             $('select[name="matchType"] option').filter('[value!='+value+']').hide();
         }else{
-            let value='';
-            $('select[name="matchType"]').val(value);
+            // let value='';
+            // $('select[name="matchType"]').val(value);
             $('select[name="matchType"] option').show();
         }
     });
