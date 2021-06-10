@@ -30,7 +30,7 @@
             </div>
             <div class="col align-self-center mt-3">
                 <button type="button" class="btn btn-outline-primary mr-2"
-                        onclick="javascript:$('#conditionDefinitionQueryForm .form-control').val('');"><i
+                        onclick="clearForm()"><i
                         class="fa fa-refresh"></i> 清空
                 </button>
                 <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i
@@ -116,6 +116,19 @@
 <script type="text/javascript" src="${contextPath}/resources/js/businessInfo.js"></script>
 <#conditionDefinition_listJs />
 <script type="text/javascript">
+    function clearForm(){
+        $('#conditionDefinitionQueryForm .form-control').filter('[name!="marketId"][name!="businessType"]').val('')
+        //$('#conditionDefinitionQueryForm .form-control').val('');
+        let marketId=$('#conditionDefinitionQueryForm .form-control[name="marketId"] option:first').val();
+        if(marketId!=''&&$('#conditionDefinitionQueryForm .form-control[name="marketId"]').val()!=marketId){
+            $('#conditionDefinitionQueryForm .form-control[name="marketId"]').val(marketId);
+        }else{
+            let businessType=$('#conditionDefinitionQueryForm .form-control[name="businessType"] option:first').val();
+            if(businessType!=''&&$('#conditionDefinitionQueryForm .form-control[name="businessType"]').val()!=businessType){
+                $('#conditionDefinitionQueryForm .form-control[name="businessType"]').val(businessType);
+            }
+        }
+    }
 //<!--
 $('select[name="targetType"]').change(function(){
 	var elList=$('select[name="matchType"]');

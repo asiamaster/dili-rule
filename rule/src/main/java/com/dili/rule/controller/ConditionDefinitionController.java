@@ -29,6 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import one.util.streamex.StreamEx;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -88,6 +89,9 @@ public class ConditionDefinitionController {
     @ResponseBody
     public String listPage(ConditionDefinition conditionDefinition, HttpServletRequest request) {
         try {
+            if(conditionDefinition.getMarketId()==null||StringUtils.isBlank(conditionDefinition.getBusinessType())){
+                return EasyuiPageOutputUtil.build(0, Lists.newArrayList()).toString();
+            }
             return conditionDefinitionService.listEasyuiPageByExample(conditionDefinition, true).toString();
         } catch (Exception e) {
             log.error("查询条件预定义列表异常," + e.getMessage(), e);
