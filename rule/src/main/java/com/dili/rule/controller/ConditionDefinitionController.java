@@ -107,6 +107,7 @@ public class ConditionDefinitionController {
             conditionDefinition = conditionDefinitionService.get(conditionDefinition.getId());
         }
         modelMap.put("conditionDefinition", conditionDefinition);
+        modelMap.put("matchTypeEnumList", MatchTypeEnum.values());
         return "conditionDefinition/edit";
     }
 

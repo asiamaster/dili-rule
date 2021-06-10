@@ -33,6 +33,7 @@
             }
         });
         targetId.html(dataSource.join(''));
+        targetId.trigger('change')
     }
 
     /**

@@ -30,8 +30,12 @@
             </div>
             <div class="form-group col">
                 <label for="matchType" class="">条件类型<i class="red">*</i></label>
-                <select id="matchType" name="matchType" class="form-control" required></select>
-                <#bcomboProvider _id="matchType" _provider="matchTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="${conditionDefinition.matchType!}" />
+                <select id="matchType" name="matchType" class="form-control" required>
+                    <option value="">---请选择---</option>
+                    <%for(matchType in matchTypeEnumList){%>
+                    <option value="${matchType.code}">${matchType.desc}</option>
+                    <%}%>
+                </select>
             </div>
             <div class="form-group col">
                 <label for="dataType" class="">值类型<i class="red">*</i></label>
@@ -104,6 +108,16 @@
      */
     $('#dataSourceId').on('change', function(){
         getMatchColumn('','matchColumn','-- 请选择 --');
+        if($(this).val()!=''){
+            let value='${@com.dili.rule.domain.enums.MatchTypeEnum.IN.getCode()}';
+            $('select[name="matchType"]').val(value);
+            //$('select[name="matchType"] option').filter('[value!='+value+'][value!=""]').hide();
+            $('select[name="matchType"] option').filter('[value!='+value+']').hide();
+        }else{
+            let value='';
+            $('select[name="matchType"]').val(value);
+            $('select[name="matchType"] option').show();
+        }
     });
 
     $('select[name="targetType"]').change(function () {
