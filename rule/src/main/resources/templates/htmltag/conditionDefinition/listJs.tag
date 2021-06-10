@@ -94,7 +94,7 @@
         let selectedRow = rows[0];
         let url = "/conditionDefinition/view.action?id=" + selectedRow.id;
         dia = bs4pop.dialog({
-            title: '修改预定义条件',
+            title: '查看预定义条件',
             content: url,
             isIframe: true,
             closeBtn: true,
