@@ -1,12 +1,19 @@
-jQuery.validator.addMethod("reg", function (v, a) {
+jQuery.validator.addMethod('reg', function (value, element, param) {
+    var customMsg = '输入内容格式错误';
+    var result    = true;
     try {
-        let regText = $(a).data('rule-reg');
         debugger
-        if ($.trim(regText) != '' && !(new RegExp($.trim(regText))).test(v)) {
-            return false;
+        let regText = $(element).data('rule-reg');
+        if ($.trim(regText) != '' && !(new RegExp($.trim(regText))).test(value)) {
+            result= false;
         }
-        return true;
+        let regMessage = $(element).data('reg-msg');
+        if($.trim(regMessage) != ''){
+            customMsg= $.trim(regMessage);
+        }
     } catch (e) {
-        return false;
+        result=false;
     }
-}, "输入内容格式错误");
+    jQuery.validator.messages.reg = customMsg;
+    return result;
+});

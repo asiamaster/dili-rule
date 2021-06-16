@@ -133,11 +133,11 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" >前</span>
                             </div>
-                            <input class="form-control" _log="阶梯计算[前]" name="actionExpressionParams[_first_tiered_period]" value="${actionExpressionParams['_first_tiered_period']!}"/>
+                            <input class="form-control" _log="阶梯计算[前]" name="actionExpressionParams[_first_tiered_period]"  data-rule-reg="^(\d\.([1-9]{1,2}|[0-9][1-9])|[1-9]\d{0,6}(\.\d{1,2}){0,1})$" data-reg-msg="请输入0.01-9999999.99之间的数字(两位小数)"  value="${actionExpressionParams['_first_tiered_period']!}"/>
                             <div class="input-group-append">
                                 <span class="input-group-text">分钟收费</span>
                             </div>
-                            <input class="form-control" _log="阶梯计算[分钟收费]" name="actionExpressionParams[_first_tiered_fee]" value="${actionExpressionParams['_first_tiered_fee']!}"/>
+                            <input class="form-control" _log="阶梯计算[分钟收费]" name="actionExpressionParams[_first_tiered_fee]"  data-rule-reg="^(\d\.([1-9]{1,2}|[0-9][1-9])|[1-9]\d{0,6}(\.\d{1,2}){0,1})$" data-reg-msg="请输入0.01-9999999.99之间的数字(两位小数)"  value="${actionExpressionParams['_first_tiered_fee']!}"/>
                             <div class="input-group-append">
                                 <span class="input-group-text">元</span>
                             </div>
@@ -148,11 +148,11 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" >后每</span>
                             </div>
-                            <input class="form-control" _log="阶梯计算[后每]" name="actionExpressionParams[_second_tiered_period]"  value="${actionExpressionParams['_second_tiered_period']!}"/>
+                            <input class="form-control" _log="阶梯计算[后每]" name="actionExpressionParams[_second_tiered_period]"  data-rule-reg="^(\d\.([1-9]{1,2}|[0-9][1-9])|[1-9]\d{0,6}(\.\d{1,2}){0,1})$" data-reg-msg="请输入0.01-9999999.99之间的数字(两位小数)"  value="${actionExpressionParams['_second_tiered_period']!}"/>
                             <div class="input-group-append">
                                 <span class="input-group-text">分钟收费</span>
                             </div>
-                            <input class="form-control" _log="阶梯计算[分钟收费]" name="actionExpressionParams[_second_tiered_fee]"  value="${actionExpressionParams['_second_tiered_fee']!}"/>
+                            <input class="form-control" _log="阶梯计算[分钟收费]" name="actionExpressionParams[_second_tiered_fee]"  data-rule-reg="^(\d\.([1-9]{1,2}|[0-9][1-9])|[1-9]\d{0,6}(\.\d{1,2}){0,1})$" data-reg-msg="请输入0.01-9999999.99之间的数字(两位小数)"  value="${actionExpressionParams['_second_tiered_fee']!}"/>
                             <div class="input-group-append">
                                 <span class="input-group-text">元</span>
                             </div>
@@ -261,6 +261,7 @@
        $('#complexsimpleExpressionDiv').hide();
        $('select[name="actionExpressionParams[_start]"]').attr('required',false);
        $('#complexsimpleExpressionDiv').find('input').attr('required',false);
+       $('#complexsimpleExpressionDiv').find('input').val('');
 
        $('#matchConditionDiv').hide();
        $('#matchConditionDiv').find("input").attr('disabled','disabled');

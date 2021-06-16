@@ -388,11 +388,39 @@
                 bs4pop.alert("计算表达式输入不正确", {type: 'error', position: 'center'});
                 return;
             }
+            let expressionNumList=$('#expressionInput').val().match(/(\d{1,}(\.\d{1,}|\d{0,}))/g);
+            if(expressionNumList!=null&&expressionNumList.length>0){
+                for(var i=0;i<expressionNumList.length;i++){
+                    let num=expressionNumList[i];
+                    let index=num.indexOf('.');
+
+                    let integer='';
+                    let decimal='';
+                    if(index<0){
+                        integer=num;
+                    }else{
+                        integer=num.substring(0,index);
+                        decimal=num.substring(index+1);
+                    }
+                    if(parseInt(integer)>99999999){
+                        bs4pop.alert("计算表达式包含的数字不能超过99999999", {type: 'error', position: 'center'});
+                        return;
+                    }
+                    if(decimal!=''){
+                        if(parseInt(decimal)>99){
+                            bs4pop.alert("计算表达式包含的数字不能超过两位小数", {type: 'error', position: 'center'});
+                            return;
+                        }
+                    }
+                }
+            }
+
             bui.loading.show('努力提交中，请稍候。。。');
             let id = $('#id').val();
             let url = '${contextPath}/chargeRule/save.action';
             let data = buildData();
-
+            debugger
+            return
             $.ajax({
                 type: "POST",
                 dataType: "json",
