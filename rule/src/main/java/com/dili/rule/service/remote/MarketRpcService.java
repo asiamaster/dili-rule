@@ -11,6 +11,7 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.DataAuthRpc;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.session.SessionContext;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -127,12 +128,12 @@ public class MarketRpcService {
             firmDto.setCodes(firmCodeList);
             BaseOutput<List<Firm>> listBaseOutput = firmRpc.listByExample(firmDto);
             if (listBaseOutput.isSuccess() && CollectionUtil.isNotEmpty(listBaseOutput.getData())) {
-                return listBaseOutput.getData();
+                return Lists.newArrayList(listBaseOutput.getData());
             } else {
-                return Collections.emptyList();
+                return Lists.newArrayList();
             }
         } else {
-            return Collections.emptyList();
+            return Lists.newArrayList();
         }
     }
 }

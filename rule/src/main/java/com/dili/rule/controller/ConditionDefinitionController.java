@@ -162,6 +162,10 @@ public class ConditionDefinitionController {
             if (Objects.nonNull(conditionDefinition)) {
                 modelMap.put("conditionDefinition", conditionDefinition);
             }
+            DataSourceDefinition dataSourceDefinition= StreamEx.ofNullable(conditionDefinition).map(ConditionDefinition::getDataSourceId)
+                    .nonNull().map(this.dataSourceDefinitionService::get).findFirst()
+                    .orElse(new DataSourceDefinition());
+            modelMap.put("dataSourceDefinition", dataSourceDefinition);
         }
         return "conditionDefinition/view";
     }

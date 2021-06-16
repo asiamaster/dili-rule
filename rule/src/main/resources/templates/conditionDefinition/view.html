@@ -44,10 +44,8 @@
                 <input type="text" class="form-control" id="defaultValues" name="defaultValues" maxlength="255" value="${conditionDefinition.defaultValues!}"  placeholder="条件默认值,多个以英文逗号隔开" />
             </div>
             <div class="form-group col">
-                <input type="hidden" id="oldDataSourceId" value="${conditionDefinition.dataSourceId!}">
-                <label for="dataSourceId">数据来源</label>
-                <select class="form-control" id="dataSourceId" name="dataSourceId" title="数据来源选项，如果为空，则认为是直接输入的文本框">
-                </select>
+                <label>数据来源</label>
+                <input class="form-control"  value="${dataSourceDefinition.name!}"/>
             </div>
             <div class="form-group col">
                 <input type="hidden" id="oldMatchColumn" value="${conditionDefinition.matchColumn!}">
