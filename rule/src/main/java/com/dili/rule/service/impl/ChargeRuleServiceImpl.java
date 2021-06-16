@@ -36,6 +36,7 @@ import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.google.common.collect.Lists;
 import com.udojava.evalex.AbstractLazyFunction;
 import com.udojava.evalex.Expression;
 import com.udojava.evalex.Expression.LazyNumber;
@@ -468,32 +469,33 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
 
             if (item.getIsBackup().equals(YesOrNoEnum.NO.getCode())) {
                 if (YesOrNoEnum.YES.getCode().equals(input.getIsBackup())) {
-
+                    //insert backup
                     input.setId(null);
                     input.setCreateTime(LocalDateTime.now());
                     input.setModifyTime(LocalDateTime.now());
-                    this.checkRuleNameOrEx(input);
+                    this.checkRuleNameOrEx(input,item.getId());
                     this.insert(input);
 
                     item.setBackupedRuleId(input.getId());
+                    this.checkRuleNameOrEx(item,item.getId(),item.getBackupedRuleId());
                     this.update(item);
                 } else {
-                    //                inputRuleInfo.setModifyTime(old.getModifyTime());
+                    //update existed item(not backup)
                     input.setIsBackup(item.getIsBackup());
                     input.setBackupedRuleId(item.getBackupedRuleId());
                     input.setIsDeleted(item.getIsDeleted());
                     input.setPriority(item.getPriority());
-                    this.checkRuleNameOrEx(input);
+                    this.checkRuleNameOrEx(input,input.getId(),input.getBackupedRuleId());
                     this.update(input);
                 }
 
             } else if (YesOrNoEnum.YES.getCode().equals(item.getIsBackup())) {
-//            inputRuleInfo.setModifyTime(old.getModifyTime());
+                // update backup
                 input.setIsBackup(item.getIsBackup());
                 input.setBackupedRuleId(item.getBackupedRuleId());
                 input.setIsDeleted(item.getIsDeleted());
                 input.setPriority(item.getPriority());
-                this.checkRuleNameOrEx(input);
+                this.checkRuleNameOrEx(input,input.getId(),input.getBackupedRuleId());
                 this.update(input);
             }
             return input;
@@ -555,13 +557,20 @@ public class ChargeRuleServiceImpl extends BaseServiceImpl<ChargeRule, Long> imp
      * @param chargeRule
      * @return
      */
-    private void checkRuleNameOrEx(ChargeRule chargeRule) {
+    private void checkRuleNameOrEx(ChargeRule chargeRule,Long...excludeId) {
         ChargeRule condition = new ChargeRule();
         condition.setRuleName(chargeRule.getRuleName());
         condition.setMarketId(chargeRule.getMarketId());
         condition.setBusinessType(chargeRule.getBusinessType());
         condition.setChargeItem(chargeRule.getChargeItem());
-        long sameNameCount = this.listByExample(condition).stream().filter((r) -> !r.getId().equals(chargeRule.getId()))
+        long sameNameCount = this.listByExample(condition).stream()
+                .filter((r) ->{
+                    if(excludeId!=null&&excludeId.length>0){
+                        StreamEx.of(Lists.newArrayList(excludeId)).nonNull().toList().contains(r.getId());
+                    }
+                    return !r.getId().equals(chargeRule.getId());
+
+                } )
                 .count();
 
         if (sameNameCount>0) {
