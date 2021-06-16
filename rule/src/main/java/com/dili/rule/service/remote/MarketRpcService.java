@@ -114,7 +114,7 @@ public class MarketRpcService {
         if (null == userId) {
             UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
             if (null == userTicket){
-                return Collections.emptyList();
+                return Lists.newArrayListWithCapacity(0);
             }
             userDataAuth.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
         } else {
@@ -130,10 +130,10 @@ public class MarketRpcService {
             if (listBaseOutput.isSuccess() && CollectionUtil.isNotEmpty(listBaseOutput.getData())) {
                 return Lists.newArrayList(listBaseOutput.getData());
             } else {
-                return Lists.newArrayList();
+                return Lists.newArrayListWithCapacity(0);
             }
         } else {
-            return Lists.newArrayList();
+            return Lists.newArrayListWithCapacity(0);
         }
     }
 }
