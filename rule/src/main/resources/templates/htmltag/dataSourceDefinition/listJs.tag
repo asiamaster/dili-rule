@@ -48,7 +48,7 @@
             closeBtn: true,
             backdrop: 'static',
             width: '60%',
-            height: '50%',
+            height: '450px',
             btns: []
         });
     }
@@ -73,7 +73,7 @@
             closeBtn: true,
             backdrop: 'static',
             width: '60%',
-            height: '60%',
+            height: '450px',
             btns: []
         });
     }

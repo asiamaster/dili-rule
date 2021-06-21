@@ -13,15 +13,15 @@ import com.google.common.collect.Maps;
  * @date 2020/5/13 16:36
  */
 public enum DataSourceTypeEnum {
-
-    /**
-     * 本地数据
-     */
-    LOCAL("local","本地数据-暂未支持"),
     /**
      * 远程数据
      */
     REMOTE("remote","远程数据"),
+    /**
+     * 本地数据
+     */
+    LOCAL("local","本地数据"),
+
     ;
     private String code;
     private String desc;

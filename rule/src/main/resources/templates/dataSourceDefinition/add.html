@@ -10,11 +10,14 @@
             </div>
             <div class="form-group col">
                 <label for="dataSourceType" class="">数据来源<i class="red">*</i></label>
-                <select id="dataSourceType" name="dataSourceType" class="form-control" required></select>
-                <#bcomboProvider _id="dataSourceType" _provider="dataSourceTypeProvider" _queryParams='{required:true}' _valueField="value" _textField="text" _value="" />
+                <select id="dataSourceType" name="dataSourceType" class="form-control" required>
+                    <%for(dataSourceType in dataSourceTypeEnumList){%>
+                    <option value="${dataSourceType.code}">${dataSourceType.desc}</option>
+                    <%}%>
+                </select>
             </div>
             <div class="form-group col">
-                <label for="" class="">数据URL</label>
+                <label for="" class="">数据URL<i class="red">*</i></label>
                 <input type="text" class="form-control url" id="queryUrl" name="queryUrl" maxlength="255" placeholder="如果来源为远程，则需设置数据URL" />
             </div>
             <div class="form-group col">
@@ -39,7 +42,7 @@
                 <textarea type="text" id="dataJson" name="dataJson"  placeholder="JSON格式的本地数据，如果来源为本地，需填写此项 " class="form-control isJSON" maxlength="500"></textarea>
             </div>
             <div class="form-group col">
-                <label for="keysField" class="">联想查询规则Key</label>
+                <label for="keysField" class="">联想查询Key</label>
                 <input type="text" class="form-control" id="autoCompleteQueryKey" name="autoCompleteQueryKey" maxlength="50" placeholder="联想查询规则Key" />
             </div>
 
@@ -52,4 +55,20 @@
 </div>
 </#bs4Body>
 <script type="text/javascript" src="${contextPath}/resources/js/jquery.serializejson-2.9.0.min.js"></script>
+<script>
+    $('#dataSourceType').on('change',function(){
+        let inputList=$('input[name="queryUrl"], input[name="keysUrl"]')
+        let redLabels=inputList.siblings('label').find('i[class="red"]');
+
+        if($(this).val()=='${@com.dili.rule.domain.enums.DataSourceTypeEnum.LOCAL.getCode()}'){
+            redLabels.hide()
+            inputList.prop('required',false)
+        }else{
+            redLabels.show()
+            inputList.prop('required',true);
+        }
+
+    })
+    $('#dataSourceType').trigger('change')
+</script>
 <#dataSourceDefinition_editJs />

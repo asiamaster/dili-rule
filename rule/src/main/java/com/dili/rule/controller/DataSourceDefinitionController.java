@@ -1,6 +1,7 @@
 package com.dili.rule.controller;
 
 import com.dili.rule.domain.DataSourceDefinition;
+import com.dili.rule.domain.enums.DataSourceTypeEnum;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import org.slf4j.Logger;
@@ -68,6 +69,8 @@ public class DataSourceDefinitionController {
      */
     @RequestMapping(value = "/preSave.html", method = RequestMethod.GET)
     public String preSave(Long id, ModelMap modelMap) {
+
+        modelMap.put("dataSourceTypeEnumList",DataSourceTypeEnum.values());
         if (Objects.nonNull(id)) {
             DataSourceDefinition dataSourceDefinition = dataSourceDefinitionService.get(id);
             if (Objects.nonNull(dataSourceDefinition)) {
