@@ -419,8 +419,6 @@
             let id = $('#id').val();
             let url = '${contextPath}/chargeRule/save.action';
             let data = buildData();
-            debugger
-            return
             $.ajax({
                 type: "POST",
                 dataType: "json",
